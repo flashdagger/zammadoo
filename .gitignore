@@ -1,0 +1,14 @@
+/venv
+/dist
+/build
+/htmlcov
+.coverage
+/*.egg-info
+*_
+/doc/html
+/doc/_build
+/cache
+/.idea/workspace.xml
+/.idea
+/token.json
+/*.crt
