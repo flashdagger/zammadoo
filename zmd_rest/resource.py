@@ -1,66 +1,39 @@
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
-from typing import Union, Optional, Dict, Any, Mapping, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from .lazymapping import LazyMapping
-from .utils import join
+from .utils import JsonDict
 
 if TYPE_CHECKING:
-    from .resources import Resources
-
-Rid = Union[str, int]
+    from .resources import ResourcesG
 
 
 class Resource:
-    def __init__(
-        self, resources: "Resources", rid: Rid, info: Optional[Dict[str, Any]] = None
-    ):
+    def __init__(self, resources: "ResourcesG", rid: int):
+        self._id = rid
         self._resources = resources
-        if info is None:
-            self._id = rid
-            self._info: Mapping[str, Any] = LazyMapping(
-                lambda: cast(Mapping, self._resources.get(rid))
-            )
-        else:
-            self._id = info["id"]
-            self._info = info
+        self._info: JsonDict = {}
 
     def __repr__(self):
-        url = join(self._resources.url, self.id)
+        url = self._resources.url(self.id)
         return f"<{self.__class__.__qualname__} {url!r}>"
 
     def __getattr__(self, item: str):
         try:
-            value = self._info[item]
-            if isinstance(value, str):
-                with suppress(ValueError):
-                    return datetime.fromisoformat(value)
-            return value
-        except KeyError as _exc:
-            value = self._info.get(f"{item}_id")
-            endpoint = f"{item}s"
-            if isinstance(value, int) and endpoint in self._resources.client.__ano__:
-                return self._resources.as_endpoint(endpoint)(value)
+            value = self[item]
+        except KeyError as exc:
+            raise AttributeError(
+                f"{self.__class__.__name__!r} object has no attribute {item!r}"
+            ) from exc
 
-            if item in self._resources.client.__ano__:
-                assert item.endswith("s"), f"{item} is not a plural"
-                values = self._info.get(f"{item[:-1]}_ids")
-                assert isinstance(values, list) and all(
-                    isinstance(value, int) for value in values
-                ), (item, values)
-                return [self._resources.as_endpoint(item)(value) for value in values]
-
-            if item.endswith("_by"):
-                value = self._info.get(f"{item}_id")
-                if isinstance(value, int):
-                    return self._resources.as_endpoint("users")(value)
-
-        raise AttributeError(
-            f"{self.__class__.__name__!r} object has no attribute {item!r}"
-        )
+        if isinstance(value, str):
+            with suppress(ValueError):
+                return datetime.fromisoformat(value)
+        return value
 
     def __getitem__(self, item: str):
+        self._initialize()
         return self._info[item]
 
     @property
@@ -69,15 +42,15 @@ class Resource:
 
     @property
     def info(self) -> MappingProxyType[str, Any]:
-        info = self._info
-        if isinstance(info, LazyMapping):
-            return info.view()
+        self._initialize()
         return MappingProxyType(self._info)
+
+    def _initialize(self):
+        if self._info:
+            return
+        self._info.update(self._resources.get(self._id, refresh=False))
 
     def reload(self):
         info = self._info
-        if isinstance(info, LazyMapping):
-            info.update()
-        else:
-            info.clear()
-            info.update(self._resources.get(self._id))
+        info.clear()
+        info.update(self._resources.get(self._id), refresh=True)

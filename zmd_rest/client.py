@@ -1,24 +1,30 @@
 import atexit
-from typing import (
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Type,
-)
+import logging
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple, Type
 
 import requests
-from requests import HTTPError
+from requests import HTTPError, JSONDecodeError
 
-from .resources import Resources
-from .utils import join, JsonDict, JsonContainer, JsonMapping
+from .resources import Resources, ResourcesG, Searchable
+from .tickets import Tickets
+from .utils import JsonContainer, JsonDict, JsonMapping, join
+
+LOG = logging.getLogger(__name__)
+
+
+class RequestException(Exception):
+    pass
 
 
 def raise_or_return_json(response: requests.Response) -> JsonContainer:
     try:
         response.raise_for_status()
     except HTTPError as exc:
-        raise HTTPError(response.text) from exc
+        try:
+            raise RequestException(response.json()["error"]) from exc
+        except (JSONDecodeError, KeyError):
+            raise HTTPError(response.text) from exc
 
     return response.json()
 
@@ -26,34 +32,42 @@ def raise_or_return_json(response: requests.Response) -> JsonContainer:
 class ClientMeta(type):
     def __init__(cls, name, bases, attributes):
         super().__init__(name, bases, attributes)
-        mapping = getattr(cls, "__ano__")
+        mapping = getattr(cls, "resource_types")
         for base_cls in reversed(cls.mro()):
-            ano = base_cls.__dict__.get("__annotations__", {})
+            annotations = base_cls.__dict__.get("__annotations__", {})
             mapping.update(
                 (key, value)
-                for key, value in ano.items()
-                if isinstance(value, type) and issubclass(value, Resources)
+                for key, value in annotations.items()
+                if isinstance(value, type) and issubclass(value, ResourcesG)
             )
 
 
+# pylint: disable=too-many-instance-attributes
 class Client(metaclass=ClientMeta):
     groups: Resources
-    links: Resources
-    object_manager_attributes: Resources
-    online_notifications: Resources
+    # links: Resources
+    # object_manager_attributes: Resources
+    # online_notifications: Resources
     organizations: Resources
     roles: Resources
     # tags: Resources
-    tag_list: Resources
-    ticket_article_plain: Resources
+    # tag_list: Resources
+    # ticket_article_plain: Resources
     ticket_articles: Resources
-    ticket_attachment: Resources
-    ticket_priorities: Resources
-    ticket_states: Resources
-    tickets: Resources
-    users: Resources
+    # ticket_attachment: Resources
+    # ticket_priorities: Resources
+    # ticket_states: Resources
+    tickets: Tickets
+    users: Searchable
 
-    __ano__: Dict[str, Type[Resources]] = {}
+    @dataclass
+    class Pagination:
+        page: int = 1
+        per_page: int = 10
+        expand: bool = False
+
+    resource_types: Dict[str, Type[Resources]] = {}
+    __resource_inst: Dict[str, Resources] = {}
 
     class ConfigException(Exception):
         pass
@@ -70,6 +84,8 @@ class Client(metaclass=ClientMeta):
         additional_headers: Optional[List[Tuple[str, str]]] = None,
     ) -> None:
         self.url = url.rstrip("/")
+        self.pagination = self.Pagination()
+
         self._username = username
         self._password = password
         self._http_token = http_token
@@ -111,14 +127,19 @@ class Client(metaclass=ClientMeta):
             raise Client.ConfigException("Missing password in config")
 
     def __getattr__(self, item) -> Resources:
-        klass = self.__ano__.get(item)
+        instance_map = self.__resource_inst
+        instance = instance_map.get(item)
+        if instance:
+            return instance
+
+        klass = self.resource_types.get(item)
         if not klass:
             raise AttributeError(item)
-        return klass(self, item)
+        return instance_map.setdefault(item, klass(self, item))
 
     def get(self, *args, params: Optional[JsonMapping] = None) -> JsonContainer:
-        print("--> get", args)
         response = self.session.get(join(self.url, *args), params=params)
+        LOG.debug("GET %s", response.url)
         return raise_or_return_json(response)
 
     def create(self, *args, params: JsonMapping) -> JsonDict:
