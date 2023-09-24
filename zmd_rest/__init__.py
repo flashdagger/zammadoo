@@ -1,1 +1,3 @@
-from .client import Client
+from .client import LOG, Client
+
+LOG.name = __name__

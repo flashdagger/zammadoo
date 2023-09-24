@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from itertools import islice
-from typing import Callable, Any
+from typing import Any, Callable
 
 
 class LruCache:

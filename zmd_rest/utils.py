@@ -1,4 +1,4 @@
-from typing import Union, Dict, List, Mapping, Any
+from typing import Any, Dict, List, Mapping, Union
 
 
 def join(*args) -> str:
