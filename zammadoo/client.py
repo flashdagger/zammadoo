@@ -24,7 +24,9 @@ def raise_or_return_json(response: requests.Response) -> JsonContainer:
         try:
             raise RequestException(response.json()["error"]) from exc
         except (JSONDecodeError, KeyError):
-            raise HTTPError(response.text) from exc
+            raise HTTPError(
+                response.text, request=exc.request, response=exc.response
+            ) from exc
 
     return response.json()
 

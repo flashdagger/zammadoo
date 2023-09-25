@@ -28,10 +28,6 @@ class Ticket(Resource):
     title: str
     updated_by = ResourceGetter[User]("users")
 
-    # @property
-    # def articles(self) -> List[Article]:
-    #     return [self._resources.client.ticket_articles(aid) for aid in self.article_ids]
-
 
 class Tickets(SearchableG[Ticket]):
     RESOURCE_TYPE = Ticket
