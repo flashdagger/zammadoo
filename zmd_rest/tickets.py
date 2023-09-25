@@ -1,59 +1,31 @@
-from types import MethodType
-from typing import Iterable, Optional, List
+from datetime import datetime
+from typing import Iterable, List
 
-from .resource import Resource
+from .resource import Resource, ResourceGetter
 from .resources import SearchableG
 from .utils import JsonContainer
 
 Article = Resource
 Group = Resource
-User = Resource
 Organization = Resource
-
-
-def decorator_factory(endpoint=""):
-    def _decorator(method: MethodType):
-        name = method.__name__
-        id_spec = f"{name}_id"
-
-        # pylint: disable=protected-access
-        def _resource_getter(self):
-            rid = self[id_spec]
-            return rid and getattr(self._resources.client, endpoint or f"{name}s")(rid)
-
-        return property(_resource_getter)
-
-    return _decorator
-
-
-resource_by_id = decorator_factory()
-user_by_id = decorator_factory("users")
+Priority = Resource
+State = Resource
+User = Resource
 
 
 class Ticket(Resource):
-    @resource_by_id
-    def group(self) -> Optional[Group]:
-        ...
-
-    @user_by_id
-    def owner(self) -> User:
-        ...
-
-    @resource_by_id
-    def organization(self) -> Optional[Organization]:
-        ...
-
-    @user_by_id
-    def customer(self) -> User:
-        ...
-
-    @user_by_id
-    def created_by(self) -> User:
-        ...
-
-    @user_by_id
-    def updated_by(self) -> Optional[User]:
-        ...
+    created_at: datetime
+    created_by = ResourceGetter[User]("users")
+    customer = ResourceGetter[User]("users")
+    group = ResourceGetter[Group]()
+    note: str
+    number: str
+    organization = ResourceGetter[Organization]()
+    owner = ResourceGetter[User]("users")
+    priority = ResourceGetter[Priority]("ticket_priorities")
+    state = ResourceGetter[State]("ticket_states")
+    title: str
+    updated_by = ResourceGetter[User]("users")
 
     @property
     def articles(self) -> List[Article]:

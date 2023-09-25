@@ -1,17 +1,15 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
-from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type, TypeVar
+from typing import Iterable as IterableType
+from typing import TYPE_CHECKING, Generic, Optional, Type
 
 from .cache import LruCache
-from .resource import Resource
+from .resource import Resource, T
 from .utils import JsonContainer
 
 if TYPE_CHECKING:
     from . import Client
-
-
-T = TypeVar("T", bound=Resource)
 
 
 class ResourcesG(Generic[T]):
@@ -49,19 +47,19 @@ class ResourcesG(Generic[T]):
         return response
 
 
-class IterableResourcesG(ResourcesG[T]):
+class IterableG(ResourcesG[T]):
     def __init__(self, client: "Client", endpoint: str):
         super().__init__(client, endpoint)
         self.pagination = copy(client.pagination)
 
-    def _iter_items(self, items: JsonContainer) -> Iterable[T]:
+    def _iter_items(self, items: JsonContainer) -> IterableType[T]:
         assert isinstance(items, list)
         for item in items:
             rid = item["id"]
             self.cache[self.url(rid)] = item
             yield self.RESOURCE_TYPE(self, rid)
 
-    def iter(self, *args, **kwargs) -> Iterable[T]:
+    def iter(self, *args, **kwargs) -> IterableType[T]:
         params = asdict(self.pagination)
         params.update(kwargs)
         kwargs.update(params)  # preserves the kwargs order
@@ -77,20 +75,24 @@ class IterableResourcesG(ResourcesG[T]):
     __iter__ = iter
 
 
-class SearchableG(IterableResourcesG[T]):
+class SearchableG(IterableG[T]):
     def search(
         self,
         query: str,
         sort_by: Optional[str] = None,
         order_by: Optional[str] = None,
         limit: Optional[int] = None,
-    ) -> Iterable[T]:
+    ) -> IterableType[T]:
         return self.iter(
             "search", query=query, sort_by=sort_by, limit=limit, order_by=order_by
         )
 
 
 class Resources(ResourcesG[Resource]):
+    RESOURCE_TYPE = Resource
+
+
+class Iterable(IterableG[Resource]):
     RESOURCE_TYPE = Resource
 
 

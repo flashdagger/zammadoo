@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Tuple, Type
 import requests
 from requests import HTTPError, JSONDecodeError
 
-from .resources import Resources, ResourcesG, Searchable
+from .resources import Iterable, Resources, ResourcesG, Searchable
 from .tickets import Tickets
 from .utils import JsonContainer, JsonDict, JsonMapping, join
 
@@ -55,8 +55,8 @@ class Client(metaclass=ClientMeta):
     # ticket_article_plain: Resources
     ticket_articles: Resources
     # ticket_attachment: Resources
-    # ticket_priorities: Resources
-    # ticket_states: Resources
+    ticket_priorities: Resources
+    ticket_states: Iterable
     tickets: Tickets
     users: Searchable
 
