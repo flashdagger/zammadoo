@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "zmd-rest"
+name = "zammadoo"
 version = "0.1.0"
-description = "object oriented client accessing the Zammad REST API"
+description = "an object-oriented Zammad REST API Client for Python"
 authors = ["Marcel Kuszak <marcel.kuszak@gmx.de>"]
 readme = "README.md"
-packages = [{ include = "zmd_rest" }]
+packages = [{ include = "zammadoo" }]
 
 [tool.poetry.dependencies]
 python = "^3.9"

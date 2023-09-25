@@ -1,3 +1,3 @@
 <h1 align="center">
- Object-oriented Zammad REST API Client
+ zammadoo - an object-oriented Zammad REST API Client for Python
 </h1>
