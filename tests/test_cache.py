@@ -26,7 +26,8 @@ def test_order_with_setitem():
     assert all(
         eq(a, b) for a, b in zip_longest(cache.keys(), cache.values())
     ), "key/value mismatch"
-    assert all(eq(a, b) for a, b in zip_longest(rng, cache.keys())), "key/data mismatch"
+    assert all(eq(a, b) for a, b in cache.items()), "key/value mismatch"
+    assert all(eq(a, b) for a, b in zip_longest(rng, cache.keys())), "data/key mismatch"
 
 
 def test_order_with_callback():
@@ -55,6 +56,9 @@ def test_setitem_with_max_size_0():
     for item in range(10):
         cache[item] = item
         assert len(cache) == 0
+
+    cache.evict()
+    assert len(cache) == 0
 
 
 def test_setbycallback_with_max_size_0():
@@ -117,6 +121,16 @@ def test_reducing_max_size_evicts_older_entries():
     cache = LruCache(max_size=20)
     fill_by_callback(cache, range(20))
     assert len(cache) == 20
-    cache.max_size = 5
+    cache.max_size -= 15
     assert len(cache) == 5
     assert list(cache.keys()) == [15, 16, 17, 18, 19]
+
+
+def test_clear():
+    cache = LruCache()
+    fill_by_callback(cache, range(20))
+    assert bool(cache)
+    cache.clear()
+    assert 0 not in cache
+    assert len(cache) == 0
+    assert not cache
