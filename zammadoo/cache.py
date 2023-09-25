@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from collections import OrderedDict
 from itertools import islice
 from typing import Any, Callable
@@ -6,10 +9,19 @@ from typing import Any, Callable
 class LruCache:
     def __init__(self, max_size=-1):
         self._cache = OrderedDict()
-        self.max_size = max_size
+        self._max_size = max_size
+
+    @property
+    def max_size(self):
+        return self._max_size
+
+    @max_size.setter
+    def max_size(self, value: int):
+        self._max_size = value
+        self.evict()
 
     def evict(self):
-        max_size = self.max_size
+        max_size = self._max_size
         if max_size <= 0:
             return
         cache = self._cache
@@ -24,7 +36,7 @@ class LruCache:
             return cache[item]
 
         value = cache[item] = callback()
-        max_size = self.max_size
+        max_size = self._max_size
         if 0 <= max_size < len(cache):
             cache.popitem(last=False)
 
@@ -60,6 +72,6 @@ class LruCache:
             cache[item] = value
         else:
             cache[item] = value
-            max_size = self.max_size
+            max_size = self._max_size
             if 0 <= max_size < len(cache):
                 cache.popitem(last=False)

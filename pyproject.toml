@@ -50,7 +50,7 @@ exclude = '''
 
 [tool.pytest.ini_options]
 minversion = "7.4"
-addopts = "test -v --tb=line"
+addopts = "tests -v --tb=line"
 cache_dir = ".cache/pytest"
 
 
