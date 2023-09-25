@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Iterable, List
+from typing import Iterable
 
-from .resource import Resource, ResourceGetter
+from .resource import Resource, ResourceGetter, ResourceListGetter
 from .resources import SearchableG
 from .utils import JsonContainer
 
@@ -14,6 +14,7 @@ User = Resource
 
 
 class Ticket(Resource):
+    articles = ResourceListGetter[Article]("ticket_articles")
     created_at: datetime
     created_by = ResourceGetter[User]("users")
     customer = ResourceGetter[User]("users")
@@ -27,9 +28,9 @@ class Ticket(Resource):
     title: str
     updated_by = ResourceGetter[User]("users")
 
-    @property
-    def articles(self) -> List[Article]:
-        return [self._resources.client.ticket_articles(aid) for aid in self.article_ids]
+    # @property
+    # def articles(self) -> List[Article]:
+    #     return [self._resources.client.ticket_articles(aid) for aid in self.article_ids]
 
 
 class Tickets(SearchableG[Ticket]):
