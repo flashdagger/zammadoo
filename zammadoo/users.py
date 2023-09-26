@@ -17,7 +17,7 @@ class Users(SearchableG[User]):
     RESOURCE_TYPE = User
 
     # pylint: disable=invalid-name
-    def me(self):
+    def me(self) -> User:
         cache = self.cache
         endpoint = "users/me"
         url = f"{self.url()}/{endpoint}"

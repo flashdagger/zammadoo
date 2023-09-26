@@ -1,0 +1,17 @@
+- case: client_attributes_are_of_proper_type
+  main: |
+    from zammadoo import Client
+
+    client = Client("<url>")
+    reveal_type(client.tickets)     # N: Revealed type is "zammadoo.tickets.Tickets"
+    ticket = client.tickets(1)
+    reveal_type(ticket)             # N: Revealed type is "zammadoo.tickets.Ticket"
+    reveal_type(ticket.owner)       # N: Revealed type is "zammadoo.users.User"
+    reveal_type(ticket.state)       # N: Revealed type is "zammadoo.states.State"
+    reveal_type(ticket.created_at)  # N: Revealed type is "datetime.datetime"
+    
+    reveal_type(client.users)       # N: Revealed type is "zammadoo.users.Users"
+    reveal_type(client.users.me())  # N: Revealed type is "zammadoo.users.User"
+    user = client.users(1)
+    reveal_type(user)               # N: Revealed type is "zammadoo.users.User"
+    reveal_type(user.created_by)    # N: Revealed type is "zammadoo.users.User"
