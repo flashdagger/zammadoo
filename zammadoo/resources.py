@@ -72,7 +72,8 @@ class IterableG(ResourcesG[T]):
 
             params["page"] += 1
 
-    __iter__ = iter
+    def __iter__(self):
+        return self.iter()
 
 
 class SearchableG(IterableG[T]):

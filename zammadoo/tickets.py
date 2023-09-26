@@ -1,15 +1,15 @@
 from datetime import datetime
-from typing import Iterable
+from typing import Iterable, Optional, cast
 
 from .resource import Resource, ResourceGetter, ResourceListGetter
 from .resources import SearchableG
+from .states import State
 from .utils import JsonContainer
 
 Article = Resource
 Group = Resource
 Organization = Resource
 Priority = Resource
-State = Resource
 User = Resource
 
 
@@ -26,7 +26,7 @@ class Ticket(Resource):
     priority = ResourceGetter[Priority]("ticket_priorities")
     state = ResourceGetter[State]("ticket_states")
     title: str
-    updated_by = ResourceGetter[User]("users")
+    updated_by = cast(Optional[User], ResourceGetter[User]("users"))
 
 
 class Tickets(SearchableG[Ticket]):

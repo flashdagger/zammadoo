@@ -1,7 +1,7 @@
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Generic, List, Type, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, List, Type, TypeVar
 
 from .utils import JsonDict
 
@@ -69,7 +69,7 @@ class ResourceGetter(Generic[T]):
         if not self.endpoint:
             self.endpoint = f"{name}s"
 
-    def __get__(self, instance: Resource, owner: Type[Resource]) -> Optional[T]:
+    def __get__(self, instance: Resource, owner: Type[Resource]) -> T:
         rid = instance[self.key]
         resources: ResourcesG[T] = getattr(instance, "_resources")
         return rid and getattr(resources.client, self.endpoint)(rid)
