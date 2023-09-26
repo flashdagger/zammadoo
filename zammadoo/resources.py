@@ -7,7 +7,7 @@ from typing import Optional, Type
 
 from .cache import LruCache
 from .resource import Resource, T
-from .utils import JsonContainer
+from .utils import JsonContainer, YieldCounter
 
 if TYPE_CHECKING:
     from . import Client
@@ -60,22 +60,28 @@ class IterableG(ResourcesG[T]):
             self.cache[self.url(rid)] = item
             yield self.RESOURCE_TYPE(self, rid)
 
-    def iter(self, *args, **kwargs) -> IterableType[T]:
-        params = asdict(self.pagination)
-        params.update(kwargs)
-        kwargs.update(params)  # preserves the kwargs order
-        while True:
-            items = self.client.get(self.endpoint, *args, params=kwargs)
-            for item in self._iter_items(items):
-                yield item
-            if isinstance(items, dict):
-                item_len = next(
-                    (value for key, value in items.items() if key.endswith("_count"))
-                )
-            else:
-                item_len = len(items)
+    def iter(self, *args, **params) -> IterableType[T]:
+        # preserve the kwargs order
+        params.update(
+            (
+                (key, value)
+                for key, value in asdict(self.pagination).items()
+                if key not in params
+            )
+        )
+        per_page = params["per_page"]
+        if params["page"] is None:
+            params["page"] = 1
+        assert params["page"] is not None  # make mypy happy
 
-            if item_len < params["per_page"]:
+        while True:
+            items = self.client.get(self.endpoint, *args, params=params)
+            counter = YieldCounter()
+
+            yield from counter.iter(self._iter_items(items))
+            yielded = counter.yielded
+
+            if per_page and yielded < per_page or yielded == 0:
                 return
 
             params["page"] += 1

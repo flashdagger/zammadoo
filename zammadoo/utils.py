@@ -1,4 +1,18 @@
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, Dict, Iterable, List, Mapping, Union
+
+
+class YieldCounter:
+    def __init__(self):
+        self._counter = 0
+
+    @property
+    def yielded(self):
+        return self._counter
+
+    def iter(self, itr: Iterable) -> Iterable:
+        for item in itr:
+            yield item
+            self._counter += 1
 
 
 def join(*args) -> str:
