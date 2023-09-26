@@ -6,9 +6,11 @@ from typing import Dict, List, Optional, Tuple, Type
 import requests
 from requests import HTTPError, JSONDecodeError
 
-from .resources import Resources, ResourcesG, Searchable
+from .organizations import Organizations
+from .resources import Resources, ResourcesG
 from .states import States
 from .tickets import Tickets
+from .users import Users
 from .utils import JsonContainer, JsonDict, JsonMapping, join
 
 LOG = logging.getLogger(__name__)
@@ -51,7 +53,7 @@ class Client(metaclass=ClientMeta):
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
-    organizations: Resources
+    organizations: Organizations
     roles: Resources
     # tags: Resources
     # tag_list: Resources
@@ -61,7 +63,7 @@ class Client(metaclass=ClientMeta):
     ticket_priorities: Resources
     ticket_states: States
     tickets: Tickets
-    users: Searchable
+    users: Users
 
     @dataclass
     class Pagination:

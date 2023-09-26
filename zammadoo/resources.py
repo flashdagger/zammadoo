@@ -1,8 +1,9 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
+from typing import TYPE_CHECKING, Generic
 from typing import Iterable as IterableType
-from typing import TYPE_CHECKING, Generic, Optional, Type
+from typing import Optional, Type
 
 from .cache import LruCache
 from .resource import Resource, T
@@ -65,9 +66,16 @@ class IterableG(ResourcesG[T]):
         kwargs.update(params)  # preserves the kwargs order
         while True:
             items = self.client.get(self.endpoint, *args, params=kwargs)
-            yield from self._iter_items(items)
+            for item in self._iter_items(items):
+                yield item
+            if isinstance(items, dict):
+                item_len = next(
+                    (value for key, value in items.items() if key.endswith("_count"))
+                )
+            else:
+                item_len = len(items)
 
-            if len(items) < params["per_page"]:
+            if item_len < params["per_page"]:
                 return
 
             params["page"] += 1

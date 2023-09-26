@@ -1,19 +1,21 @@
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Generic, List, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
 
 from .utils import JsonDict
 
 if TYPE_CHECKING:
-    from .resources import ResourcesG, Resources
+    from .resources import Resources, ResourcesG
 
 
 class Resource:
-    def __init__(self, resources: "ResourcesG", rid: int):
+    def __init__(
+        self, resources: "ResourcesG", rid: int, info: Optional[JsonDict] = None
+    ):
         self._id = rid
         self._resources = resources
-        self._info: JsonDict = {}
+        self._info: JsonDict = info or {}
 
     def __repr__(self):
         url = self._resources.url(self.id)

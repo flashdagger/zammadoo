@@ -1,14 +1,14 @@
 from typing import cast
 
 from .resource import Resource, ResourceGetter
-from .resources import IterableG
+from .resources import SearchableG
 from .users import User
 
 
-class State(Resource):
+class Organization(Resource):
     created_by = cast(User, ResourceGetter("users"))
     updated_by = cast(User, ResourceGetter("users"))
 
 
-class States(IterableG[State]):
-    RESOURCE_TYPE = State
+class Organizations(SearchableG[Organization]):
+    RESOURCE_TYPE = Organization

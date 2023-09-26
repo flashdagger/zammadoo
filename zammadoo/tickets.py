@@ -1,32 +1,32 @@
 from datetime import datetime
 from typing import Iterable, Optional, cast
 
+from .organizations import Organization
 from .resource import Resource, ResourceGetter, ResourceListGetter
 from .resources import SearchableG
 from .states import State
+from .users import User
 from .utils import JsonContainer
 
 Article = Resource
 Group = Resource
-Organization = Resource
 Priority = Resource
-User = Resource
 
 
 class Ticket(Resource):
     articles = ResourceListGetter[Article]("ticket_articles")
     created_at: datetime
-    created_by = ResourceGetter[User]("users")
-    customer = ResourceGetter[User]("users")
-    group = ResourceGetter[Group]()
+    created_by = cast(User, ResourceGetter("users"))
+    customer = cast(User, ResourceGetter("users"))
+    group = cast(Group, ResourceGetter())
     note: str
     number: str
-    organization = ResourceGetter[Organization]()
-    owner = ResourceGetter[User]("users")
-    priority = ResourceGetter[Priority]("ticket_priorities")
-    state = ResourceGetter[State]("ticket_states")
+    organization = cast(Organization, ResourceGetter())
+    owner = cast(User, ResourceGetter("users"))
+    priority = cast(Priority, ResourceGetter("ticket_priorities"))
+    state = cast(State, ResourceGetter("ticket_states"))
     title: str
-    updated_by = cast(Optional[User], ResourceGetter[User]("users"))
+    updated_by = cast(Optional[User], cast(User, ResourceGetter("users")))
 
 
 class Tickets(SearchableG[Ticket]):
