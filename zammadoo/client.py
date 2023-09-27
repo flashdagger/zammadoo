@@ -8,7 +8,7 @@ from requests import HTTPError, JSONDecodeError
 
 from .organizations import Organizations
 from .resources import Resources, ResourcesG
-from .states import States
+from .ticket_states import TicketStates
 from .tickets import Tickets
 from .users import Users
 from .utils import JsonContainer, JsonDict, JsonMapping, join
@@ -61,7 +61,7 @@ class Client(metaclass=ClientMeta):
     ticket_articles: Resources
     # ticket_attachment: Resources
     ticket_priorities: Resources
-    ticket_states: States
+    ticket_states: TicketStates
     tickets: Tickets
     users: Users
 

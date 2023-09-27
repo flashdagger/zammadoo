@@ -1,13 +1,11 @@
-from typing import cast
-
-from .resource import Resource, ResourceGetter
+from .resource import Resource
 from .resources import SearchableG
-from .users import User
+from .users import UserProperty
 
 
 class Organization(Resource):
-    created_by = cast(User, ResourceGetter("users"))
-    updated_by = cast(User, ResourceGetter("users"))
+    created_by = UserProperty()
+    updated_by = UserProperty()
 
 
 class Organizations(SearchableG[Organization]):

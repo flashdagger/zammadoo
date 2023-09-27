@@ -7,7 +7,7 @@
     ticket = client.tickets(1)
     reveal_type(ticket)             # N: Revealed type is "zammadoo.tickets.Ticket"
     reveal_type(ticket.owner)       # N: Revealed type is "zammadoo.users.User"
-    reveal_type(ticket.state)       # N: Revealed type is "zammadoo.states.State"
+    reveal_type(ticket.state)       # N: Revealed type is "zammadoo.ticket_states.TicketState"
     reveal_type(ticket.created_at)  # N: Revealed type is "datetime.datetime"
     
     reveal_type(client.users)       # N: Revealed type is "zammadoo.users.Users"

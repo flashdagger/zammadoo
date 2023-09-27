@@ -61,7 +61,7 @@ class Resource:
 T = TypeVar("T", bound=Resource)
 
 
-class ResourceGetter(Generic[T]):
+class ResourceProperty(Generic[T]):
     def __init__(self, endpoint="", key=""):
         self.endpoint = endpoint
         self.key = key
