@@ -78,7 +78,7 @@ class IterableG(ResourcesG[T]):
             items = self.client.get(self.endpoint, *args, params=params)
             counter = YieldCounter()
 
-            yield from counter.iter(self._iter_items(items))
+            yield from counter(self._iter_items(items))
             yielded = counter.yielded
 
             if per_page and yielded < per_page or yielded == 0:

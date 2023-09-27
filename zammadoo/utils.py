@@ -9,10 +9,11 @@ class YieldCounter:
     def yielded(self):
         return self._counter
 
-    def iter(self, itr: Iterable) -> Iterable:
-        for item in itr:
+    def __call__(self, itr: Iterable) -> Iterable:
+        self._counter = 0
+        for count, item in enumerate(itr, 1):
+            self._counter = count
             yield item
-            self._counter += 1
 
 
 def join(*args) -> str:
