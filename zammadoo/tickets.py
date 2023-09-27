@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from datetime import datetime
 from typing import Iterable, Optional, cast
 
 from .organizations import Organization
-from .resource import Resource, ResourceListGetter, ResourceProperty
+from .resource import Resource, ResourceListGetter, ResourceProperty, datetime
 from .resources import SearchableT
 from .ticket_states import TicketStateProperty
 from .users import User, UserProperty

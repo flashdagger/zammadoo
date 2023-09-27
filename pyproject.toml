@@ -22,10 +22,10 @@ pytest-cov = "^4.1.0"
 pytest-mypy-plugins = "^3.0.0"
 types-requests = "^2.31"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
 
 [bumpver]
 current_version = "0.1.0"
@@ -35,6 +35,8 @@ version_pattern = "MAJOR.MINOR.PATCH"
 "pyproject.toml" = [
     'version = "{version}"',
 ]
+
+
 [tool.black]
 line-length = 88
 target_version = ['py39', 'py310', 'py311']
@@ -48,6 +50,10 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.isort]
+profile = "black"
+src_paths = ["zammadoo", "tests"]
 
 
 [tool.pytest.ini_options]
