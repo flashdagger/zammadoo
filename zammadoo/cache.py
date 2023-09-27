@@ -30,14 +30,18 @@ class LruCache:
             del cache[key]
 
     def setdefault_by_callback(self, item, callback: Callable[[], Any]):
+        max_size = self._max_size
+        if max_size == 0:
+            return callback()
+
         cache = self._cache
         if item in cache:
-            cache.move_to_end(item)
+            if max_size > 1:
+                cache.move_to_end(item)
             return cache[item]
 
         value = cache[item] = callback()
-        max_size = self._max_size
-        if 0 <= max_size < len(cache):
+        if 0 < max_size < len(cache):
             cache.popitem(last=False)
 
         return value
@@ -62,16 +66,21 @@ class LruCache:
 
     def __getitem__(self, item):
         cache = self._cache
-        cache.move_to_end(item)
+        if self._max_size > 1:
+            cache.move_to_end(item)
         return cache[item]
 
     def __setitem__(self, item, value):
+        max_size = self._max_size
+        if max_size == 0:
+            return
+
         cache = self._cache
         if item in cache:
-            cache.move_to_end(item)
+            if max_size > 1:
+                cache.move_to_end(item)
             cache[item] = value
         else:
             cache[item] = value
-            max_size = self._max_size
-            if 0 <= max_size < len(cache):
+            if 0 < max_size < len(cache):
                 cache.popitem(last=False)

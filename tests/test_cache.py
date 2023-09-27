@@ -4,6 +4,8 @@
 from itertools import zip_longest
 from operator import eq
 
+import pytest
+
 from zammadoo.cache import LruCache
 
 
@@ -61,14 +63,14 @@ def test_setitem_with_max_size_0():
     assert len(cache) == 0
 
 
-def test_setbycallback_with_max_size_0():
+def test_setdefault_with_max_size_0():
     cache = LruCache(max_size=0)
     for item in range(10):
         cache.setdefault_by_callback(item, lambda: item)
         assert len(cache) == 0
 
 
-def test_setbycallback_with_max_size_5():
+def test_setdefault_with_max_size_5():
     cache = LruCache(max_size=5)
     for item in range(15):
         cache.setdefault_by_callback(item, lambda: item)
@@ -93,28 +95,48 @@ def test_setdefault_by_callback_does_not_overwrites_value():
     assert cache["foo"] == "bar"
 
 
-def test_setdefault_by_callback_makes_existing_item_most_recent():
-    cache = LruCache()
-    fill_by_callback(cache, range(10))
-    assert tuple(cache.keys()).index(1) == 1
+def test_setdefault_by_callback_makes_existing_item_most_recent_if_max_size_greater_1():
+    cache = LruCache(2)
+    cache.setdefault_by_callback(0, lambda: 0)
     cache.setdefault_by_callback(1, lambda: 1)
-    assert tuple(cache.keys()).index(1) == len(cache) - 1
+    assert tuple(cache.keys())[-1] == 1
+    cache.setdefault_by_callback(0, lambda: 0)
+    assert tuple(cache.keys())[-1] == 0
 
 
-def test_setitem_makes_existing_item_most_recent():
-    cache = LruCache()
-    fill_by_callback(cache, range(10))
-    assert tuple(cache.keys()).index(1) == 1
+def test_setitem_makes_existing_item_most_recent_if_max_size_greater_1():
+    cache = LruCache(2)
+    cache[0] = 0
     cache[1] = 1
-    assert tuple(cache.keys()).index(1) == len(cache) - 1
+    assert tuple(cache.keys())[-1] == 1
+    cache[0] = 0
+    assert tuple(cache.keys())[-1] == 0
 
 
-def test_getitem_makes_existing_item_most_recent():
-    cache = LruCache()
-    fill_by_callback(cache, range(10))
-    assert tuple(cache.keys()).index(1) == 1
-    _ = cache[1]
-    assert tuple(cache.keys()).index(1) == len(cache) - 1
+def test_getitem_makes_existing_item_most_recent_if_max_size_greater_1():
+    cache = LruCache(2)
+    cache[0] = 0
+    cache[1] = 1
+    assert tuple(cache.keys())[-1] == 1
+    _ = cache[0]
+    assert tuple(cache.keys())[-1] == 0
+
+
+def test_with_max_size_1():
+    cache = LruCache(1)
+    cache[0] = 0
+    assert cache[0] == 0
+    cache[1] = 1
+    assert cache[1] == 1
+    cache.setdefault_by_callback(2, lambda: 2)
+    assert cache[2] == 2
+    with pytest.raises(KeyError):
+        _ = cache[1]
+
+
+def test_setdefault_by_callback_with_max_size_0():
+    cache = LruCache(0)
+    assert cache.setdefault_by_callback(0, lambda: 0) == 0
 
 
 def test_reducing_max_size_evicts_older_entries():

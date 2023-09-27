@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class ResourcesG(Generic[T]):
     RESOURCE_TYPE: Type[T]
-    CACHE_SIZE = 10
+    CACHE_SIZE = -1
 
     def __init__(self, client: "Client", endpoint: str):
         self.client = client
