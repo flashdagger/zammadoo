@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
 from .utils import JsonDict
 
 if TYPE_CHECKING:
-    from .resources import Resources, ResourcesT
+    from .resources import BaseResources, ResourcesT
 
 
 class Resource:
@@ -93,6 +93,6 @@ class ResourceListGetter(Generic[T]):
 
     def __get__(self, instance: Resource, owner: Type[Resource]) -> List[T]:
         rids = instance[self.key]
-        instance_resources: Resources = getattr(instance, "_resources")
+        instance_resources: BaseResources = getattr(instance, "_resources")
         resources: ResourcesT[T] = getattr(instance_resources.client, self.endpoint)
         return [resources(rid) for rid in rids]

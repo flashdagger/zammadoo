@@ -10,7 +10,7 @@ import requests
 from requests import HTTPError, JSONDecodeError
 
 from .organizations import Organizations
-from .resources import Iterable, Resources, ResourcesT
+from .resources import BaseResources, IterableResources, ResourcesT
 from .ticket_states import TicketStates
 from .tickets import Tickets
 from .users import Users
@@ -52,18 +52,18 @@ class ClientMeta(type):
 
 # pylint: disable=too-many-instance-attributes
 class Client(metaclass=ClientMeta):
-    groups: Iterable
+    groups: IterableResources
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
     organizations: Organizations
-    roles: Iterable
+    roles: IterableResources
     # tags: Resources
     # tag_list: Resources
     # ticket_article_plain: Resources
-    ticket_articles: Resources
+    ticket_articles: BaseResources
     # ticket_attachment: Resources
-    ticket_priorities: Iterable
+    ticket_priorities: IterableResources
     ticket_states: TicketStates
     tickets: Tickets
     users: Users
@@ -74,8 +74,8 @@ class Client(metaclass=ClientMeta):
         per_page: int = 10
         expand: bool = False
 
-    resource_types: Dict[str, Type[Resources]] = {}
-    __resource_inst: Dict[str, Resources] = {}
+    resource_types: Dict[str, Type[BaseResources]] = {}
+    __resource_inst: Dict[str, BaseResources] = {}
 
     class ConfigException(Exception):
         pass
@@ -134,7 +134,7 @@ class Client(metaclass=ClientMeta):
         if not self._password:
             raise Client.ConfigException("Missing password in config")
 
-    def __getattr__(self, item) -> Resources:
+    def __getattr__(self, item) -> BaseResources:
         instance_map = self.__resource_inst
         instance = instance_map.get(item)
         if instance:

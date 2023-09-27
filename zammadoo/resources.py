@@ -4,9 +4,7 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
-from typing import TYPE_CHECKING, Generic
-from typing import Iterable as IterableType
-from typing import Optional, Type
+from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type
 
 from .cache import LruCache
 from .resource import Resource, T
@@ -56,14 +54,14 @@ class IterableT(ResourcesT[T]):
         super().__init__(client, endpoint)
         self.pagination = copy(client.pagination)
 
-    def _iter_items(self, items: JsonContainer) -> IterableType[T]:
+    def _iter_items(self, items: JsonContainer) -> Iterable[T]:
         assert isinstance(items, list)
         for item in items:
             rid = item["id"]
             self.cache[self.url(rid)] = item
             yield self.RESOURCE_TYPE(self, rid)
 
-    def iter(self, *args, **params) -> IterableType[T]:
+    def iter(self, *args, **params) -> Iterable[T]:
         # preserve the kwargs order
         params.update(
             (
@@ -100,19 +98,19 @@ class SearchableT(IterableT[T]):
         sort_by: Optional[str] = None,
         order_by: Optional[str] = None,
         limit: Optional[int] = None,
-    ) -> IterableType[T]:
+    ) -> Iterable[T]:
         yield from self.iter(
             "search", query=query, sort_by=sort_by, limit=limit, order_by=order_by
         )
 
 
-class Resources(ResourcesT[Resource]):
+class BaseResources(ResourcesT[Resource]):
     RESOURCE_TYPE = Resource
 
 
-class Iterable(IterableT[Resource]):
+class IterableResources(IterableT[Resource]):
     RESOURCE_TYPE = Resource
 
 
-class Searchable(SearchableT[Resource]):
+class SearchableResources(SearchableT[Resource]):
     RESOURCE_TYPE = Resource
