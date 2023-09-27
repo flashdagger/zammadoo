@@ -16,3 +16,8 @@ repos:
           ^tests/|
           /__init__.py$
         )
+    - id: pyflakes
+      name: pyflakes (pyi)
+      language: python
+      entry: pyflakes
+      types: [pyi]

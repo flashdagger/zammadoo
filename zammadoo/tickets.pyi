@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from .organizations import Organization as Organization
-from .resource import Resource
-from .resources import SearchableT as SearchableT
-from .ticket_states import TicketState
-from .users import User as User, UserProperty as UserProperty
-from .utils import JsonContainer as JsonContainer
 from datetime import datetime
+
+from .organizations import Organization
+from .resource import Resource
+from .resources import SearchableT
+from .ticket_states import TicketState
+from .users import User
 
 Article = Resource
 Group = Resource

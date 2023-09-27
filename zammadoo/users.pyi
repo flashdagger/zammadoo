@@ -2,11 +2,12 @@
 # -*- coding: UTF-8 -*-
 
 import datetime
-from typing import Optional, Iterable
+from typing import Optional
 
 from .organizations import Organization as Organization
 from .resource import Resource, ResourceProperty
 from .resources import SearchableT
+from .users import User
 
 class UserProperty(ResourceProperty["User"]):
     def __init__(self, key: Optional[str] = ...) -> None: ...
