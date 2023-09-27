@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from copy import copy
 from dataclasses import asdict
 from functools import partial

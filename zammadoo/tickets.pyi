@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from .organizations import Organization as Organization
 from .resource import Resource
 from .resources import SearchableT as SearchableT

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from .resource import Resource
 from .resources import SearchableT
 from .users import UserProperty

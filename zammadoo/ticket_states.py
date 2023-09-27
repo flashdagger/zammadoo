@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from .resource import Resource, ResourceProperty
 from .resources import IterableT
 from .users import UserProperty

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from datetime import datetime
 from typing import Iterable, Optional, cast
 

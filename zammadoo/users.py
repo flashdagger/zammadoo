@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 import datetime
 from functools import partial
 from typing import TYPE_CHECKING, Optional, cast

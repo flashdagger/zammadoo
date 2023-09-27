@@ -11,4 +11,8 @@ repos:
       language: python
       entry: pyflakes
       types: [python]
-      exclude: ^tests/
+      exclude: |
+        (?x)(
+          ^tests/|
+          /__init__.py$
+        )

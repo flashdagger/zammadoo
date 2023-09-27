@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
