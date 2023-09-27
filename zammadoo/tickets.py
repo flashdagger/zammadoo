@@ -3,7 +3,7 @@ from typing import Iterable, Optional, cast
 
 from .organizations import Organization
 from .resource import Resource, ResourceListGetter, ResourceProperty
-from .resources import SearchableG
+from .resources import SearchableT
 from .ticket_states import TicketStateProperty
 from .users import User, UserProperty
 from .utils import JsonContainer
@@ -29,7 +29,7 @@ class Ticket(Resource):
     updated_by = cast(Optional[User], UserProperty())
 
 
-class Tickets(SearchableG[Ticket]):
+class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
 
     def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]:

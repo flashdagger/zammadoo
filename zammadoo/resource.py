@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
 from .utils import JsonDict
 
 if TYPE_CHECKING:
-    from .resources import Resources, ResourcesG
+    from .resources import Resources, ResourcesT
 
 
 class Resource:
     def __init__(
-        self, resources: "ResourcesG", rid: int, info: Optional[JsonDict] = None
+        self, resources: "ResourcesT", rid: int, info: Optional[JsonDict] = None
     ):
         self._id = rid
         self._resources = resources
@@ -73,7 +73,7 @@ class ResourceProperty(Generic[T]):
 
     def __get__(self, instance: Resource, owner: Type[Resource]) -> T:
         rid = instance[self.key]
-        resources: ResourcesG[T] = getattr(instance, "_resources")
+        resources: ResourcesT[T] = getattr(instance, "_resources")
         return rid and getattr(resources.client, self.endpoint)(rid)
 
 
@@ -91,5 +91,5 @@ class ResourceListGetter(Generic[T]):
     def __get__(self, instance: Resource, owner: Type[Resource]) -> List[T]:
         rids = instance[self.key]
         instance_resources: Resources = getattr(instance, "_resources")
-        resources: ResourcesG[T] = getattr(instance_resources.client, self.endpoint)
+        resources: ResourcesT[T] = getattr(instance_resources.client, self.endpoint)
         return [resources(rid) for rid in rids]

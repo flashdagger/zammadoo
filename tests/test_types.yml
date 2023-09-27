@@ -15,3 +15,9 @@
     user = client.users(1)
     reveal_type(user)               # N: Revealed type is "zammadoo.users.User"
     reveal_type(user.created_by)    # N: Revealed type is "zammadoo.users.User"
+
+    for user in client.users:
+      reveal_type(user)             # N: Revealed type is "zammadoo.users.User"
+    
+    for user in client.users.search("..."):
+      reveal_type(user)             # N: Revealed type is "zammadoo.users.User"

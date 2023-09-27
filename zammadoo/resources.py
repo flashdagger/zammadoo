@@ -13,13 +13,13 @@ if TYPE_CHECKING:
     from . import Client
 
 
-class ResourcesG(Generic[T]):
+class ResourcesT(Generic[T]):
     RESOURCE_TYPE: Type[T]
     CACHE_SIZE = -1
 
     def __init__(self, client: "Client", endpoint: str):
-        self.client = client
-        self.endpoint = endpoint
+        self.client: "Client" = client
+        self.endpoint: str = endpoint
         self.cache = LruCache(max_size=self.CACHE_SIZE)
         self._url = f"{client.url}/{endpoint}"
 
@@ -48,7 +48,7 @@ class ResourcesG(Generic[T]):
         return response
 
 
-class IterableG(ResourcesG[T]):
+class IterableT(ResourcesT[T]):
     def __init__(self, client: "Client", endpoint: str):
         super().__init__(client, endpoint)
         self.pagination = copy(client.pagination)
@@ -90,7 +90,7 @@ class IterableG(ResourcesG[T]):
         return self.iter()
 
 
-class SearchableG(IterableG[T]):
+class SearchableT(IterableT[T]):
     def search(
         self,
         query: str,
@@ -98,18 +98,18 @@ class SearchableG(IterableG[T]):
         order_by: Optional[str] = None,
         limit: Optional[int] = None,
     ) -> IterableType[T]:
-        return self.iter(
+        yield from self.iter(
             "search", query=query, sort_by=sort_by, limit=limit, order_by=order_by
         )
 
 
-class Resources(ResourcesG[Resource]):
+class Resources(ResourcesT[Resource]):
     RESOURCE_TYPE = Resource
 
 
-class Iterable(IterableG[Resource]):
+class Iterable(IterableT[Resource]):
     RESOURCE_TYPE = Resource
 
 
-class Searchable(SearchableG[Resource]):
+class Searchable(SearchableT[Resource]):
     RESOURCE_TYPE = Resource

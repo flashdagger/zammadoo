@@ -1,5 +1,5 @@
 from .resource import Resource
-from .resources import SearchableG
+from .resources import SearchableT
 from .users import UserProperty
 
 
@@ -8,5 +8,5 @@ class Organization(Resource):
     updated_by = UserProperty()
 
 
-class Organizations(SearchableG[Organization]):
+class Organizations(SearchableT[Organization]):
     RESOURCE_TYPE = Organization

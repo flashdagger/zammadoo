@@ -1,8 +1,9 @@
+import datetime
 from functools import partial
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from .resource import Resource, ResourceProperty
-from .resources import SearchableG
+from .resources import SearchableT
 
 if TYPE_CHECKING:
     from .organizations import Organization
@@ -11,16 +12,17 @@ if TYPE_CHECKING:
 
 
 class UserProperty(ResourceProperty["User"]):
-    def __init__(self, key=None):
+    def __init__(self, key: Optional[str] = None):
         super().__init__(endpoint="users", key=key or "")
 
 
 class User(Resource):
     created_by = UserProperty()
+    last_login: Optional[datetime.datetime]
     organization = cast("Organization", ResourceProperty("organizations"))
 
 
-class Users(SearchableG[User]):
+class Users(SearchableT[User]):
     RESOURCE_TYPE = User
 
     # pylint: disable=invalid-name

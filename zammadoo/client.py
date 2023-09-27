@@ -7,7 +7,7 @@ import requests
 from requests import HTTPError, JSONDecodeError
 
 from .organizations import Organizations
-from .resources import Resources, ResourcesG
+from .resources import Iterable, Resources, ResourcesT
 from .ticket_states import TicketStates
 from .tickets import Tickets
 from .users import Users
@@ -43,24 +43,24 @@ class ClientMeta(type):
             mapping.update(
                 (key, value)
                 for key, value in annotations.items()
-                if isinstance(value, type) and issubclass(value, ResourcesG)
+                if isinstance(value, type) and issubclass(value, ResourcesT)
             )
 
 
 # pylint: disable=too-many-instance-attributes
 class Client(metaclass=ClientMeta):
-    groups: Resources
+    groups: Iterable
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
     organizations: Organizations
-    roles: Resources
+    roles: Iterable
     # tags: Resources
     # tag_list: Resources
     # ticket_article_plain: Resources
     ticket_articles: Resources
     # ticket_attachment: Resources
-    ticket_priorities: Resources
+    ticket_priorities: Iterable
     ticket_states: TicketStates
     tickets: Tickets
     users: Users
