@@ -5,10 +5,13 @@ import datetime
 from typing import Optional
 
 from .organizations import Organization as Organization
-from .resource import Resource, ResourceProperty
+from .resource import Resource, ResourceListProperty, ResourceProperty
 from .resources import SearchableT
 
 class UserProperty(ResourceProperty["User"]):
+    def __init__(self, key: Optional[str] = ...) -> None: ...
+
+class UserListProperty(ResourceListProperty["User"]):
     def __init__(self, key: Optional[str] = ...) -> None: ...
 
 class User(Resource):

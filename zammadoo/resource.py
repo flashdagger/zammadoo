@@ -80,7 +80,7 @@ class ResourceProperty(Generic[T]):
         return rid and getattr(resources.client, self.endpoint)(rid)
 
 
-class ResourceListGetter(Generic[T]):
+class ResourceListProperty(Generic[T]):
     def __init__(self, endpoint="", key=""):
         self.endpoint = endpoint
         self.key = key

@@ -5,7 +5,7 @@ import datetime
 from functools import partial
 from typing import TYPE_CHECKING, Optional, cast
 
-from .resource import Resource, ResourceProperty
+from .resource import Resource, ResourceListProperty, ResourceProperty
 from .resources import SearchableT
 
 if TYPE_CHECKING:
@@ -15,6 +15,11 @@ if TYPE_CHECKING:
 
 
 class UserProperty(ResourceProperty["User"]):
+    def __init__(self, key: Optional[str] = None):
+        super().__init__(endpoint="users", key=key or "")
+
+
+class UserListProperty(ResourceListProperty["User"]):
     def __init__(self, key: Optional[str] = None):
         super().__init__(endpoint="users", key=key or "")
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Iterable, Optional, cast
+from typing import Iterable, cast
 
-from .organizations import Organization
-from .resource import Resource, ResourceListGetter, ResourceProperty, datetime
+from .organizations import OrganizationProperty
+from .resource import Resource, ResourceListProperty, ResourceProperty, datetime
 from .resources import SearchableT
 from .ticket_states import TicketStateProperty
-from .users import User, UserProperty
+from .users import UserProperty
 from .utils import JsonContainer
 
 Article = Resource
@@ -16,19 +16,19 @@ Priority = Resource
 
 
 class Ticket(Resource):
-    articles = ResourceListGetter[Article]("ticket_articles")
+    articles = ResourceListProperty[Article]("ticket_articles")
     created_at: datetime
     created_by = UserProperty()
     customer = UserProperty()
-    group = cast(Group, ResourceProperty())
+    group = ResourceProperty()
     note: str
     number: str
-    organization = cast(Organization, ResourceProperty())
+    organization = OrganizationProperty()
     owner = UserProperty()
     priority = cast(Priority, ResourceProperty("ticket_priorities"))
     state = TicketStateProperty()
     title: str
-    updated_by = cast(Optional[User], UserProperty())
+    updated_by = UserProperty()
 
     def tags(self):
         return self._resources.client.tags.by_ticket(self.id)

@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from .organizations import Organization
 from .resource import Resource
@@ -15,14 +15,14 @@ Group = Resource
 Priority = Resource
 
 class Ticket(Resource):
-    articles: Article
+    articles: List[Article]
     created_at: datetime
     created_by: User
     customer: User
     group: User
     note: str
     number: str
-    organization: Organization
+    organization: Optional[Organization]
     owner: User
     priority: Priority
     state: TicketState

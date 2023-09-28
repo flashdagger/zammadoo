@@ -7,6 +7,14 @@
     ticket = client.tickets(1)
     reveal_type(ticket)             # N: Revealed type is "zammadoo.tickets.Ticket"
     reveal_type(ticket.owner)       # N: Revealed type is "zammadoo.users.User"
+    reveal_type(ticket.created_by)  # N: Revealed type is "zammadoo.users.User"
+    reveal_type(ticket.updated_by)  # N: Revealed type is "zammadoo.users.User"
+
+    org = ticket.organization
+    reveal_type(org)                # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
+    assert org
+    reveal_type(org.members)        # N: Revealed type is "builtins.list[zammadoo.users.User]"
+
     reveal_type(ticket.state)       # N: Revealed type is "zammadoo.ticket_states.TicketState"
     reveal_type(ticket.created_at)  # N: Revealed type is "datetime.datetime"
     reveal_type(ticket._resources)  # N: Revealed type is "zammadoo.tickets.Tickets"
