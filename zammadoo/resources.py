@@ -4,7 +4,7 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
-from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type
+from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type, cast
 
 from .cache import LruCache
 from .resource import Resource, T
@@ -57,7 +57,7 @@ class IterableT(ResourcesT[T]):
     def _iter_items(self, items: JsonContainer) -> Iterable[T]:
         assert isinstance(items, list)
         for item in items:
-            rid = item["id"]
+            rid = cast(int, item["id"])
             self.cache[self.url(rid)] = item
             yield self.RESOURCE_TYPE(self, rid)
 

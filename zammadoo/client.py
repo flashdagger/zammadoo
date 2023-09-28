@@ -4,7 +4,7 @@
 import atexit
 import logging
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Type
+from typing import Dict, List, Optional, Tuple, Type, cast
 
 import requests
 from requests import HTTPError, JSONDecodeError
@@ -15,7 +15,7 @@ from .tags import Tags
 from .ticket_states import TicketStates
 from .tickets import Tickets
 from .users import Users
-from .utils import JsonContainer, JsonMapping, JsonType, join
+from .utils import JsonContainer, JsonType, StringKeyDict, join
 
 LOG = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class RestApiException(HTTPError):
     pass
 
 
-def raise_or_return_json(response: requests.Response) -> JsonContainer:
+def raise_or_return_json(response: requests.Response) -> JsonType:
     try:
         response.raise_for_status()
     except HTTPError as exc:
@@ -148,19 +148,19 @@ class Client(metaclass=ClientMeta):
             raise AttributeError(item)
         return instance_map.setdefault(item, klass(self, item))
 
-    def get(self, *args, params: Optional[JsonMapping] = None) -> JsonContainer:
+    def get(self, *args, params: Optional[StringKeyDict] = None):
         response = self.session.get(join(self.url, *args), params=params)
         LOG.debug("[GET] %s", response.url)
-        return raise_or_return_json(response)
+        return cast(JsonContainer, raise_or_return_json(response))
 
-    def post(self, *args, params: Optional[JsonMapping] = None) -> JsonType:
+    def post(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
         response = self.session.post(join(self.url, *args), json=params)
         LOG.debug("[POST] %s json=%s", response.url, params)
         value = raise_or_return_json(response)
         LOG.debug("[POST] returned %r", value)
         return value
 
-    def delete(self, *args, params: Optional[JsonMapping] = None) -> JsonType:
+    def delete(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
         response = self.session.delete(join(self.url, *args), json=params)
         LOG.debug("[DELETE] %s", response.url)
         value = raise_or_return_json(response)

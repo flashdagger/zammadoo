@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union, cast
+
+from .utils import StringKeyDict
 
 if TYPE_CHECKING:
     from .client import Client
+
+
+ItemDict = Dict[str, List[str]]
+ItemList = List[StringKeyDict]
 
 
 class Tags:
@@ -25,14 +31,12 @@ class Tags:
     def all(self) -> List[str]:
         cache = self._map
         cache.clear()
-        items = self.client.get(self.endpoint)
-        assert isinstance(items, list)
+        items = cast(ItemList, self.client.get(self.endpoint))
         cache.update((info.pop("name"), info) for info in items)
         return list(cache.keys())
 
     def search(self, term: str) -> List[str]:
-        items = self.client.get("tag_search", params={"term": term})
-        assert isinstance(items, list)
+        items = cast(ItemList, self.client.get("tag_search", params={"term": term}))
 
         found = []
         for info in items:
@@ -59,6 +63,7 @@ class Tags:
         return self.client.delete("tags/remove", params=params)
 
     def by_ticket(self, tid: int) -> List[str]:
-        items = self.client.get("tags", params={"object": "Ticket", "o_id": tid})
-        assert isinstance(items, dict)
+        items = cast(
+            ItemDict, self.client.get("tags", params={"object": "Ticket", "o_id": tid})
+        )
         return items.get("tags", [])

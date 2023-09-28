@@ -25,7 +25,7 @@
     user = client.users(1)
     reveal_type(user)               # N: Revealed type is "zammadoo.users.User"
     reveal_type(user.created_by)    # N: Revealed type is "zammadoo.users.User"
-    reveal_type(user.organization)  # N: Revealed type is "zammadoo.organizations.Organization"
+    reveal_type(user.organization)  # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
 
     for user in client.users:
       reveal_type(user)             # N: Revealed type is "zammadoo.users.User"

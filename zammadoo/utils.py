@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Any, Dict, Iterable, List, Mapping, Union
+from typing import Any, Dict, Iterable, List, Union
 
 
 class YieldCounter:
@@ -23,8 +23,8 @@ def join(*args) -> str:
     return "/".join(map(str, args))
 
 
-JsonType = Union[int, bool, None, float, str, "JsonList", "JsonDict"]
-JsonDict = Dict[str, Any]
-JsonList = List[JsonDict]
-JsonContainer = Union[JsonDict, JsonList]
-JsonMapping = Mapping[str, Any]
+JsonType = Union[None, bool, int, float, str, List["JsonType"], Dict[str, "JsonType"]]
+JsonDict = Dict[str, JsonType]
+JsonDictList = List[JsonDict]
+JsonContainer = Union[JsonDict, JsonDictList]
+StringKeyDict = Dict[str, Any]

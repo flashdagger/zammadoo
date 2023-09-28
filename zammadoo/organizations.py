@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 from typing import Optional
 
-from .resource import Resource, ResourceProperty, ResourceListProperty
+from .resource import Resource, ResourceListProperty, ResourceProperty
 from .resources import SearchableT
 from .users import UserListProperty, UserProperty
 
