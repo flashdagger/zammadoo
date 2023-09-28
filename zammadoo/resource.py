@@ -4,7 +4,7 @@
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Generic, List, Optional, Type, TypeVar
 
 from .utils import JsonDict
 
@@ -45,8 +45,7 @@ class Resource:
     def id(self):
         return self._id
 
-    @property
-    def info(self) -> MappingProxyType[str, Any]:
+    def view(self):
         self._initialize()
         return MappingProxyType(self._info)
 
