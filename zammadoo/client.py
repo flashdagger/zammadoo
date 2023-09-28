@@ -159,6 +159,13 @@ class Client(metaclass=ClientMeta):
         LOG.debug("[POST] returned %r", value)
         return value
 
+    def put(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
+        response = self.session.put(join(self.url, *args), json=params)
+        LOG.debug("[PUT] %s json=%r", response.url, params)
+        value = raise_or_return_json(response)
+        LOG.debug("[PUT] returned %r", value)
+        return value
+
     def delete(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
         response = self.session.delete(join(self.url, *args), json=params)
         LOG.debug("[DELETE] %s", response.url)

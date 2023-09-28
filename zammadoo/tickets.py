@@ -46,11 +46,11 @@ class Ticket(Resource):
     def tags(self):
         return self._resources.client.tags.by_ticket(self.id)
 
-    def add_tag(self, name: str):
-        return self._resources.client.tags.add_to_ticket(name, self.id)
+    def add_tags(self, *names: str):
+        return self._resources.client.tags.add_to_ticket(self.id, *names)
 
-    def remove_tag(self, name: str):
-        return self._resources.client.tags.remove_from_ticket(name, self.id)
+    def remove_tags(self, *names: str):
+        return self._resources.client.tags.remove_from_ticket(self.id, *names)
 
 
 class Tickets(SearchableT[Ticket]):

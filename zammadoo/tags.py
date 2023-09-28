@@ -54,13 +54,20 @@ class Tags:
             name_or_tid = self._map[name_or_tid]["id"]
         self.client.delete(f"{self.endpoint}/{name_or_tid}")
 
-    def add_to_ticket(self, name: str, tid: int):
-        params = {"item": name, "object": "Ticket", "o_id": tid}
-        return self.client.post("tags/add", params=params)
+    def rename(self, name_or_tid: Union[str, int], new_name: str):
+        if isinstance(name_or_tid, str):
+            name_or_tid = self._map[name_or_tid]["id"]
+        self.client.put(f"{self.endpoint}/{name_or_tid}", params={"name": new_name})
 
-    def remove_from_ticket(self, name: str, tid: int):
-        params = {"item": name, "object": "Ticket", "o_id": tid}
-        return self.client.delete("tags/remove", params=params)
+    def add_to_ticket(self, tid: int, *names: str):
+        for name in names:
+            params = {"item": name, "object": "Ticket", "o_id": tid}
+            self.client.post("tags/add", params=params)
+
+    def remove_from_ticket(self, tid: int, *names: str):
+        for name in names:
+            params = {"item": name, "object": "Ticket", "o_id": tid}
+            self.client.delete("tags/remove", params=params)
 
     def by_ticket(self, tid: int) -> List[str]:
         items = cast(
