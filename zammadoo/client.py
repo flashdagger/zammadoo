@@ -12,8 +12,7 @@ from requests import HTTPError, JSONDecodeError
 from .organizations import Organizations
 from .resources import BaseResources, IterableResources, ResourcesT
 from .tags import Tags
-from .ticket_states import TicketStates
-from .tickets import Tickets
+from .tickets import States, Tickets
 from .users import Users
 from .utils import JsonContainer, JsonType, StringKeyDict, join
 
@@ -66,7 +65,7 @@ class Client(metaclass=ClientMeta):
     ticket_articles: BaseResources
     # ticket_attachment: Resources
     ticket_priorities: IterableResources
-    ticket_states: TicketStates
+    ticket_states: States
     tickets: Tickets
     users: Users
 
@@ -155,7 +154,7 @@ class Client(metaclass=ClientMeta):
 
     def post(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
         response = self.session.post(join(self.url, *args), json=params)
-        LOG.debug("[POST] %s json=%s", response.url, params)
+        LOG.debug("[POST] %s json=%r", response.url, params)
         value = raise_or_return_json(response)
         LOG.debug("[POST] returned %r", value)
         return value

@@ -5,14 +5,27 @@ from typing import Iterable, cast
 
 from .organizations import OrganizationProperty
 from .resource import Resource, ResourceListProperty, ResourceProperty, datetime
-from .resources import SearchableT
-from .ticket_states import TicketStateProperty
+from .resources import IterableT, SearchableT
 from .users import UserProperty
 from .utils import JsonContainer
 
 Article = Resource
 Group = Resource
 Priority = Resource
+
+
+class State(Resource):
+    created_by = UserProperty()
+    updated_by = UserProperty()
+
+
+class States(IterableT[State]):
+    RESOURCE_TYPE = State
+
+
+class StateProperty(ResourceProperty[State]):
+    def __init__(self, key=None):
+        super().__init__(endpoint="ticket_states", key=key or "")
 
 
 class Ticket(Resource):
@@ -26,7 +39,7 @@ class Ticket(Resource):
     organization = OrganizationProperty()
     owner = UserProperty()
     priority = cast(Priority, ResourceProperty("ticket_priorities"))
-    state = TicketStateProperty()
+    state = StateProperty()
     title: str
     updated_by = UserProperty()
 

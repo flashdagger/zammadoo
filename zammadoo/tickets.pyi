@@ -5,14 +5,23 @@ from datetime import datetime
 from typing import List, Optional
 
 from .organizations import Organization
-from .resource import Resource
-from .resources import SearchableT
-from .ticket_states import TicketState
+from .resource import Resource, ResourceProperty
+from .resources import IterableT, SearchableT
 from .users import User
 
 Article = Resource
 Group = Resource
 Priority = Resource
+
+class State(Resource):
+    created_by: User
+    updated_by: User
+
+class States(IterableT[State]):
+    RESOURCE_TYPE = State
+
+class StateProperty(ResourceProperty[State]):
+    def __init__(self, key: Optional[str] = ...) -> None: ...
 
 class Ticket(Resource):
     articles: List[Article]
@@ -25,7 +34,7 @@ class Ticket(Resource):
     organization: Optional[Organization]
     owner: User
     priority: Priority
-    state: TicketState
+    state: State
     title: str
     updated_by: User
 
