@@ -11,10 +11,11 @@ from requests import HTTPError, JSONDecodeError
 
 from .organizations import Organizations
 from .resources import BaseResources, IterableResources, ResourcesT
+from .tags import Tags
 from .ticket_states import TicketStates
 from .tickets import Tickets
 from .users import Users
-from .utils import JsonContainer, JsonDict, JsonMapping, join
+from .utils import JsonContainer, JsonMapping, JsonType, join
 
 LOG = logging.getLogger(__name__)
 
@@ -58,8 +59,6 @@ class Client(metaclass=ClientMeta):
     # online_notifications: Resources
     organizations: Organizations
     roles: IterableResources
-    # tags: Resources
-    # tag_list: Resources
     # ticket_article_plain: Resources
     ticket_articles: BaseResources
     # ticket_attachment: Resources
@@ -93,6 +92,7 @@ class Client(metaclass=ClientMeta):
     ) -> None:
         self.url = url.rstrip("/")
         self.pagination = self.Pagination()
+        self._tags = Tags(self)
 
         self._username = username
         self._password = password
@@ -147,23 +147,22 @@ class Client(metaclass=ClientMeta):
 
     def get(self, *args, params: Optional[JsonMapping] = None) -> JsonContainer:
         response = self.session.get(join(self.url, *args), params=params)
-        LOG.debug("GET %s", response.url)
+        LOG.debug("[GET] %s", response.url)
         return raise_or_return_json(response)
 
-    def create(self, *args, params: JsonMapping) -> JsonDict:
+    def post(self, *args, params: Optional[JsonMapping] = None) -> JsonType:
         response = self.session.post(join(self.url, *args), json=params)
+        LOG.debug("[POST] %s json=%s", response.url, params)
         value = raise_or_return_json(response)
-        assert isinstance(value, dict)
+        LOG.debug("[POST] returned %r", value)
         return value
 
-    def update(self, *args, params: JsonMapping) -> JsonDict:
-        response = self.session.put(join(self.url, *args), json=params)
+    def delete(self, *args, params: Optional[JsonMapping] = None) -> JsonType:
+        response = self.session.delete(join(self.url, *args), json=params)
+        LOG.debug("[DELETE] %s", response.url)
         value = raise_or_return_json(response)
-        assert isinstance(value, dict)
         return value
 
-    def delete(self, *args) -> JsonDict:
-        response = self.session.get(join(self.url, *args))
-        value = raise_or_return_json(response)
-        assert isinstance(value, dict)
-        return value
+    @property
+    def tags(self):
+        return self._tags
