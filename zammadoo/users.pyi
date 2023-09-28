@@ -17,7 +17,7 @@ class UserListProperty(ResourceListProperty["User"]):
 class User(Resource):
     created_by: "User"
     last_login: Optional[datetime.datetime]
-    organization: Organization
+    organization: Optional[Organization]
 
 class Users(SearchableT[User]):
     RESOURCE_TYPE = User
