@@ -30,6 +30,15 @@ class Ticket(Resource):
     title: str
     updated_by = cast(Optional[User], UserProperty())
 
+    def tags(self):
+        return self._resources.client.tags.by_ticket(self.id)
+
+    def add_tag(self, name: str):
+        return self._resources.client.tags.add_to_ticket(name, self.id)
+
+    def remove_tag(self, name: str):
+        return self._resources.client.tags.remove_from_ticket(name, self.id)
+
 
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket

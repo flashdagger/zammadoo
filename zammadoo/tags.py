@@ -27,8 +27,20 @@ class Tags:
         cache.clear()
         items = self.client.get(self.endpoint)
         assert isinstance(items, list)
-        cache.update((info["name"], info) for info in items)
+        cache.update((info.pop("name"), info) for info in items)
         return list(cache.keys())
+
+    def search(self, term: str) -> List[str]:
+        items = self.client.get("tag_search", params={"term": term})
+        assert isinstance(items, list)
+
+        found = []
+        for info in items:
+            name = info.pop("value")
+            self._map.setdefault(name, info)
+            found.append(name)
+
+        return found
 
     def create(self, name: str):
         self.client.post(self.endpoint, params={"name": name})
@@ -45,17 +57,6 @@ class Tags:
     def remove_from_ticket(self, name: str, tid: int):
         params = {"item": name, "object": "Ticket", "o_id": tid}
         return self.client.delete("tags/remove", params=params)
-
-    def search(self, term: str) -> List[str]:
-        items = self.client.get("tag_search", params={"term": term})
-        assert isinstance(items, list)
-        found = []
-        for info in items:
-            name = info["name"] = info.pop("value")
-            self._map.setdefault(name, info)
-            found.append(name)
-
-        return found
 
     def by_ticket(self, tid: int) -> List[str]:
         items = self.client.get("tags", params={"object": "Ticket", "o_id": tid})

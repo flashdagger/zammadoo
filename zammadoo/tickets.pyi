@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
+from typing import List
 
 from .organizations import Organization
 from .resource import Resource
@@ -27,6 +28,11 @@ class Ticket(Resource):
     state: TicketState
     title: str
     updated_by: User
+
+    _resources: "Tickets"
+    def tags(self) -> List[str]: ...
+    def add_tag(self, name: str): ...
+    def remove_tag(self, name: str): ...
 
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
