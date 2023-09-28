@@ -20,7 +20,7 @@ from .utils import JsonContainer, JsonType, StringKeyDict, join
 LOG = logging.getLogger(__name__)
 
 
-class RestApiException(HTTPError):
+class APIException(HTTPError):
     pass
 
 
@@ -29,7 +29,7 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
         response.raise_for_status()
     except HTTPError as exc:
         try:
-            raise RestApiException(
+            raise APIException(
                 response.json()["error"], request=exc.request, response=exc.response
             ) from exc
         except (JSONDecodeError, KeyError):
