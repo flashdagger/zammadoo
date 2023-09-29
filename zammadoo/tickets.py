@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Iterable, cast
+from typing import Iterable, Optional, cast
 
+from .articles import ArticleListProperty
 from .organizations import OrganizationProperty
-from .resource import Resource, ResourceListProperty, ResourceProperty, datetime
+from .resource import Resource, ResourceProperty, datetime
 from .resources import IterableT, SearchableT
 from .users import UserProperty
 from .utils import JsonContainer
 
-Article = Resource
 Group = Resource
 Priority = Resource
 
@@ -29,7 +29,7 @@ class StateProperty(ResourceProperty[State]):
 
 
 class Ticket(Resource):
-    articles = ResourceListProperty[Article]("ticket_articles")
+    articles = ArticleListProperty()
     created_at: datetime
     created_by = UserProperty()
     customer = UserProperty()
@@ -70,3 +70,8 @@ class Tickets(SearchableT[Ticket]):
 
         for rid in items.get("tickets", ()):
             yield self.RESOURCE_TYPE(self, rid)
+
+
+class TicketProperty(ResourceProperty[Ticket]):
+    def __init__(self, key: Optional[str] = None):
+        super().__init__(endpoint="tickets", key=key or "")

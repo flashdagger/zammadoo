@@ -18,6 +18,7 @@
     reveal_type(ticket.state)       # N: Revealed type is "zammadoo.tickets.State"
     reveal_type(ticket.created_at)  # N: Revealed type is "datetime.datetime"
     reveal_type(ticket._resources)  # N: Revealed type is "zammadoo.tickets.Tickets"
+    reveal_type(ticket.articles)    # N: Revealed type is "builtins.list[zammadoo.articles.Article]"
     reveal_type(ticket.tags())      # N: Revealed type is "builtins.list[builtins.str]"
     
     reveal_type(client.users)       # N: Revealed type is "zammadoo.users.Users"

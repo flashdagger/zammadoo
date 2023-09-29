@@ -4,12 +4,12 @@
 from datetime import datetime
 from typing import List, Optional
 
+from .articles import Article
 from .organizations import Organization
 from .resource import Resource, ResourceProperty
 from .resources import IterableT, SearchableT
 from .users import User
 
-Article = Resource
 Group = Resource
 Priority = Resource
 

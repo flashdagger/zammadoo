@@ -9,6 +9,7 @@ from typing import Dict, List, Optional, Tuple, Type, cast
 import requests
 from requests import HTTPError, JSONDecodeError
 
+from .articles import Articles
 from .organizations import Organizations
 from .resources import BaseResources, IterableResources, ResourcesT
 from .tags import Tags
@@ -62,7 +63,7 @@ class Client(metaclass=ClientMeta):
     organizations: Organizations
     roles: IterableResources
     # ticket_article_plain: Resources
-    ticket_articles: BaseResources
+    ticket_articles: Articles
     # ticket_attachment: Resources
     ticket_priorities: IterableResources
     ticket_states: States

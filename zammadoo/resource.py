@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
@@ -39,6 +38,8 @@ class Resource:
 
     def __getitem__(self, item: str):
         self._initialize()
+        if item in {"from_"}:
+            return self._info[item[:-1]]
         return self._info[item]
 
     @property
