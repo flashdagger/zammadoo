@@ -1,17 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Iterable, Optional, cast
-
 from .articles import ArticleListProperty
 from .organizations import OrganizationProperty
 from .resource import Resource, ResourceProperty
 from .resources import IterableT, SearchableT
 from .users import UserProperty
-from .utils import JsonContainer
-
-Group = Resource
-Priority = Resource
 
 
 class State(Resource):
@@ -35,39 +29,60 @@ class Ticket(Resource):
     group = ResourceProperty()
     organization = OrganizationProperty()
     owner = UserProperty()
-    priority = cast(Priority, ResourceProperty("ticket_priorities"))
+    priority = ResourceProperty("ticket_priorities")
     state = StateProperty()
     updated_by = UserProperty()
 
     def tags(self):
         return self._resources.client.tags.by_ticket(self.id)
 
-    def add_tags(self, *names: str):
+    def add_tags(self, *names):
         return self._resources.client.tags.add_to_ticket(self.id, *names)
 
-    def remove_tags(self, *names: str):
+    def remove_tags(self, *names):
         return self._resources.client.tags.remove_from_ticket(self.id, *names)
+
+    def relations(self):
+        resources = self._resources
+        params = {"link_object": "Ticket", "link_object_value": self.id}
+        link_map = {"normal": [], "parent": [], "child": []}
+
+        items = resources.client.get("links", params=params)
+        cache_assets(resources.client, items.get("assets", {}))
+        for item in items["links"]:
+            assert item["link_object"] == "Ticket"
+            link_type = item["link_type"]
+            link_map.setdefault(link_type, []).append(
+                resources(item["link_object_value"])
+            )
+
+        return link_map
 
 
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
+    CACHE_SIZE = 100
 
-    def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]:
+    def _iter_items(self, items):
         if isinstance(items, list):
             yield from super()._iter_items(items)
             return
 
         assert isinstance(items, dict)
-        for key, asset in items.get("assets", {}).items():
-            resources = getattr(self.client, f"{key.lower()}s")
-            for rid_s, info in asset.items():
-                url = resources.url(rid_s)
-                resources.cache[url] = info
+        cache_assets(self.client, items.get("assets", {}))
 
         for rid in items.get("tickets", ()):
             yield self.RESOURCE_TYPE(self, rid)
 
 
 class TicketProperty(ResourceProperty[Ticket]):
-    def __init__(self, key: Optional[str] = None):
+    def __init__(self, key=None):
         super().__init__(endpoint="tickets", key=key or "")
+
+
+def cache_assets(client, assets):
+    for key, asset in assets.items():
+        resources = getattr(client, f"{key.lower()}s")
+        for rid_s, info in asset.items():
+            url = resources.url(rid_s)
+            resources.cache[url] = info
