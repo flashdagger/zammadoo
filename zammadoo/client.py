@@ -153,6 +153,11 @@ class Client(metaclass=ClientMeta):
         LOG.debug("[GET] %s", response.url)
         return cast(JsonContainer, raise_or_return_json(response))
 
+    def get_bytes(self, *args, params: Optional[StringKeyDict] = None):
+        response = self.session.get(join(self.url, *args), params=params)
+        LOG.debug("[GET] %s", response.url)
+        return response
+
     def post(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
         response = self.session.post(join(self.url, *args), json=params)
         LOG.debug("[POST] %s json=%r", response.url, params)

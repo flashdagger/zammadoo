@@ -14,7 +14,11 @@ Group = Resource
 Priority = Resource
 
 class State(Resource):
+    created_at: datetime
     created_by: User
+    name: str
+    note: Optional[str]
+    updated_at: datetime
     updated_by: User
 
 class States(IterableT[State]):
