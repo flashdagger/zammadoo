@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import datetime
+from datetime import datetime
 from typing import Optional
 
 from .organizations import Organization as Organization
@@ -16,7 +16,7 @@ class UserListProperty(ResourceListProperty["User"]):
 
 class User(Resource):
     created_by: "User"
-    last_login: Optional[datetime.datetime]
+    last_login: Optional[datetime]
     organization: Optional[Organization]
 
 class Users(SearchableT[User]):

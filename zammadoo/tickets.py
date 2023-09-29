@@ -5,7 +5,7 @@ from typing import Iterable, Optional, cast
 
 from .articles import ArticleListProperty
 from .organizations import OrganizationProperty
-from .resource import Resource, ResourceProperty, datetime
+from .resource import Resource, ResourceProperty
 from .resources import IterableT, SearchableT
 from .users import UserProperty
 from .utils import JsonContainer
@@ -30,17 +30,13 @@ class StateProperty(ResourceProperty[State]):
 
 class Ticket(Resource):
     articles = ArticleListProperty()
-    created_at: datetime
     created_by = UserProperty()
     customer = UserProperty()
     group = ResourceProperty()
-    note: str
-    number: str
     organization = OrganizationProperty()
     owner = UserProperty()
     priority = cast(Priority, ResourceProperty("ticket_priorities"))
     state = StateProperty()
-    title: str
     updated_by = UserProperty()
 
     def tags(self):

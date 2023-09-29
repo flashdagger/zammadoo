@@ -24,22 +24,24 @@ class Resource:
         return f"<{self.__class__.__qualname__} {url!r}>"
 
     def __getattr__(self, item: str):
-        try:
-            value = self[item]
-        except KeyError as exc:
+        self._initialize()
+        info = self._info
+
+        key = item[:-1] if item in {"from_"} else item
+        if key not in info:
             raise AttributeError(
                 f"{self.__class__.__name__!r} object has no attribute {item!r}"
-            ) from exc
+            )
 
-        if isinstance(value, str):
+        value = info[key]
+        if isinstance(value, str) and (key.endswith("_at") or key in {"last_login"}):
             with suppress(ValueError):
                 return datetime.fromisoformat(value)
+
         return value
 
     def __getitem__(self, item: str):
         self._initialize()
-        if item in {"from_"}:
-            return self._info[item[:-1]]
         return self._info[item]
 
     @property

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-from pathlib import Path
 from logging import getLogger
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
 
 from requests import Session

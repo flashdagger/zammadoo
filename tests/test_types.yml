@@ -9,6 +9,13 @@
     reveal_type(ticket.owner)       # N: Revealed type is "zammadoo.users.User"
     reveal_type(ticket.created_by)  # N: Revealed type is "zammadoo.users.User"
     reveal_type(ticket.updated_by)  # N: Revealed type is "zammadoo.users.User"
+    
+    reveal_type(ticket.articles)    # N: Revealed type is "builtins.list[zammadoo.articles.Article]"
+    article = ticket.articles[0]
+    reveal_type(article)            # N: Revealed type is "zammadoo.articles.Article"
+    attachments = article.attachments
+    reveal_type(attachments)        # N: Revealed type is "builtins.list[zammadoo.articles.Attachment]"
+    reveal_type(attachments[0])     # N: Revealed type is "zammadoo.articles.Attachment"
 
     org = ticket.organization
     reveal_type(org)                # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
