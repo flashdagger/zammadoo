@@ -7,6 +7,8 @@ from .resource import Resource, ResourceProperty
 from .resources import IterableT, SearchableT
 from .users import UserProperty
 
+LINK_TYPES = ("normal", "parent", "child")
+
 
 class State(Resource):
     created_by = UserProperty()
@@ -42,10 +44,10 @@ class Ticket(Resource):
     def remove_tags(self, *names):
         return self._resources.client.tags.remove_from_ticket(self.id, *names)
 
-    def relations(self):
+    def links(self):
         resources = self._resources
         params = {"link_object": "Ticket", "link_object_value": self.id}
-        link_map = {"normal": [], "parent": [], "child": []}
+        link_map = dict((key, []) for key in LINK_TYPES)
 
         items = resources.client.get("links", params=params)
         cache_assets(resources.client, items.get("assets", {}))
@@ -57,6 +59,37 @@ class Ticket(Resource):
             )
 
         return link_map
+
+    def link_with(self, target_id, link_type="normal"):
+        assert (
+            link_type in LINK_TYPES
+        ), f"parameter link_type must be one of {LINK_TYPES}"
+        resources = self._resources
+        params = {
+            "link_type": link_type,
+            "link_object_target": "Ticket",
+            "link_object_target_value": target_id,
+            "link_object_source": "Ticket",
+            "link_object_source_number": self["number"],
+        }
+        resources.client.post("links/add", params=params)
+
+    def unlink_from(self, target_id, link_type="any"):
+        resources = self._resources
+        if link_type not in LINK_TYPES:
+            link_type = "normal"
+            for _link_type, tickets in self.links().items():
+                if target_id in {ticket.id for ticket in tickets}:
+                    link_type = _link_type
+
+        params = {
+            "link_type": link_type,
+            "link_object_target": "Ticket",
+            "link_object_target_value": self._id,
+            "link_object_source": "Ticket",
+            "link_object_source_value": target_id,
+        }
+        resources.client.delete("links/remove", params=params)
 
 
 class Tickets(SearchableT[Ticket]):

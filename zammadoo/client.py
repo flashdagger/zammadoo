@@ -174,8 +174,9 @@ class Client(metaclass=ClientMeta):
 
     def delete(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
         response = self.session.delete(join(self.url, *args), json=params)
-        LOG.debug("[DELETE] %s", response.url)
+        LOG.debug("[DELETE] %s json=%r", response.url, params)
         value = raise_or_return_json(response)
+        LOG.debug("[DELETE] returned %r", value)
         return value
 
     @property
