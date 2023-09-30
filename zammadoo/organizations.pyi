@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from typing import List, Optional
 
 from .resource import Resource as Resource
