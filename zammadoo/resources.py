@@ -4,11 +4,11 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
-from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type, cast
+from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type
 
 from .cache import LruCache
 from .resource import Resource, T
-from .utils import JsonContainer, YieldCounter
+from .utils import JsonContainer, JsonDict, YieldCounter
 
 if TYPE_CHECKING:
     from . import Client
@@ -24,8 +24,11 @@ class ResourcesT(Generic[T]):
         self.cache = LruCache(max_size=self.CACHE_SIZE)
         self._url = f"{client.url}/{endpoint}"
 
-    def __call__(self, rid: int) -> T:
-        return self.RESOURCE_TYPE(self, rid)
+    def __call__(self, rid: int, info: Optional[JsonDict] = None) -> T:
+        if info:
+            assert info["id"] == rid
+            self.cache[self.url(rid)] = info
+        return self.RESOURCE_TYPE(self, rid, info=info)
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url()!r}>"
@@ -57,9 +60,7 @@ class IterableT(ResourcesT[T]):
     def _iter_items(self, items: JsonContainer) -> Iterable[T]:
         assert isinstance(items, list)
         for item in items:
-            rid = cast(int, item["id"])
-            self.cache[self.url(rid)] = item
-            yield self.RESOURCE_TYPE(self, rid)
+            yield self.RESOURCE_TYPE(self, item["id"], info=item)  # type: ignore[arg-type]
 
     def iter(self, *args, **params) -> Iterable[T]:
         # preserve the kwargs order

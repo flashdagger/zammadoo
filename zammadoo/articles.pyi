@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 from datetime import datetime
+from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Union
+from typing import Any, Dict, Iterator, List, Optional, Type, Union
 
 from requests import Session
 
@@ -11,6 +12,8 @@ from .resources import Resource as Resource
 from .resources import ResourcesT as ResourcesT
 from .tickets import Ticket
 from .utils import JsonDict
+
+PathType = Union[str, PathLike]
 
 class Attachment:
     id: int
@@ -21,11 +24,13 @@ class Attachment:
 
     def __init__(self, session: Session, content_url: str, info: JsonDict) -> None: ...
     def __getattr__(self, item): ...
+    @staticmethod
+    def info_from_files(*paths: PathType) -> List[Dict[str, str]]: ...
     @property
     def url(self): ...
     def read_bytes(self) -> bytes: ...
     def read_text(self) -> str: ...
-    def download(self, path: Union[str, Path] = ...) -> Path: ...
+    def download(self, path: PathType = ...) -> Path: ...
     @property
     def encoding(self) -> Optional[str]: ...
     def iter_text(self, chunk_size: int = ...) -> Iterator[str]: ...
@@ -56,3 +61,4 @@ class Articles(ResourcesT[Article]):
 
 class ArticleListProperty(ResourceListProperty[Article]):
     def __init__(self, key: Optional[str] = ...) -> None: ...
+    def __get__(self, instance: Resource, owner: Type[Resource]) -> List[Article]: ...

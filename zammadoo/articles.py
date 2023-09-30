@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
+from base64 import b64encode
 from logging import getLogger
+from mimetypes import guess_type
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 from requests import Session
 
@@ -25,6 +28,22 @@ class Attachment:
     def __getattr__(self, item):
         return self._info[item]
 
+    @staticmethod
+    def info_from_files(*paths):
+        info_list = []
+        for path in paths:
+            filepath = Path(path)
+            assert filepath.is_file()
+            mime_type, encoding = guess_type(filepath, strict=True)
+            info_list.append(
+                {
+                    "filename": filepath.name,
+                    "data": b64encode(filepath.read_bytes()),
+                    "mime-type": mime_type,
+                }
+            )
+        return info_list
+
     @property
     def url(self):
         return self._content_url
@@ -45,8 +64,8 @@ class Attachment:
             response.encoding = encoding
         return response
 
-    def download(self, path: Union[str, Path] = ".") -> Path:
-        filepath: Path = Path(path)
+    def download(self, path=".") -> Path:
+        filepath = Path(path)
         if filepath.is_dir():
             filepath = filepath / self.filename
 
@@ -100,3 +119,16 @@ class Articles(ResourcesT[Article]):
 class ArticleListProperty(ResourceListProperty[Article]):
     def __init__(self, key: Optional[str] = None):
         super().__init__(endpoint="ticket_articles", key=key or "")
+
+    def __get__(self, instance, owner):
+        resources = getattr(instance, "_resources")
+        client = resources.client
+        articles = getattr(client, self.endpoint)
+
+        try:
+            rids = instance[self.key]
+        except KeyError:
+            items = client.get(self.endpoint, "by_ticket", instance.id)
+            return [articles(item["id"], info=item) for item in items]
+
+        return [articles(rid) for rid in rids]
