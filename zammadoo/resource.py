@@ -18,10 +18,10 @@ class Resource:
         self._id = rid
         self._resources = resources
         self._info: JsonDict = info or {}
+        self._url = resources.url(rid)
 
     def __repr__(self):
-        url = self._resources.url(self.id)
-        return f"<{self.__class__.__qualname__} {url!r}>"
+        return f"<{self.__class__.__qualname__} {self._url!r}>"
 
     def __getattr__(self, item: str):
         self._initialize()
@@ -43,6 +43,9 @@ class Resource:
     def __getitem__(self, item: str):
         self._initialize()
         return self._info[item]
+
+    def __eq__(self, other):
+        return isinstance(other, Resource) and other._url == self._url
 
     @property
     def id(self):

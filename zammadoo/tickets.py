@@ -72,7 +72,7 @@ class Ticket(Resource):
             "link_object_source": "Ticket",
             "link_object_source_number": self["number"],
         }
-        resources.client.post("links/add", params=params)
+        resources.client.post("links/add", json=params)
 
     def unlink_from(self, target_id, link_type="any"):
         resources = self._resources
@@ -89,7 +89,20 @@ class Ticket(Resource):
             "link_object_source": "Ticket",
             "link_object_source_value": target_id,
         }
-        resources.client.delete("links/remove", params=params)
+        resources.client.delete("links/remove", json=params)
+
+    def merge_with(self, target_id):
+        resources = self._resources
+        info = resources.client.put("ticket_merge", target_id, self["number"])
+        if info.get("result") == "success":
+            ticket_info = info["target_ticket"]
+            assert isinstance(ticket_info, dict)
+            assert ticket_info["id"] == self._id
+            resources.cache[self._url] = ticket_info
+            self._info.clear()
+            return True
+
+        return False
 
 
 class Tickets(SearchableT[Ticket]):
