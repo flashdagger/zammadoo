@@ -4,6 +4,7 @@
 import atexit
 import logging
 from dataclasses import dataclass
+from textwrap import shorten
 from typing import Dict, List, Optional, Tuple, Type, cast
 
 import requests
@@ -28,9 +29,12 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
     try:
         response.raise_for_status()
     except HTTPError as exc:
+        LOG.error("%s (%d): %s", response.reason, response.status_code, response.text)
         try:
+            info = response.json()
+            error = info.get("error_human") or info["error"]
             raise APIException(
-                response.json()["error"], request=exc.request, response=exc.response
+                error, request=exc.request, response=exc.response
             ) from exc
         except (JSONDecodeError, KeyError):
             message = response.text
@@ -158,26 +162,23 @@ class Client(metaclass=ClientMeta):
         LOG.debug("[GET] %s", response.url)
         return response
 
-    def post(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
-        response = self.session.post(join(self.url, *args), json=params)
-        LOG.debug("[POST] %s json=%r", response.url, params)
+    def request(
+        self, method: str, *args, json: Optional[StringKeyDict] = None
+    ) -> JsonType:
+        response = self.session.request(method, join(self.url, *args), json=json)
+        LOG.debug("[%s] %s json=%r", method, response.url, json)
         value = raise_or_return_json(response)
-        LOG.debug("[POST] returned %r", value)
+        LOG.debug("[%s] returned %s", method, shorten(repr(value), width=120))
         return value
 
-    def put(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
-        response = self.session.put(join(self.url, *args), json=params)
-        LOG.debug("[PUT] %s json=%r", response.url, params)
-        value = raise_or_return_json(response)
-        LOG.debug("[PUT] returned %r", value)
-        return value
+    def post(self, *args, json: Optional[StringKeyDict] = None) -> JsonType:
+        return self.request("POST", *args, json=json)
 
-    def delete(self, *args, params: Optional[StringKeyDict] = None) -> JsonType:
-        response = self.session.delete(join(self.url, *args), json=params)
-        LOG.debug("[DELETE] %s json=%r", response.url, params)
-        value = raise_or_return_json(response)
-        LOG.debug("[DELETE] returned %r", value)
-        return value
+    def put(self, *args, json: Optional[StringKeyDict] = None) -> JsonType:
+        return self.request("PUT", *args, json=json)
+
+    def delete(self, *args, json: Optional[StringKeyDict] = None) -> JsonType:
+        return self.request("DELETE", *args, json=json)
 
     @property
     def tags(self):

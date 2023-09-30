@@ -47,7 +47,7 @@ class Tags:
         return found
 
     def create(self, name: str):
-        self.client.post(self.endpoint, params={"name": name})
+        self.client.post(self.endpoint, json={"name": name})
 
     def remove(self, name_or_tid: Union[str, int]):
         if isinstance(name_or_tid, str):
@@ -57,17 +57,17 @@ class Tags:
     def rename(self, name_or_tid: Union[str, int], new_name: str):
         if isinstance(name_or_tid, str):
             name_or_tid = self._map[name_or_tid]["id"]
-        self.client.put(f"{self.endpoint}/{name_or_tid}", params={"name": new_name})
+        self.client.put(f"{self.endpoint}/{name_or_tid}", json={"name": new_name})
 
     def add_to_ticket(self, tid: int, *names: str):
         for name in names:
             params = {"item": name, "object": "Ticket", "o_id": tid}
-            self.client.post("tags/add", params=params)
+            self.client.post("tags/add", json=params)
 
     def remove_from_ticket(self, tid: int, *names: str):
         for name in names:
             params = {"item": name, "object": "Ticket", "o_id": tid}
-            self.client.delete("tags/remove", params=params)
+            self.client.delete("tags/remove", json=params)
 
     def by_ticket(self, tid: int) -> List[str]:
         items = cast(
