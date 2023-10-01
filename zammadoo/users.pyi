@@ -5,14 +5,13 @@ from datetime import datetime
 from typing import Callable, Optional
 
 from .organizations import Organization
-from .resource import Resource
+from .resource import UpdatableResource
 from .resources import SearchableT
 
 user_property: Callable[..., "User"]
 userlist_property: Callable[..., "User"]
 
-class User(Resource):
-    created_by: "User"
+class User(UpdatableResource):
     firstname: str
     last_login: Optional[datetime]
     lastname: str

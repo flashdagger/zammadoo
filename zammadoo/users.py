@@ -4,7 +4,7 @@
 from functools import partial
 from typing import TYPE_CHECKING
 
-from .resource import Resource, resource_property, resourcelist_property
+from .resource import UpdatableResource, resource_property, resourcelist_property
 from .resources import SearchableT
 
 if TYPE_CHECKING:
@@ -17,11 +17,7 @@ user_property = partial(resource_property("users"))
 userlist_property = partial(resourcelist_property("users"))
 
 
-class User(Resource):
-    @user_property
-    def created_by(self):
-        ...
-
+class User(UpdatableResource):
     @resource_property
     def organization(self):
         ...

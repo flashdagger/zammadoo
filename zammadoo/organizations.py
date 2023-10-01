@@ -1,20 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from .resource import Resource
+from .resource import UpdatableResource
 from .resources import SearchableT
-from .users import user_property, userlist_property
+from .users import userlist_property
 
 
-class Organization(Resource):
-    @user_property
-    def created_by(self):
-        ...
-
-    @user_property
-    def updated_by(self):
-        ...
-
+class Organization(UpdatableResource):
     @userlist_property
     def members(self):
         ...

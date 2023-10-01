@@ -7,7 +7,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 from .articles import Article
 from .client import Client
 from .organizations import Organization
-from .resource import Resource
+from .resource import Resource, UpdatableResource
 from .resources import IterableT, SearchableT
 from .users import User
 from .utils import JsonContainer, JsonDict
@@ -16,18 +16,16 @@ LINK_TYPES: Tuple[str, ...]
 Group = Resource
 Priority = Resource
 
-class State(Resource):
-    created_at: datetime
-    created_by: User
+class State(UpdatableResource):
+    active: bool
     name: str
+    next_state: "State"
     note: Optional[str]
-    updated_at: datetime
-    updated_by: User
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
 
-class Ticket(Resource):
+class Ticket(UpdatableResource):
     articles: List[Article]
     created_at: datetime
     created_by: User

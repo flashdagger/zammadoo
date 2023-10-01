@@ -3,14 +3,12 @@
 
 from typing import List
 
-from .resource import Resource
+from .resource import UpdatableResource
 from .resources import SearchableT
 from .users import User
 
-class Organization(Resource):
-    created_by: User
+class Organization(UpdatableResource):
     members: List[User]
-    updated_by: User
 
 class Organizations(SearchableT[Organization]):
     RESOURCE_TYPE = Organization

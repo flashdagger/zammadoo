@@ -1,20 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from .resource import Resource, resource_property
+from .resource import UpdatableResource, resource_property
 from .resources import IterableT, SearchableT
 from .users import user_property
 
 LINK_TYPES = ("normal", "parent", "child")
 
 
-class State(Resource):
-    @user_property
-    def created_by(self):
-        ...
-
-    @user_property
-    def updated_by(self):
+class State(UpdatableResource):
+    @resource_property("ticket_states")
+    def next_state(self):
         ...
 
 
@@ -22,11 +18,7 @@ class States(IterableT[State]):
     RESOURCE_TYPE = State
 
 
-class Ticket(Resource):
-    @user_property
-    def created_by(self):
-        ...
-
+class Ticket(UpdatableResource):
     @user_property
     def customer(self):
         ...
@@ -49,10 +41,6 @@ class Ticket(Resource):
 
     @resource_property("ticket_states")
     def state(self):
-        ...
-
-    @user_property
-    def updated_by(self):
         ...
 
     @property
