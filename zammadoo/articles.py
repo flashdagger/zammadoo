@@ -7,6 +7,7 @@ from mimetypes import guess_type
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
+import requests
 from requests import Session
 
 from .resource import ResourceListProperty
@@ -48,7 +49,7 @@ class Attachment:
     def url(self):
         return self._content_url
 
-    def _response(self, encoding: Optional[str] = None):
+    def _response(self, encoding: Optional[str] = None) -> requests.Response:
         url = self._content_url
         response = self._session.get(url, stream=True)
 
@@ -92,7 +93,7 @@ class Attachment:
             chunk_size=chunk_size, decode_unicode=bool(encoding)
         )
 
-    def iter_bytes(self, chunk_size=1024):
+    def iter_bytes(self, chunk_size=4096):
         return self._response().iter_content(chunk_size=chunk_size)
 
 
