@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union, cast
 
 from .utils import StringKeyDict
