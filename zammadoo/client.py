@@ -130,15 +130,13 @@ class Client(metaclass=ClientMeta):
 
     def _check_config(self) -> None:
         """Check the configuration"""
-        if not self.url:
-            raise Client.ConfigException("Missing url in config")
-        if self._http_token:
+        if self._http_token is not None:
             return
-        if self._oauth2_token:
+        if self._oauth2_token is not None:
             return
-        if not self._username:
+        if self._username is None:
             raise Client.ConfigException("Missing username in config")
-        if not self._password:
+        if self._password is None:
             raise Client.ConfigException("Missing password in config")
 
     def __getattr__(self, item) -> BaseResources:
