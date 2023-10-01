@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import datetime
 from functools import partial
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Optional
 
 from .resource import Resource, ResourceListProperty, ResourceProperty
 from .resources import SearchableT
@@ -26,8 +25,7 @@ class UserListProperty(ResourceListProperty["User"]):
 
 class User(Resource):
     created_by = UserProperty()
-    last_login: Optional[datetime.datetime]
-    organization = cast("Organization", ResourceProperty("organizations"))
+    organization = ResourceProperty()
 
 
 class Users(SearchableT[User]):

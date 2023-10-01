@@ -16,7 +16,9 @@ class UserListProperty(ResourceListProperty["User"]):
 
 class User(Resource):
     created_by: "User"
+    firstname: str
     last_login: Optional[datetime]
+    lastname: str
     organization: Optional[Organization]
 
 class Users(SearchableT[User]):
