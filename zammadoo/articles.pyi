@@ -4,13 +4,12 @@
 from datetime import datetime
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Type, Union
+from typing import Any, Dict, Iterator, List, Optional, Union
 
 from requests import Session
 
-from .resource import ResourceListProperty as ResourceListProperty
-from .resources import Resource as Resource
-from .resources import ResourcesT as ResourcesT
+from .resources import Resource
+from .resources import ResourcesT
 from .tickets import Ticket
 from .utils import JsonDict
 
@@ -59,7 +58,4 @@ class Articles(ResourcesT[Article]):
     def ticket(self): ...
     @property
     def attachments(self): ...
-
-class ArticleListProperty(ResourceListProperty[Article]):
-    def __init__(self, key: Optional[str] = ...) -> None: ...
-    def __get__(self, instance: Resource, owner: Type[Resource]) -> List[Article]: ...
+    def by_ticket(self, tid: int) -> List[Article]: ...

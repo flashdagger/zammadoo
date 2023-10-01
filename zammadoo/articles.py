@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Optional
 import requests
 from requests import Session
 
-from .resource import ResourceListProperty
 from .resources import Resource, ResourcesT
 
 if TYPE_CHECKING:
@@ -116,20 +115,6 @@ class Article(Resource):
 class Articles(ResourcesT[Article]):
     RESOURCE_TYPE = Article
 
-
-class ArticleListProperty(ResourceListProperty[Article]):
-    def __init__(self, key: Optional[str] = None):
-        super().__init__(endpoint="ticket_articles", key=key or "")
-
-    def __get__(self, instance, owner):
-        resources = getattr(instance, "_resources")
-        client = resources.client
-        articles = getattr(client, self.endpoint)
-
-        try:
-            rids = instance[self.key]
-        except KeyError:
-            items = client.get(self.endpoint, "by_ticket", instance.id)
-            return [articles(item["id"], info=item) for item in items]
-
-        return [articles(rid) for rid in rids]
+    def by_ticket(self, tid: int):
+        items = self.client.get(self.endpoint, "by_ticket", tid)
+        return [self(item["id"], info=item) for item in items]

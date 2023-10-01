@@ -1,39 +1,70 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from .articles import ArticleListProperty
-from .organizations import OrganizationProperty
-from .resource import Resource, ResourceProperty
+from .resource import Resource, resource_property
 from .resources import IterableT, SearchableT
-from .users import UserProperty
+from .users import user_property
 
 LINK_TYPES = ("normal", "parent", "child")
 
 
 class State(Resource):
-    created_by = UserProperty()
-    updated_by = UserProperty()
+    @user_property
+    def created_by(self):
+        ...
+
+    @user_property
+    def updated_by(self):
+        ...
 
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
 
 
-class StateProperty(ResourceProperty[State]):
-    def __init__(self, key=None):
-        super().__init__(endpoint="ticket_states", key=key or "")
-
-
 class Ticket(Resource):
-    articles = ArticleListProperty()
-    created_by = UserProperty()
-    customer = UserProperty()
-    group = ResourceProperty()
-    organization = OrganizationProperty()
-    owner = UserProperty()
-    priority = ResourceProperty("ticket_priorities")
-    state = StateProperty()
-    updated_by = UserProperty()
+    @user_property
+    def created_by(self):
+        ...
+
+    @user_property
+    def customer(self):
+        ...
+
+    @resource_property
+    def group(self):
+        ...
+
+    @resource_property
+    def organization(self):
+        ...
+
+    @user_property
+    def owner(self):
+        ...
+
+    @resource_property("ticket_priorities")
+    def priority(self):
+        ...
+
+    @resource_property("ticket_states")
+    def state(self):
+        ...
+
+    @user_property
+    def updated_by(self):
+        ...
+
+    @property
+    def articles(self):
+        articles = self._resources.client.ticket_articles
+
+        try:
+            rids = self["article_ids"]
+        except KeyError:
+            return articles.by_ticket(self._id)
+
+        return [articles(rid) for rid in rids]
 
     def tags(self):
         return self._resources.client.tags.by_ticket(self.id)
@@ -119,11 +150,6 @@ class Tickets(SearchableT[Ticket]):
 
         for rid in items.get("tickets", ()):
             yield self.RESOURCE_TYPE(self, rid)
-
-
-class TicketProperty(ResourceProperty[Ticket]):
-    def __init__(self, key=None):
-        super().__init__(endpoint="tickets", key=key or "")
 
 
 def cache_assets(client, assets):

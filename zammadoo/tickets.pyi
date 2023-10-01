@@ -7,7 +7,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 from .articles import Article
 from .client import Client
 from .organizations import Organization
-from .resource import Resource, ResourceProperty
+from .resource import Resource
 from .resources import IterableT, SearchableT
 from .users import User
 from .utils import JsonContainer, JsonDict
@@ -26,9 +26,6 @@ class State(Resource):
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
-
-class StateProperty(ResourceProperty[State]):
-    def __init__(self, key: Optional[str] = ...) -> None: ...
 
 class Ticket(Resource):
     articles: List[Article]
@@ -58,8 +55,5 @@ class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
 
     def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]: ...
-
-class TicketProperty(ResourceProperty[Ticket]):
-    def __init__(self, key: Optional[str] = ...): ...
 
 def cache_assets(client: Client, assets: Dict[str, Dict[str, JsonDict]]) -> None: ...

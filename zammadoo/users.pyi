@@ -2,17 +2,14 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import Optional
+from typing import Callable, Optional
 
-from .organizations import Organization as Organization
-from .resource import Resource, ResourceListProperty, ResourceProperty
+from .organizations import Organization
+from .resource import Resource
 from .resources import SearchableT
 
-class UserProperty(ResourceProperty["User"]):
-    def __init__(self, key: Optional[str] = ...) -> None: ...
-
-class UserListProperty(ResourceListProperty["User"]):
-    def __init__(self, key: Optional[str] = ...) -> None: ...
+user_property: Callable[..., "User"]
+userlist_property: Callable[..., "User"]
 
 class User(Resource):
     created_by: "User"

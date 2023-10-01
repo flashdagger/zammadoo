@@ -2,9 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 from functools import partial
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
-from .resource import Resource, ResourceListProperty, ResourceProperty
+from .resource import Resource, resource_property, resourcelist_property
 from .resources import SearchableT
 
 if TYPE_CHECKING:
@@ -13,19 +13,18 @@ if TYPE_CHECKING:
     _ = Organization
 
 
-class UserProperty(ResourceProperty["User"]):
-    def __init__(self, key: Optional[str] = None):
-        super().__init__(endpoint="users", key=key or "")
-
-
-class UserListProperty(ResourceListProperty["User"]):
-    def __init__(self, key: Optional[str] = None):
-        super().__init__(endpoint="users", key=key or "")
+user_property = partial(resource_property("users"))
+userlist_property = partial(resourcelist_property("users"))
 
 
 class User(Resource):
-    created_by = UserProperty()
-    organization = ResourceProperty()
+    @user_property
+    def created_by(self):
+        ...
+
+    @resource_property
+    def organization(self):
+        ...
 
 
 class Users(SearchableT[User]):

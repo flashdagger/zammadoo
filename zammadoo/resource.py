@@ -3,13 +3,61 @@
 
 from contextlib import suppress
 from datetime import datetime
+from functools import wraps
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Generic, List, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 from .utils import JsonDict
 
 if TYPE_CHECKING:
-    from .resources import BaseResources, ResourcesT
+    from .resources import ResourcesT
+
+T = TypeVar("T", bound="Resource")
+
+
+def resource_property(endpoint, key=None):
+    def decorator(_func):
+        func_name = _func.__name__
+        _key = key or f"{func_name}_id"
+        _endpoint = endpoint or f"{func_name}s"
+
+        @property
+        @wraps(_func)
+        def property_func(self: "Resource"):
+            uid = self[_key]
+            client = getattr(self, "_resources").client
+            return uid and getattr(client, _endpoint)(uid)
+
+        return property_func
+
+    if isinstance(endpoint, str):
+        return decorator
+
+    func, endpoint = endpoint, None
+    return decorator(func)
+
+
+def resourcelist_property(endpoint, key=None):
+    def decorator(_func):
+        func_name = _func.__name__
+        assert func_name.endswith("s")
+        _key = key or f"{func_name[:-1]}_ids"
+        _endpoint = endpoint or func_name
+
+        @property
+        @wraps(_func)
+        def propertylist_func(self: "Resource"):
+            uids = self[_key]
+            client = getattr(self, "_resources").client
+            return list(map(getattr(client, _endpoint), uids))
+
+        return propertylist_func
+
+    if isinstance(endpoint, str):
+        return decorator
+
+    func, endpoint = endpoint, None
+    return decorator(func)
 
 
 class Resource:
@@ -65,40 +113,3 @@ class Resource:
         info = self._info
         info.clear()
         info.update(self._resources.cached_info(self._id), refresh=True)
-
-
-T = TypeVar("T", bound=Resource)
-
-
-class ResourceProperty(Generic[T]):
-    def __init__(self, endpoint="", key=""):
-        self.endpoint = endpoint
-        self.key = key
-
-    def __set_name__(self, owner: Type[Resource], name: str):
-        self.key = f"{name}_id"
-        if not self.endpoint:
-            self.endpoint = f"{name}s"
-
-    def __get__(self, instance: Resource, owner: Type[Resource]) -> T:
-        rid = instance[self.key]
-        resources: ResourcesT[T] = getattr(instance, "_resources")
-        return rid and getattr(resources.client, self.endpoint)(rid)
-
-
-class ResourceListProperty(Generic[T]):
-    def __init__(self, endpoint="", key=""):
-        self.endpoint = endpoint
-        self.key = key
-
-    def __set_name__(self, owner, name):
-        assert name.endswith("s")
-        self.key = f"{name[:-1]}_ids"
-        if not self.endpoint:
-            self.endpoint = name
-
-    def __get__(self, instance: Resource, owner: Type[Resource]) -> List[T]:
-        rids = instance[self.key]
-        instance_resources: BaseResources = getattr(instance, "_resources")
-        resources: ResourcesT[T] = getattr(instance_resources.client, self.endpoint)
-        return [resources(rid) for rid in rids]

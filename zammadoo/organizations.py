@@ -1,28 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Optional
-
-from .resource import Resource, ResourceListProperty, ResourceProperty
+from .resource import Resource
 from .resources import SearchableT
-from .users import UserListProperty, UserProperty
+from .users import user_property, userlist_property
 
 
 class Organization(Resource):
-    created_by = UserProperty()
-    updated_by = UserProperty()
-    members = UserListProperty()
+    @user_property
+    def created_by(self):
+        ...
+
+    @user_property
+    def updated_by(self):
+        ...
+
+    @userlist_property
+    def members(self):
+        ...
 
 
 class Organizations(SearchableT[Organization]):
     RESOURCE_TYPE = Organization
-
-
-class OrganizationProperty(ResourceProperty[Organization]):
-    def __init__(self, key: Optional[str] = None):
-        super().__init__(endpoint="organizations", key=key or "")
-
-
-class OrganizationListProperty(ResourceListProperty[Organization]):
-    def __init__(self, key: Optional[str] = None):
-        super().__init__(endpoint="organizations", key=key or "")
