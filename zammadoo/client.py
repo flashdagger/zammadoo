@@ -11,6 +11,7 @@ import requests
 from requests import HTTPError, JSONDecodeError
 
 from .articles import Articles
+from .groups import Groups
 from .organizations import Organizations
 from .resources import BaseResources, IterableResources, ResourcesT
 from .tags import Tags
@@ -60,7 +61,7 @@ class ClientMeta(type):
 
 # pylint: disable=too-many-instance-attributes
 class Client(metaclass=ClientMeta):
-    groups: IterableResources
+    groups: Groups
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
