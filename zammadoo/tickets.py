@@ -123,6 +123,12 @@ class Ticket(UpdatableResource):
 
         return False
 
+    def update(self, **kwargs):
+        resources = self._resources
+        ticket_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
+        self._info.clear()
+        return resources(ticket_info["id"], info=ticket_info)
+
 
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
