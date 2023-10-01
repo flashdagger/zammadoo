@@ -12,6 +12,7 @@ user_property: Callable[..., "User"]
 userlist_property: Callable[..., "User"]
 
 class User(UpdatableResource):
+    email: str
     firstname: str
     last_login: Optional[datetime]
     lastname: str

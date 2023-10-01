@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from .articles import Article
 from .client import Client
@@ -53,5 +53,13 @@ class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
 
     def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]: ...
+    def create(
+        self,
+        title: str,
+        group: Union[str, int],
+        customer: Union[str, int],
+        body: Optional[str] = ...,
+        **kwargs,
+    ) -> Ticket: ...
 
 def cache_assets(client: Client, assets: Dict[str, Dict[str, JsonDict]]) -> None: ...

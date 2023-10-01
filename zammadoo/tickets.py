@@ -139,6 +139,24 @@ class Tickets(SearchableT[Ticket]):
         for rid in items.get("tickets", ()):
             yield self.RESOURCE_TYPE(self, rid)
 
+    def create(self, title, group, customer, body=None, **kwargs):
+        group_key = "group_id" if isinstance(group, int) else "group"
+        customer_key = "customer_id" if isinstance(customer, int) else "customer"
+        article = kwargs.pop("article", {})
+        if body is not None:
+            article["body"] = body
+
+        info = {
+            "title": title,
+            group_key: group,
+            customer_key: customer,
+            "article": article,
+            **kwargs,
+        }
+        ticket_info = self.client.post(self.endpoint, json=info)
+
+        return self(ticket_info["id"], info=ticket_info)
+
 
 def cache_assets(client, assets):
     for key, asset in assets.items():
