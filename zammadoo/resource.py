@@ -11,7 +11,6 @@ from .utils import JsonDict
 
 if TYPE_CHECKING:
     from .resources import ResourcesT
-    from .users import User
 
 T = TypeVar("T", bound="Resource")
 
@@ -118,12 +117,9 @@ class Resource:
 
 class UpdatableResource(Resource):
     @resource_property("users")
-    def created_by(self) -> "User":
+    def created_by(self):
         ...
 
     @resource_property("users")
-    def updated_by(self) -> "User":
+    def updated_by(self):
         ...
-
-    created_at: datetime
-    updated_at: datetime
