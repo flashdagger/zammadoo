@@ -24,9 +24,11 @@ class ResourcesT(Generic[T]):
         self.cache = LruCache(max_size=self.CACHE_SIZE)
         self._url = f"{client.url}/{endpoint}"
 
-    def __call__(self, rid: int, info: Optional[JsonDict] = None) -> T:
+    def __call__(self, rid: int, *, info: Optional[JsonDict] = None) -> T:
         if info:
-            assert info["id"] == rid
+            assert (
+                info.get("id") == rid
+            ), "parameter info must contain 'id' and be equal with rid"
             self.cache[self.url(rid)] = info
         return self.RESOURCE_TYPE(self, rid, info=info)
 
@@ -39,7 +41,7 @@ class ResourcesT(Generic[T]):
             return url
         return f"{url}/{rid}"
 
-    def get(self, rid: int, refresh=True) -> JsonContainer:
+    def cached_info(self, rid: int, refresh=True) -> JsonContainer:
         item = self.url(rid)
         cache = self.cache
         callback = partial(self.client.get, self.endpoint, rid)

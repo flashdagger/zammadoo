@@ -59,12 +59,12 @@ class Resource:
     def _initialize(self):
         if self._info:
             return
-        self._info.update(self._resources.get(self._id, refresh=False))
+        self._info.update(self._resources.cached_info(self._id, refresh=False))
 
     def reload(self):
         info = self._info
         info.clear()
-        info.update(self._resources.get(self._id), refresh=True)
+        info.update(self._resources.cached_info(self._id), refresh=True)
 
 
 T = TypeVar("T", bound=Resource)
