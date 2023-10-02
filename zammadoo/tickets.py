@@ -80,9 +80,6 @@ class Ticket(UpdatableResource):
         return link_map
 
     def link_with(self, target_id, link_type="normal"):
-        assert (
-            link_type in LINK_TYPES
-        ), f"parameter link_type must be one of {LINK_TYPES}"
         resources = self._resources
         params = {
             "link_type": link_type,
