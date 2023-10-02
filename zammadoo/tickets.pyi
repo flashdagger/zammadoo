@@ -6,26 +6,36 @@ from typing import Dict, Iterable, List, Literal, Optional, Tuple, Union
 from .articles import Article
 from .client import Client
 from .organizations import Organization
-from .resource import Resource, UpdatableResource
-from .resources import IterableT, SearchableT
+from .resource import MutableResource, NamedResource
+from .resources import Creatable, IterableT, SearchableT
 from .users import User
 from .utils import JsonContainer, JsonDict
 
 LINK_TYPES: Tuple[str, ...]
 LINK_TYPE = Literal["normal", "parent", "child"]
-Group = Resource
-Priority = Resource
 
-class State(UpdatableResource):
+class Priority(NamedResource):
+    default_create: bool
+    ui_icon: str
+    ui_color: str
+    def update(self, **kwargs) -> "Priority": ...
+
+class Priorities(IterableT[Priority], Creatable[Priority]):
+    RESOURCE_TYPE = Priority
+
+    def create(self, name: str, **kwargs) -> Priority: ...
+
+class State(MutableResource):
     active: bool
     name: str
     next_state: "State"
     note: Optional[str]
+    def update(self, **kwargs) -> "State": ...
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
 
-class Ticket(UpdatableResource):
+class Ticket(MutableResource):
     articles: List[Article]
     customer: User
     group: User
@@ -46,9 +56,8 @@ class Ticket(UpdatableResource):
     def unlink_from(self, target_id: int, link_type: LINK_TYPE = ...) -> None: ...
     def merge_with(self, target_id: int) -> "Ticket": ...
     def update(self, **kwargs) -> "Ticket": ...
-    def delete(self) -> None: ...
 
-class Tickets(SearchableT[Ticket]):
+class Tickets(SearchableT[Ticket], Creatable[Ticket]):
     RESOURCE_TYPE = Ticket
 
     def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]: ...

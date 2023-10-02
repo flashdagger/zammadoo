@@ -1,14 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from .resource import UpdatableResource, resource_property
-from .resources import IterableT, SearchableT
+from .resource import MutableResource, NamedResource, resource_property
+from .resources import Creatable, IterableT, SearchableT
 from .users import user_property
 
 LINK_TYPES = ("normal", "parent", "child")
 
 
-class State(UpdatableResource):
+class Priority(NamedResource):
+    pass
+
+
+class Priorities(IterableT[Priority], Creatable[Priority]):
+    RESOURCE_TYPE = Priority
+
+    def create(self, name, **kwargs):
+        return self._create({"name": name, **kwargs})
+
+
+class State(MutableResource):
     @resource_property("ticket_states")
     def next_state(self):
         ...
@@ -18,7 +29,7 @@ class States(IterableT[State]):
     RESOURCE_TYPE = State
 
 
-class Ticket(UpdatableResource):
+class Ticket(MutableResource):
     @user_property
     def customer(self):
         ...
@@ -114,20 +125,8 @@ class Ticket(UpdatableResource):
         merged_info = info["target_ticket"]
         return self._resources(merged_info["id"], info=merged_info)
 
-    def update(self, **kwargs):
-        resources = self._resources
-        updated_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
-        return resources(updated_info["id"], info=updated_info)
 
-    def delete(self):
-        resources = self._resources
-        resources.client.delete(resources.endpoint, self._id)
-        url = self._url
-        if url in resources.cache:
-            del resources.cache[self._url]
-
-
-class Tickets(SearchableT[Ticket]):
+class Tickets(SearchableT[Ticket], Creatable[Ticket]):
     RESOURCE_TYPE = Ticket
     CACHE_SIZE = 100
 
@@ -142,7 +141,7 @@ class Tickets(SearchableT[Ticket]):
         for rid in items.get("tickets", ()):
             yield self.RESOURCE_TYPE(self, rid)
 
-    def create(self, title, group, customer, body=None, **kwargs):
+    def create(self, title, *, group, customer, body=None, **kwargs):
         group_key = "group_id" if isinstance(group, int) else "group"
         customer_key = "customer_id" if isinstance(customer, int) else "customer"
         article = kwargs.pop("article", {})
@@ -156,9 +155,8 @@ class Tickets(SearchableT[Ticket]):
             "article": article,
             **kwargs,
         }
-        created_info = self.client.post(self.endpoint, json=info)
 
-        return self(created_info["id"], info=created_info)
+        return self._create(info)
 
 
 def cache_assets(client, assets):

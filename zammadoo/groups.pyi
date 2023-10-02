@@ -10,6 +10,7 @@ from .users import User
 class Group(NamedResource):
     shared_drafts: bool
     users: List[User]
+    def update(self, **kwargs) -> "Group": ...
 
 class Groups(SearchableT[Group]):
     RESOURCE_TYPE = Group

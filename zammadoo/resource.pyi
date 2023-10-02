@@ -5,8 +5,8 @@ from datetime import datetime
 from types import MappingProxyType
 from typing import Callable, Optional, TypeVar
 
-from .resources import ResourcesT as ResourcesT
-from .users import User as User
+from .resources import ResourcesT
+from .users import User
 from .utils import JsonDict, JsonType
 
 T = TypeVar("T", bound="Resource")
@@ -26,13 +26,15 @@ class Resource:
     def view(self) -> MappingProxyType[str, JsonType]: ...
     def reload(self) -> None: ...
 
-class UpdatableResource(Resource):
+class MutableResource(Resource):
     created_by: User
     updated_by: User
     created_at: datetime
     updated_at: datetime
+    def update(self, **kwargs): ...
+    def delete(self) -> None: ...
 
-class NamedResource(UpdatableResource):
+class NamedResource(MutableResource):
     active: bool
     name: str
     note: str

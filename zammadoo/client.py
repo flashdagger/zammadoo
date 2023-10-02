@@ -13,10 +13,10 @@ from requests import HTTPError, JSONDecodeError
 from .articles import Articles
 from .groups import Groups
 from .organizations import Organizations
-from .resources import BaseResources, IterableResources, ResourcesT
+from .resources import BaseResources, ResourcesT
 from .roles import Roles
 from .tags import Tags
-from .tickets import States, Tickets
+from .tickets import Priorities, States, Tickets
 from .users import Users
 from .utils import JsonContainer, JsonType, StringKeyDict, join
 
@@ -74,7 +74,7 @@ class Client(metaclass=ClientMeta):
     # ticket_article_plain: Resources
     ticket_articles: Articles
     # ticket_attachment: Resources
-    ticket_priorities: IterableResources
+    ticket_priorities: Priorities
     ticket_states: States
     tickets: Tickets
     users: Users
@@ -177,5 +177,5 @@ class Client(metaclass=ClientMeta):
         return self.request("DELETE", *args, json=json)
 
     @property
-    def tags(self):
+    def tags(self) -> Tags:
         return self._tags

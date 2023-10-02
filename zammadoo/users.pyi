@@ -22,6 +22,7 @@ class User(NamedResource):
     organization: Optional[Organization]
     organizations: List[Organization]
     roles: List[Role]
+    def update(self, **kwargs) -> "User": ...
 
 class Users(SearchableT[User]):
     RESOURCE_TYPE = User

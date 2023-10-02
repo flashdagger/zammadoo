@@ -22,7 +22,6 @@ class ResourcesT(Generic[T]):
         self.client: "Client" = client
         self.endpoint: str = endpoint
         self.cache = LruCache(max_size=self.CACHE_SIZE)
-        self._url = f"{client.url}/{endpoint}"
 
     def __call__(self, rid: int, *, info: Optional[JsonDict] = None) -> T:
         if info:
@@ -36,7 +35,7 @@ class ResourcesT(Generic[T]):
         return f"<{self.__class__.__qualname__} {self.url()!r}>"
 
     def url(self, rid: Optional[int] = None):
-        url = self._url
+        url = f"{self.client.url}/{self.endpoint}"
         if rid is None:
             return url
         return f"{url}/{rid}"
@@ -52,6 +51,12 @@ class ResourcesT(Generic[T]):
         response = callback()
         cache[item] = response
         return response
+
+
+class Creatable(ResourcesT[T]):
+    def _create(self, json) -> T:
+        created_info = self.client.post(self.endpoint, json=json)
+        return self(created_info["id"], info=created_info)
 
 
 class IterableT(ResourcesT[T]):

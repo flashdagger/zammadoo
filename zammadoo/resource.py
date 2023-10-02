@@ -67,10 +67,10 @@ class Resource:
         self._id = rid
         self._resources = resources
         self._info: JsonDict = info or {}
-        self._url = resources.url(rid)
+        self.url = resources.url(rid)
 
     def __repr__(self):
-        return f"<{self.__class__.__qualname__} {self._url!r}>"
+        return f"<{self.__class__.__qualname__} {self.url!r}>"
 
     def __getattr__(self, item: str):
         self._initialize()
@@ -94,7 +94,7 @@ class Resource:
         return self._info[item]
 
     def __eq__(self, other):
-        return isinstance(other, Resource) and other._url == self._url
+        return isinstance(other, Resource) and other.url == self.url
 
     @property
     def id(self):
@@ -115,7 +115,7 @@ class Resource:
         info.update(self._resources.cached_info(self._id), refresh=True)
 
 
-class UpdatableResource(Resource):
+class MutableResource(Resource):
     @resource_property("users")
     def created_by(self):
         ...
@@ -124,6 +124,18 @@ class UpdatableResource(Resource):
     def updated_by(self):
         ...
 
+    def update(self, **kwargs):
+        resources = self._resources
+        updated_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
+        return resources(updated_info["id"], info=updated_info)
 
-class NamedResource(UpdatableResource):
+    def delete(self):
+        resources = self._resources
+        resources.client.delete(resources.endpoint, self._id)
+        url = self.url
+        if url in resources.cache:
+            del resources.cache[url]
+
+
+class NamedResource(MutableResource):
     pass
