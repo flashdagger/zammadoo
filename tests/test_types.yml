@@ -3,7 +3,17 @@
     from zammadoo import Client
 
     client = Client("<url>")
-    reveal_type(client.tickets)     # N: Revealed type is "zammadoo.tickets.Tickets"
+    reveal_type(client.groups)            # N: Revealed type is "zammadoo.groups.Groups"
+    reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
+    reveal_type(client.organizations)     # N: Revealed type is "zammadoo.organizations.Organizations"
+    reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
+    reveal_type(client.tags)              # N: Revealed type is "zammadoo.tags.Tags"
+    reveal_type(client.tickets)           # N: Revealed type is "zammadoo.tickets.Tickets"
+    reveal_type(client.ticket_articles)   # N: Revealed type is "zammadoo.articles.Articles"
+    reveal_type(client.ticket_priorities) # N: Revealed type is "zammadoo.tickets.Priorities"
+    reveal_type(client.ticket_states)     # N: Revealed type is "zammadoo.tickets.States"
+    reveal_type(client.users)             # N: Revealed type is "zammadoo.users.Users"
+
     ticket = client.tickets(1)
     reveal_type(ticket)             # N: Revealed type is "zammadoo.tickets.Ticket"
     reveal_type(ticket.owner)       # N: Revealed type is "zammadoo.users.User"
@@ -26,14 +36,17 @@
     reveal_type(ticket.created_at)  # N: Revealed type is "datetime.datetime"
     reveal_type(ticket._resources)  # N: Revealed type is "zammadoo.tickets.Tickets"
     reveal_type(ticket.articles)    # N: Revealed type is "builtins.list[zammadoo.articles.Article]"
-    reveal_type(ticket.tags())      # N: Revealed type is "builtins.list[builtins.str]"
+    article = ticket.articles[0]
+    reveal_type(article.attachments) # N: Revealed type is "builtins.list[zammadoo.articles.Attachment]"
+    reveal_type(ticket.tags())       # N: Revealed type is "builtins.list[builtins.str]"
     
-    reveal_type(client.users)       # N: Revealed type is "zammadoo.users.Users"
-    reveal_type(client.users.me())  # N: Revealed type is "zammadoo.users.User"
+    reveal_type(client.users)        # N: Revealed type is "zammadoo.users.Users"
+    reveal_type(client.users.me())   # N: Revealed type is "zammadoo.users.User"
     user = client.users(1)
-    reveal_type(user)               # N: Revealed type is "zammadoo.users.User"
-    reveal_type(user.created_by)    # N: Revealed type is "zammadoo.users.User"
-    reveal_type(user.organization)  # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
+    reveal_type(user)                # N: Revealed type is "zammadoo.users.User"
+    reveal_type(user.created_by)     # N: Revealed type is "zammadoo.users.User"
+    reveal_type(user.organization)   # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
+    reveal_type(user.organizations)  # N: Revealed type is "builtins.list[zammadoo.organizations.Organization]"
 
     for user in client.users:
       reveal_type(user)             # N: Revealed type is "zammadoo.users.User"
