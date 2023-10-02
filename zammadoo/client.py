@@ -43,7 +43,10 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
                 message, request=exc.request, response=exc.response
             ) from exc
 
-    return response.json()
+    try:
+        return response.json()
+    except JSONDecodeError:
+        return response.text
 
 
 class ClientMeta(type):

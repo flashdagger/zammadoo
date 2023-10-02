@@ -122,6 +122,13 @@ class Ticket(UpdatableResource):
         updated_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
         return resources(updated_info["id"], info=updated_info)
 
+    def delete(self):
+        resources = self._resources
+        resources.client.delete(resources.endpoint, self._id)
+        url = self._url
+        if url in resources.cache:
+            del resources.cache[self._url]
+
 
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket

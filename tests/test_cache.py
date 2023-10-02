@@ -148,6 +148,16 @@ def test_reducing_max_size_evicts_older_entries():
     assert list(cache.keys()) == [15, 16, 17, 18, 19]
 
 
+def test_delitem():
+    cache = LruCache(max_size=10)
+    rng = range(10)
+    fill_by_setitem(cache, rng)
+    assert 5 in cache
+    del cache[5]
+    assert len(cache) == 9
+    assert 5 not in cache
+
+
 def test_clear():
     cache = LruCache()
     fill_by_callback(cache, range(20))

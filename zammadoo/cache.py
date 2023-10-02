@@ -84,3 +84,6 @@ class LruCache:
             cache[item] = value
             if 0 < max_size < len(cache):
                 cache.popitem(last=False)
+
+    def __delitem__(self, key):
+        del self._cache[key]
