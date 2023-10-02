@@ -4,7 +4,7 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
-from typing import TYPE_CHECKING, Generic, Iterable, Optional, Type
+from typing import TYPE_CHECKING, Generic, Iterable, Literal, Optional, Type
 
 from .cache import LruCache
 from .resource import Resource, T
@@ -98,8 +98,9 @@ class SearchableT(IterableT[T]):
     def search(
         self,
         query: str,
+        *,
         sort_by: Optional[str] = None,
-        order_by: Optional[str] = None,
+        order_by: Literal["asc", "desc", None] = None,
     ) -> Iterable[T]:
         yield from self.iter("search", query=query, sort_by=sort_by, order_by=order_by)
 

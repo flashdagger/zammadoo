@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Dict, Iterable, List, Optional, Tuple, Union, Literal
+from typing import Dict, Iterable, List, Literal, Optional, Tuple, Union
 
 from .articles import Article
 from .client import Client
