@@ -24,7 +24,7 @@ class User(NamedResource):
 
     @property
     def name(self):
-        return f"{self.firstname} {self.lastname}"
+        return f"{self.firstname} {self.lastname}".strip()
 
     @resource_property
     def organization(self):
