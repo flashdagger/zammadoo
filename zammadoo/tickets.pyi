@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from datetime import datetime
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from .articles import Article
@@ -27,8 +26,6 @@ class States(IterableT[State]):
 
 class Ticket(UpdatableResource):
     articles: List[Article]
-    created_at: datetime
-    created_by: User
     customer: User
     group: User
     note: str
@@ -38,7 +35,6 @@ class Ticket(UpdatableResource):
     priority: Priority
     state: State
     title: str
-    updated_by: User
 
     _resources: "Tickets"
     def tags(self) -> List[str]: ...
@@ -47,8 +43,8 @@ class Ticket(UpdatableResource):
     def links(self) -> Dict[str, List["Ticket"]]: ...
     def link_with(self, target_id: int, link_type: str = ...) -> None: ...
     def unlink_from(self, target_id: int, link_type: str = ...) -> None: ...
-    def merge_with(self, target_id: int) -> bool: ...
-    def update(self, **kwargs): ...
+    def merge_with(self, target_id: int) -> "Ticket": ...
+    def update(self, **kwargs) -> "Ticket": ...
 
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket

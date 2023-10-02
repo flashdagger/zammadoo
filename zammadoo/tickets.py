@@ -113,21 +113,14 @@ class Ticket(UpdatableResource):
     def merge_with(self, target_id):
         resources = self._resources
         info = resources.client.put("ticket_merge", target_id, self["number"])
-        if info.get("result") == "success":
-            ticket_info = info["target_ticket"]
-            assert isinstance(ticket_info, dict)
-            assert ticket_info["id"] == self._id
-            resources.cache[self._url] = ticket_info
-            self._info.clear()
-            return True
-
-        return False
+        assert info["result"] == "success", f"merge failed with {info['result']}"
+        merged_info = info["target_ticket"]
+        return self._resources(merged_info["id"], info=merged_info)
 
     def update(self, **kwargs):
         resources = self._resources
-        ticket_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
-        self._info.clear()
-        return resources(ticket_info["id"], info=ticket_info)
+        updated_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
+        return resources(updated_info["id"], info=updated_info)
 
 
 class Tickets(SearchableT[Ticket]):
@@ -159,9 +152,9 @@ class Tickets(SearchableT[Ticket]):
             "article": article,
             **kwargs,
         }
-        ticket_info = self.client.post(self.endpoint, json=info)
+        created_info = self.client.post(self.endpoint, json=info)
 
-        return self(ticket_info["id"], info=ticket_info)
+        return self(created_info["id"], info=created_info)
 
 
 def cache_assets(client, assets):

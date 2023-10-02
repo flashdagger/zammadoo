@@ -156,27 +156,20 @@ class Client(metaclass=ClientMeta):
         LOG.debug("[GET] %s", response.url)
         return cast(JsonContainer, raise_or_return_json(response))
 
-    def get_bytes(self, *args, params: Optional[StringKeyDict] = None):
-        response = self.session.get(join(self.url, *args), params=params)
-        LOG.debug("[GET] %s", response.url)
-        return response
-
-    def request(
-        self, method: str, *args, json: Optional[StringKeyDict] = None
-    ) -> JsonType:
+    def request(self, method: str, *args, json: Optional[StringKeyDict] = None):
         response = self.session.request(method, join(self.url, *args), json=json)
         LOG.debug("[%s] %s json=%r", method, response.url, json)
         value = raise_or_return_json(response)
         LOG.debug("[%s] returned %s", method, shorten(repr(value), width=120))
         return value
 
-    def post(self, *args, json: Optional[StringKeyDict] = None) -> JsonType:
+    def post(self, *args, json: Optional[StringKeyDict] = None):
         return self.request("POST", *args, json=json)
 
-    def put(self, *args, json: Optional[StringKeyDict] = None) -> JsonType:
+    def put(self, *args, json: Optional[StringKeyDict] = None):
         return self.request("PUT", *args, json=json)
 
-    def delete(self, *args, json: Optional[StringKeyDict] = None) -> JsonType:
+    def delete(self, *args, json: Optional[StringKeyDict] = None):
         return self.request("DELETE", *args, json=json)
 
     @property
