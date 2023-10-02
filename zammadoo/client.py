@@ -14,6 +14,7 @@ from .articles import Articles
 from .groups import Groups
 from .organizations import Organizations
 from .resources import BaseResources, IterableResources, ResourcesT
+from .roles import Roles
 from .tags import Tags
 from .tickets import States, Tickets
 from .users import Users
@@ -69,7 +70,7 @@ class Client(metaclass=ClientMeta):
     # object_manager_attributes: Resources
     # online_notifications: Resources
     organizations: Organizations
-    roles: IterableResources
+    roles: Roles
     # ticket_article_plain: Resources
     ticket_articles: Articles
     # ticket_attachment: Resources

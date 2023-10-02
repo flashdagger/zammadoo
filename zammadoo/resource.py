@@ -123,3 +123,7 @@ class UpdatableResource(Resource):
     @resource_property("users")
     def updated_by(self):
         ...
+
+
+class NamedResource(UpdatableResource):
+    pass

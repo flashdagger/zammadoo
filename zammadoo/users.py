@@ -4,7 +4,7 @@
 from functools import partial
 from typing import TYPE_CHECKING
 
-from .resource import UpdatableResource, resource_property, resourcelist_property
+from .resource import NamedResource, resource_property, resourcelist_property
 from .resources import SearchableT
 
 if TYPE_CHECKING:
@@ -17,9 +17,25 @@ user_property = partial(resource_property("users"))
 userlist_property = partial(resourcelist_property("users"))
 
 
-class User(UpdatableResource):
+class User(NamedResource):
+    @resourcelist_property
+    def groups(self):
+        ...
+
+    @property
+    def name(self):
+        return f"{self.firstname} {self.lastname}"
+
     @resource_property
     def organization(self):
+        ...
+
+    @resourcelist_property
+    def organizations(self):
+        ...
+
+    @resourcelist_property
+    def roles(self):
         ...
 
 

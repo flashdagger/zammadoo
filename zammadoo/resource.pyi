@@ -31,3 +31,8 @@ class UpdatableResource(Resource):
     updated_by: User
     created_at: datetime
     updated_at: datetime
+
+class NamedResource(UpdatableResource):
+    active: bool
+    name: str
+    note: str

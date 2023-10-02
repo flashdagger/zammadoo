@@ -3,14 +3,11 @@
 
 from typing import List
 
-from .resource import UpdatableResource
+from .resource import NamedResource
 from .resources import SearchableT
 from .users import User
 
-class Group(UpdatableResource):
-    active: bool
-    name: str
-    note: str
+class Group(NamedResource):
     shared_drafts: bool
     users: List[User]
 
