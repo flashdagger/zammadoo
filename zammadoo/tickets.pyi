@@ -33,7 +33,7 @@ class State(MutableResource):
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
-    def create(self, name: str, **kwargs) -> State: ...
+    def create(self, name: str, state_type_id: int, **kwargs) -> State: ...
 
 class Ticket(MutableResource):
     articles: List[Article]

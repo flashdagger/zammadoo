@@ -35,7 +35,7 @@
 
     reveal_type(client.ticket_states)           # N: Revealed type is "zammadoo.tickets.States"
     reveal_type(
-      client.ticket_states.create(name=""))     # N: Revealed type is "zammadoo.tickets.State"
+      client.ticket_states.create("", 0))       # N: Revealed type is "zammadoo.tickets.State"
     reveal_type(
       client.ticket_states(0).update())         # N: Revealed type is "zammadoo.tickets.State"
 
