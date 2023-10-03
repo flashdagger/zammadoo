@@ -5,7 +5,7 @@ from functools import partial
 from typing import TYPE_CHECKING
 
 from .resource import NamedResource, resource_property, resourcelist_property
-from .resources import SearchableT
+from .resources import Creatable, SearchableT
 
 if TYPE_CHECKING:
     from .organizations import Organization
@@ -18,13 +18,18 @@ userlist_property = partial(resourcelist_property("users"))
 
 
 class User(NamedResource):
+    @property
+    def name(self):
+        name = f"{self.firstname} {self.lastname}".strip()
+        if not name:
+            name = self.email
+        if not name:
+            name = self.phone
+        return name
+
     @resourcelist_property
     def groups(self):
         ...
-
-    @property
-    def name(self):
-        return f"{self.firstname} {self.lastname}".strip()
 
     @resource_property
     def organization(self):
@@ -39,8 +44,20 @@ class User(NamedResource):
         ...
 
 
-class Users(SearchableT[User]):
+class Users(SearchableT[User], Creatable):
     RESOURCE_TYPE = User
+
+    def create(
+        self, *, firstname=None, lastname=None, email=None, phone=None, **kwargs
+    ):
+        info = {
+            "firstname": firstname,
+            "lastname": lastname,
+            "email": email,
+            "phone": phone,
+            **kwargs,
+        }
+        return self._create(info)
 
     # pylint: disable=invalid-name
     def me(self) -> User:

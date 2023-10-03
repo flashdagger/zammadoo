@@ -21,9 +21,18 @@ class User(NamedResource):
     lastname: str
     organization: Optional[Organization]
     organizations: List[Organization]
+    phone: str
     roles: List[Role]
     def update(self, **kwargs) -> "User": ...
 
 class Users(SearchableT[User]):
     RESOURCE_TYPE = User
+    def create(
+        self,
+        firstname: Optional[str] = None,
+        lastname: Optional[str] = None,
+        email: Optional[str] = None,
+        phone: Optional[str] = None,
+        **kwargs,
+    ) -> User: ...
     def me(self) -> User: ...

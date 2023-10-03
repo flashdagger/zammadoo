@@ -7,7 +7,7 @@ from .articles import Article
 from .client import Client
 from .organizations import Organization
 from .resource import MutableResource, NamedResource
-from .resources import Creatable, IterableT, SearchableT
+from .resources import IterableT, SearchableT
 from .users import User
 from .utils import JsonContainer, JsonDict
 
@@ -20,7 +20,7 @@ class Priority(NamedResource):
     ui_color: str
     def update(self, **kwargs) -> "Priority": ...
 
-class Priorities(IterableT[Priority], Creatable):
+class Priorities(IterableT[Priority]):
     RESOURCE_TYPE = Priority
     def create(self, name: str, **kwargs) -> Priority: ...
 
@@ -31,7 +31,7 @@ class State(MutableResource):
     note: Optional[str]
     def update(self, **kwargs) -> "State": ...
 
-class States(IterableT[State], Creatable):
+class States(IterableT[State]):
     RESOURCE_TYPE = State
     def create(self, name: str, state_type_id: int, **kwargs) -> State: ...
 
@@ -56,7 +56,7 @@ class Ticket(MutableResource):
     def merge_with(self, target_id: int) -> "Ticket": ...
     def update(self, **kwargs) -> "Ticket": ...
 
-class Tickets(SearchableT[Ticket], Creatable):
+class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
 
     def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]: ...
