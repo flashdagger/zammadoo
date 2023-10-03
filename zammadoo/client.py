@@ -6,7 +6,7 @@ import logging
 from dataclasses import dataclass
 from functools import cached_property
 from textwrap import shorten
-from typing import List, Optional, Tuple
+from typing import Optional, Sequence, Tuple
 
 import requests
 from requests import HTTPError, JSONDecodeError
@@ -54,13 +54,11 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
         return response.text
 
 
-# pylint: disable=too-many-instance-attributes
 class Client:
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
     # ticket_article_plain: Resources
-    # ticket_at
     # attachment: Resources
 
     @cached_property
@@ -105,9 +103,6 @@ class Client:
         per_page: int = 10
         expand: bool = False
 
-    class ConfigException(Exception):
-        pass
-
     # pylint: disable=too-many-arguments
     def __init__(
         self,
@@ -116,49 +111,37 @@ class Client:
         password: Optional[str] = None,
         http_token: Optional[str] = None,
         oauth2_token: Optional[str] = None,
-        # on_behalf_of: Optional[str] = None,
-        additional_headers: Optional[List[Tuple[str, str]]] = None,
+        additional_headers: Sequence[Tuple[str, str]] = (),
     ) -> None:
         self.url = url.rstrip("/")
         self.pagination = self.Pagination()
 
-        self._username = username
-        self._password = password
-        self._http_token = http_token
-        self._oauth2_token = oauth2_token
-        # self._on_behalf_of = on_behalf_of
-        self._additional_headers = additional_headers
-        self._check_config()
+        def check_config():
+            if http_token is not None:
+                return
+            if oauth2_token is not None:
+                return
+            if username is None:
+                raise TypeError("Missing username in config")
+            if password is None:
+                raise TypeError("Missing password in config")
 
+        check_config()
         self.session = requests.Session()
         atexit.register(self.session.close)
         self.session.headers["User-Agent"] = "Zammad API Python"
-        if self._http_token:
-            self.session.headers["Authorization"] = f"Token token={self._http_token}"
+        if http_token:
+            self.session.headers["Authorization"] = f"Token token={http_token}"
         elif oauth2_token:
-            self.session.headers["Authorization"] = f"Bearer {self._oauth2_token}"
-        elif self._username and self._password:  # noqa: SIM106
-            self.session.auth = (self._username, self._password)
+            self.session.headers["Authorization"] = f"Bearer {oauth2_token}"
+        elif username and password:
+            self.session.auth = (username, password)
         else:
             raise ValueError("Invalid Authentication information in config")
 
         # if self._on_behalf_of:
         #     self.session.headers["X-On-Behalf-Of"] = self._on_behalf_of
-
-        if self._additional_headers:
-            for additional_header in self._additional_headers:
-                self.session.headers[additional_header[0]] = additional_header[1]
-
-    def _check_config(self) -> None:
-        """Check the configuration"""
-        if self._http_token is not None:
-            return
-        if self._oauth2_token is not None:
-            return
-        if self._username is None:
-            raise Client.ConfigException("Missing username in config")
-        if self._password is None:
-            raise Client.ConfigException("Missing password in config")
+        self.session.headers.update(additional_headers)
 
     def request(
         self,
