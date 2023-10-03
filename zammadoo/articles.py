@@ -10,7 +10,8 @@ from typing import TYPE_CHECKING, Optional
 import requests
 from requests import Session
 
-from .resources import Resource, ResourcesT
+from .resource import Resource
+from .resources import ResourcesT
 
 if TYPE_CHECKING:
     from .utils import JsonDict

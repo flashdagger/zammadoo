@@ -8,7 +8,8 @@ from typing import Any, Dict, Iterator, List, Optional, Union
 
 from requests import Session
 
-from .resources import Resource, ResourcesT
+from .resource import Resource
+from .resources import ResourcesT
 from .tickets import Ticket
 from .utils import JsonDict
 

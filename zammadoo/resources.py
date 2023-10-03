@@ -7,7 +7,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Generic, Iterable, Literal, Optional, Type
 
 from .cache import LruCache
-from .resource import Resource, T
+from .resource import T
 from .utils import JsonContainer, JsonDict, YieldCounter
 
 if TYPE_CHECKING:
@@ -111,15 +111,3 @@ class SearchableT(IterableT[T]):
         yield from self.iter(
             "search", query=query, sort_by=sort_by, order_by=order_by, **kwargs
         )
-
-
-class BaseResources(ResourcesT[Resource]):
-    RESOURCE_TYPE = Resource
-
-
-class IterableResources(IterableT[Resource]):
-    RESOURCE_TYPE = Resource
-
-
-class SearchableResources(SearchableT[Resource]):
-    RESOURCE_TYPE = Resource

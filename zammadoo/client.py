@@ -13,12 +13,15 @@ from requests import HTTPError, JSONDecodeError
 from .articles import Articles
 from .groups import Groups
 from .organizations import Organizations
-from .resources import BaseResources, ResourcesT
+from .resource import Resource
+from .resources import ResourcesT
 from .roles import Roles
 from .tags import Tags
 from .tickets import Priorities, States, Tickets
 from .users import Users
 from .utils import JsonType, StringKeyDict
+
+BaseResources = ResourcesT[Resource]
 
 LOG = logging.getLogger(__name__)
 
