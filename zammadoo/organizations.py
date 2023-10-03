@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from .resource import MutableResource
-from .resources import SearchableT, Creatable
+from .resources import Creatable, SearchableT
 from .users import userlist_property
 
 

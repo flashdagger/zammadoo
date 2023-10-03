@@ -5,7 +5,7 @@ from typing import List
 
 from .groups import Group
 from .resource import NamedResource
-from .resources import SearchableT, Creatable
+from .resources import Creatable, SearchableT
 
 class Role(NamedResource):
     groups: List[Group]

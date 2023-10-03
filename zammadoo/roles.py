@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from .resource import NamedResource, resourcelist_property
-from .resources import SearchableT, Creatable
+from .resources import Creatable, SearchableT
 
 
 class Role(NamedResource):
