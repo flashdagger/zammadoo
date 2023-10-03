@@ -13,3 +13,4 @@ class Role(NamedResource):
 
 class Roles(SearchableT[Role]):
     RESOURCE_TYPE = Role
+    def create(self, name: str, **kwargs) -> Role: ...

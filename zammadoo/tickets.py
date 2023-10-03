@@ -28,7 +28,7 @@ class States(IterableT[State], Creatable):
     RESOURCE_TYPE = State
 
     def create(self, name, state_type_id, **kwargs):
-        return self._create({"name": name, "state_type_id": state_type_id, **kwargs})
+        return super()._create({"name": name, "state_type_id": state_type_id, **kwargs})
 
 
 class Ticket(MutableResource):
@@ -158,7 +158,7 @@ class Tickets(SearchableT[Ticket], Creatable):
             **kwargs,
         }
 
-        return self._create(info)
+        return super()._create(info)
 
 
 def cache_assets(client, assets):
