@@ -19,10 +19,6 @@ class YieldCounter:
             yield item
 
 
-def join(*args) -> str:
-    return "/".join(map(str, args))
-
-
 JsonType = Union[None, bool, int, float, str, List["JsonType"], Dict[str, "JsonType"]]
 JsonDict = Dict[str, JsonType]
 JsonDictList = List[JsonDict]

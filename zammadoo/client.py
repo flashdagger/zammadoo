@@ -5,7 +5,7 @@ import atexit
 import logging
 from dataclasses import dataclass
 from textwrap import shorten
-from typing import Dict, List, Optional, Tuple, Type, cast
+from typing import Dict, List, Optional, Tuple, Type
 
 import requests
 from requests import HTTPError, JSONDecodeError
@@ -18,7 +18,7 @@ from .roles import Roles
 from .tags import Tags
 from .tickets import Priorities, States, Tickets
 from .users import Users
-from .utils import JsonContainer, JsonType, StringKeyDict, join
+from .utils import JsonType, StringKeyDict
 
 LOG = logging.getLogger(__name__)
 
@@ -155,17 +155,30 @@ class Client(metaclass=ClientMeta):
             raise AttributeError(item)
         return instance_map.setdefault(item, klass(self, item))
 
-    def get(self, *args, params: Optional[StringKeyDict] = None):
-        response = self.session.get(join(self.url, *args), params=params)
-        LOG.debug("[GET] %s", response.url)
-        return cast(JsonContainer, raise_or_return_json(response))
+    @property
+    def tags(self) -> Tags:
+        return self._tags
 
-    def request(self, method: str, *args, json: Optional[StringKeyDict] = None):
-        response = self.session.request(method, join(self.url, *args), json=json)
-        LOG.debug("[%s] %s json=%r", method, response.url, json)
+    def request(
+        self,
+        method: str,
+        *args,
+        params: Optional[StringKeyDict] = None,
+        json: Optional[StringKeyDict] = None,
+        **kwargs,
+    ):
+        url = "/".join(map(str, (self.url, *args)))
+        response = self.session.request(method, url, params=params, json=json, **kwargs)
+        if json and LOG.level == logging.DEBUG:
+            LOG.debug("[%s] %s json=%r", method, response.url, json)
+        else:
+            LOG.info("[%s] %s", method, response.url)
         value = raise_or_return_json(response)
         LOG.debug("[%s] returned %s", method, shorten(repr(value), width=120))
         return value
+
+    def get(self, *args, params: Optional[StringKeyDict] = None):
+        return self.request("GET", *args, params=params)
 
     def post(self, *args, json: Optional[StringKeyDict] = None):
         return self.request("POST", *args, json=json)
@@ -175,7 +188,3 @@ class Client(metaclass=ClientMeta):
 
     def delete(self, *args, json: Optional[StringKeyDict] = None):
         return self.request("DELETE", *args, json=json)
-
-    @property
-    def tags(self) -> Tags:
-        return self._tags
