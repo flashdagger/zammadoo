@@ -57,7 +57,6 @@
 
     reveal_type(ticket.state)       # N: Revealed type is "zammadoo.tickets.State"
     reveal_type(ticket.created_at)  # N: Revealed type is "datetime.datetime"
-    reveal_type(ticket._resources)  # N: Revealed type is "zammadoo.tickets.Tickets"
     reveal_type(ticket.articles)    # N: Revealed type is "builtins.list[zammadoo.articles.Article]"
     article = ticket.articles[0]
     reveal_type(article.attachments) # N: Revealed type is "builtins.list[zammadoo.articles.Attachment]"
