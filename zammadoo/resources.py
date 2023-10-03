@@ -106,8 +106,11 @@ class SearchableT(IterableT[T]):
         *,
         sort_by: Optional[str] = None,
         order_by: Literal["asc", "desc", None] = None,
+        **kwargs,
     ) -> Iterable[T]:
-        yield from self.iter("search", query=query, sort_by=sort_by, order_by=order_by)
+        yield from self.iter(
+            "search", query=query, sort_by=sort_by, order_by=order_by, **kwargs
+        )
 
 
 class BaseResources(ResourcesT[Resource]):
