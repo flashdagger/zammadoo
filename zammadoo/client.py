@@ -3,6 +3,7 @@
 
 import atexit
 import logging
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from textwrap import shorten
@@ -139,9 +140,15 @@ class Client:
         else:
             raise ValueError("Invalid Authentication information in config")
 
-        # if self._on_behalf_of:
-        #     self.session.headers["X-On-Behalf-Of"] = self._on_behalf_of
         self.session.headers.update(additional_headers)
+
+    @contextmanager
+    def on_behalf_of(self, user: str):
+        try:
+            self.session.headers["X-On-Behalf-Of"] = user
+            yield
+        finally:
+            self.session.headers.pop("X-On-Behalf-Of", None)
 
     def request(
         self,
@@ -152,14 +159,25 @@ class Client:
         **kwargs,
     ):
         url = "/".join(map(str, (self.url, *args)))
+        response = self.response(method, url, json=json, params=params, **kwargs)
+        value = raise_or_return_json(response)
+        LOG.debug("[%s] returned %s", method, shorten(repr(value), width=120))
+        return value
+
+    def response(
+        self,
+        method: str,
+        url: str,
+        params: Optional[StringKeyDict] = None,
+        json: Optional[StringKeyDict] = None,
+        **kwargs,
+    ):
         response = self.session.request(method, url, params=params, json=json, **kwargs)
         if json and LOG.level == logging.DEBUG:
             LOG.debug("[%s] %s json=%r", method, response.url, json)
         else:
             LOG.info("[%s] %s", method, response.url)
-        value = raise_or_return_json(response)
-        LOG.debug("[%s] returned %s", method, shorten(repr(value), width=120))
-        return value
+        return response
 
     def get(self, *args, params: Optional[StringKeyDict] = None):
         return self.request("GET", *args, params=params)
