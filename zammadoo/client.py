@@ -143,7 +143,7 @@ class Client:
         self.session.headers.update(additional_headers)
 
     @contextmanager
-    def on_behalf_of(self, user: Union[str, int]):
+    def impersonation_of(self, user: Union[str, int]):
         try:
             self.session.headers["X-On-Behalf-Of"] = str(user)
             yield
