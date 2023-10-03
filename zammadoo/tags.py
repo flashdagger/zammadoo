@@ -23,42 +23,50 @@ class Tags:
         url = f"{self.client.url}/{self.endpoint}"
         return f"<{self.__class__.__qualname__} {url!r}>"
 
-    def __iter__(self) -> Iterable[str]:
-        yield from self._map.keys()
+    def __iter__(self) -> Iterable[StringKeyDict]:
+        self._reload()
+        yield from self._map.values()
 
-    def __getitem__(self, item) -> Dict[str, Any]:
-        return self._map[item]
-
-    def all(self) -> List[str]:
+    def _reload(self):
         cache = self._map
         cache.clear()
         items = cast(ItemList, self.client.get(self.endpoint))
-        cache.update((info.pop("name"), info) for info in items)
-        return list(cache.keys())
+        cache.update((info["name"], info) for info in items)
+
+    def as_list(self) -> List[str]:
+        self._reload()
+        return list(self._map.keys())
 
     def search(self, term: str) -> List[str]:
         items = cast(ItemList, self.client.get("tag_search", params={"term": term}))
 
-        found = []
         for info in items:
             name = info.pop("value")
+            info.update((("name", name), ("count", None)))
             self._map.setdefault(name, info)
-            found.append(name)
 
-        return found
+        return list(info["name"] for info in items)
 
     def create(self, name: str):
         self.client.post(self.endpoint, json={"name": name})
 
-    def remove(self, name_or_tid: Union[str, int]):
+    def delete(self, name_or_tid: Union[str, int]):
         if isinstance(name_or_tid, str):
+            if name_or_tid not in self._map:
+                self.search(name_or_tid)
+            if name_or_tid not in self._map:
+                raise ValueError(f"Couldn't find tag with name {name_or_tid!r}")
             name_or_tid = self._map[name_or_tid]["id"]
-        self.client.delete(f"{self.endpoint}/{name_or_tid}")
+        self.client.delete(self.endpoint, name_or_tid)
 
     def rename(self, name_or_tid: Union[str, int], new_name: str):
         if isinstance(name_or_tid, str):
+            if name_or_tid not in self._map:
+                self.search(name_or_tid)
+            if name_or_tid not in self._map:
+                raise ValueError(f"Couldn't find tag with name {name_or_tid!r}")
             name_or_tid = self._map[name_or_tid]["id"]
-        self.client.put(f"{self.endpoint}/{name_or_tid}", json={"name": new_name})
+        self.client.put(self.endpoint, name_or_tid, json={"name": new_name})
 
     def add_to_ticket(self, tid: int, *names: str):
         for name in names:
