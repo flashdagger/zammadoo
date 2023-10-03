@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from .resource import MutableResource
-from .resources import SearchableT
+from .resources import SearchableT, Creatable
 from .users import userlist_property
 
 
@@ -12,5 +12,6 @@ class Organization(MutableResource):
         ...
 
 
-class Organizations(SearchableT[Organization]):
+class Organizations(SearchableT[Organization], Creatable):
     RESOURCE_TYPE = Organization
+    create = Creatable._create_with_name

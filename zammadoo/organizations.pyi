@@ -8,11 +8,13 @@ from .resources import SearchableT
 from .users import User
 
 class Organization(MutableResource):
+    domain: str
+    domain_assignment: bool
     members: List[User]
     shared: bool
-    domain_assignment: bool
     vip: bool
     def update(self, **kwargs) -> "Organization": ...
 
 class Organizations(SearchableT[Organization]):
     RESOURCE_TYPE = Organization
+    def create(self, name: str, **kwargs) -> Organization: ...

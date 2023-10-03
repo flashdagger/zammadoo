@@ -5,12 +5,12 @@ from typing import List
 
 from .groups import Group
 from .resource import NamedResource
-from .resources import SearchableT
+from .resources import SearchableT, Creatable
 
 class Role(NamedResource):
     groups: List[Group]
     def update(self, **kwargs) -> "Role": ...
 
-class Roles(SearchableT[Role]):
+class Roles(SearchableT[Role], Creatable):
     RESOURCE_TYPE = Role
     def create(self, name: str, **kwargs) -> Role: ...

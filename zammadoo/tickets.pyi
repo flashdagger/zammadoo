@@ -31,7 +31,7 @@ class State(MutableResource):
     note: Optional[str]
     def update(self, **kwargs) -> "State": ...
 
-class States(IterableT[State]):
+class States(IterableT[State], Creatable):
     RESOURCE_TYPE = State
     def create(self, name: str, state_type_id: int, **kwargs) -> State: ...
 
