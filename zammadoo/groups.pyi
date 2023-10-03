@@ -14,3 +14,4 @@ class Group(NamedResource):
 
 class Groups(SearchableT[Group]):
     RESOURCE_TYPE = Group
+    def create(self, name: str, **kwargs) -> Group: ...

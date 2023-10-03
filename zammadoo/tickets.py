@@ -12,11 +12,10 @@ class Priority(NamedResource):
     pass
 
 
-class Priorities(IterableT[Priority], Creatable[Priority]):
+class Priorities(IterableT[Priority], Creatable):
     RESOURCE_TYPE = Priority
 
-    def create(self, name, **kwargs):
-        return self._create({"name": name, **kwargs})
+    create = Creatable._create_with_name
 
 
 class State(MutableResource):
@@ -25,8 +24,10 @@ class State(MutableResource):
         ...
 
 
-class States(IterableT[State]):
+class States(IterableT[State], Creatable):
     RESOURCE_TYPE = State
+
+    create = Creatable._create_with_name
 
 
 class Ticket(MutableResource):
@@ -126,7 +127,7 @@ class Ticket(MutableResource):
         return self._resources(merged_info["id"], info=merged_info)
 
 
-class Tickets(SearchableT[Ticket], Creatable[Ticket]):
+class Tickets(SearchableT[Ticket], Creatable):
     RESOURCE_TYPE = Ticket
     CACHE_SIZE = 100
 

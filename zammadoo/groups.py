@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from .resource import NamedResource
-from .resources import SearchableT
+from .resources import SearchableT, Creatable
 from .users import userlist_property
 
 
@@ -12,5 +12,7 @@ class Group(NamedResource):
         ...
 
 
-class Groups(SearchableT[Group]):
+class Groups(SearchableT[Group], Creatable):
     RESOURCE_TYPE = Group
+
+    create = Creatable._create_with_name

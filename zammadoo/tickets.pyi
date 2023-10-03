@@ -20,9 +20,8 @@ class Priority(NamedResource):
     ui_color: str
     def update(self, **kwargs) -> "Priority": ...
 
-class Priorities(IterableT[Priority], Creatable[Priority]):
+class Priorities(IterableT[Priority], Creatable):
     RESOURCE_TYPE = Priority
-
     def create(self, name: str, **kwargs) -> Priority: ...
 
 class State(MutableResource):
@@ -34,6 +33,7 @@ class State(MutableResource):
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
+    def create(self, name: str, **kwargs) -> State: ...
 
 class Ticket(MutableResource):
     articles: List[Article]
@@ -56,7 +56,7 @@ class Ticket(MutableResource):
     def merge_with(self, target_id: int) -> "Ticket": ...
     def update(self, **kwargs) -> "Ticket": ...
 
-class Tickets(SearchableT[Ticket], Creatable[Ticket]):
+class Tickets(SearchableT[Ticket], Creatable):
     RESOURCE_TYPE = Ticket
 
     def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]: ...

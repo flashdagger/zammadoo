@@ -5,6 +5,8 @@
     client = Client("<url>")
     reveal_type(client.groups)            # N: Revealed type is "zammadoo.groups.Groups"
     reveal_type(
+      client.groups.create(name=""))      # N: Revealed type is "zammadoo.groups.Group"
+    reveal_type(
       client.groups(0).update())          # N: Revealed type is "zammadoo.groups.Group"
 
     reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
@@ -27,14 +29,18 @@
 
     reveal_type(client.ticket_priorities) # N: Revealed type is "zammadoo.tickets.Priorities"
     reveal_type(
-      client.ticket_priorities(0).update()) # N: Revealed type is "zammadoo.tickets.Priority"
-
-    reveal_type(client.ticket_states)     # N: Revealed type is "zammadoo.tickets.States"
+      client.ticket_priorities.create(name="")) # N: Revealed type is "zammadoo.tickets.Priority"
     reveal_type(
-      client.ticket_states(0).update())   # N: Revealed type is "zammadoo.tickets.State"
+      client.ticket_priorities(0).update())     # N: Revealed type is "zammadoo.tickets.Priority"
 
-    reveal_type(client.users)             # N: Revealed type is "zammadoo.users.Users"
-    reveal_type(client.users(0).update()) # N: Revealed type is "zammadoo.users.User"
+    reveal_type(client.ticket_states)           # N: Revealed type is "zammadoo.tickets.States"
+    reveal_type(
+      client.ticket_states.create(name=""))     # N: Revealed type is "zammadoo.tickets.State"
+    reveal_type(
+      client.ticket_states(0).update())         # N: Revealed type is "zammadoo.tickets.State"
+
+    reveal_type(client.users)                   # N: Revealed type is "zammadoo.users.Users"
+    reveal_type(client.users(0).update())       # N: Revealed type is "zammadoo.users.User"
 
 
     ticket = client.tickets(1)

@@ -53,8 +53,11 @@ class ResourcesT(Generic[T]):
         return response
 
 
-class Creatable(ResourcesT[T]):
-    def _create(self, json) -> T:
+class Creatable(ResourcesT):
+    def _create_with_name(self, name, **kwargs):
+        return self._create({"name": name, **kwargs})
+
+    def _create(self, json):
         created_info = self.client.post(self.endpoint, json=json)
         return self(created_info["id"], info=created_info)
 
