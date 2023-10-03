@@ -57,7 +57,7 @@ class Users(SearchableT[User], Creatable):
             "phone": phone,
             **kwargs,
         }
-        return self._create(info)
+        return super()._create(info)
 
     # pylint: disable=invalid-name
     def me(self) -> User:
