@@ -34,11 +34,8 @@ class ResourcesT(Generic[T]):
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url()!r}>"
 
-    def url(self, rid: Optional[int] = None):
-        url = f"{self.client.url}/{self.endpoint}"
-        if rid is None:
-            return url
-        return f"{url}/{rid}"
+    def url(self, *args):
+        return "/".join(map(str, (self.client.url, self.endpoint, *args)))
 
     def cached_info(self, rid: int, refresh=True) -> JsonContainer:
         item = self.url(rid)

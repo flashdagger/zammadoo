@@ -63,10 +63,9 @@ class Users(SearchableT[User], Creatable):
     def me(self) -> User:
         cache = self.cache
         endpoint = "users/me"
-        url = f"{self.url()}/{endpoint}"
         callback = partial(self.client.get, endpoint)
 
-        info = cache.setdefault_by_callback(url, callback)
+        info = cache.setdefault_by_callback(self.url(endpoint), callback)
         uid = info["id"]
         cache[self.url(uid)] = info
         return self.RESOURCE_TYPE(self, uid)
