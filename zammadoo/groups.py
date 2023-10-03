@@ -16,3 +16,6 @@ class Groups(SearchableT[Group], Creatable):
     RESOURCE_TYPE = Group
 
     create = Creatable._create_with_name
+
+    def __init__(self, client):
+        super().__init__(client, "groups")

@@ -47,6 +47,9 @@ class User(NamedResource):
 class Users(SearchableT[User], Creatable):
     RESOURCE_TYPE = User
 
+    def __init__(self, client):
+        super().__init__(client, "users")
+
     def create(
         self, *, firstname=None, lastname=None, email=None, phone=None, **kwargs
     ):

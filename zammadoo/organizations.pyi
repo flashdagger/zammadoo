@@ -3,6 +3,7 @@
 
 from typing import List
 
+from . import Client
 from .resource import MutableResource
 from .resources import SearchableT
 from .users import User
@@ -17,4 +18,5 @@ class Organization(MutableResource):
 
 class Organizations(SearchableT[Organization]):
     RESOURCE_TYPE = Organization
+    def __init__(self, client: Client) -> None: ...
     def create(self, name: str, **kwargs) -> Organization: ...

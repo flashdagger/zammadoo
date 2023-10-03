@@ -17,6 +17,9 @@ class Priorities(IterableT[Priority], Creatable):
 
     create = Creatable._create_with_name
 
+    def __init__(self, client):
+        super().__init__(client, "ticket_priorities")
+
 
 class State(MutableResource):
     @resource_property("ticket_states")
@@ -26,6 +29,9 @@ class State(MutableResource):
 
 class States(IterableT[State], Creatable):
     RESOURCE_TYPE = State
+
+    def __init__(self, client):
+        super().__init__(client, "ticket_states")
 
     def create(self, name, state_type_id, **kwargs):
         return super()._create({"name": name, "state_type_id": state_type_id, **kwargs})
@@ -128,6 +134,9 @@ class Ticket(MutableResource):
 class Tickets(SearchableT[Ticket], Creatable):
     RESOURCE_TYPE = Ticket
     CACHE_SIZE = 100
+
+    def __init__(self, client):
+        super().__init__(client, "tickets")
 
     def _iter_items(self, items):
         if isinstance(items, list):

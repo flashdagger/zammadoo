@@ -116,6 +116,9 @@ class Article(Resource):
 class Articles(ResourcesT[Article]):
     RESOURCE_TYPE = Article
 
+    def __init__(self, client):
+        super().__init__(client, "ticket_articles")
+
     def by_ticket(self, tid: int):
         items = self.client.get(self.endpoint, "by_ticket", tid)
         return [self(item["id"], info=item) for item in items]

@@ -4,6 +4,7 @@
 from datetime import datetime
 from typing import Callable, List, Optional
 
+from .client import Client
 from .groups import Group
 from .organizations import Organization
 from .resource import NamedResource
@@ -27,6 +28,7 @@ class User(NamedResource):
 
 class Users(SearchableT[User]):
     RESOURCE_TYPE = User
+    def __init__(self, client: Client) -> None: ...
     def create(
         self,
         firstname: Optional[str] = None,

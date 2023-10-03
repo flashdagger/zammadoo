@@ -15,3 +15,6 @@ class Organization(MutableResource):
 class Organizations(SearchableT[Organization], Creatable):
     RESOURCE_TYPE = Organization
     create = Creatable._create_with_name
+
+    def __init__(self, client):
+        super().__init__(client, "organizations")

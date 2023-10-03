@@ -8,6 +8,7 @@ from typing import Any, Dict, Iterator, List, Optional, Union
 
 from requests import Session
 
+from . import Client
 from .resource import Resource
 from .resources import ResourcesT
 from .tickets import Ticket
@@ -56,6 +57,7 @@ class Article(Resource):
     updated_by: str
 
 class Articles(ResourcesT[Article]):
+    def __init__(self, client: Client) -> None: ...
     @property
     def ticket(self): ...
     @property

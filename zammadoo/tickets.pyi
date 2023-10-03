@@ -18,10 +18,12 @@ class Priority(NamedResource):
     default_create: bool
     ui_icon: str
     ui_color: str
+    def __init__(self, client: Client) -> None: ...
     def update(self, **kwargs) -> "Priority": ...
 
 class Priorities(IterableT[Priority]):
     RESOURCE_TYPE = Priority
+    def __init__(self, client: Client) -> None: ...
     def create(self, name: str, **kwargs) -> Priority: ...
 
 class State(MutableResource):
@@ -33,6 +35,7 @@ class State(MutableResource):
 
 class States(IterableT[State]):
     RESOURCE_TYPE = State
+    def __init__(self, client: Client) -> None: ...
     def create(self, name: str, state_type_id: int, **kwargs) -> State: ...
 
 class Ticket(MutableResource):
@@ -61,6 +64,7 @@ class Ticket(MutableResource):
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
 
+    def __init__(self, client: Client) -> None: ...
     def create(
         self,
         title: str,

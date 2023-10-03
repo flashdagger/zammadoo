@@ -3,6 +3,7 @@
 
 from typing import List
 
+from . import Client
 from .groups import Group
 from .resource import NamedResource
 from .resources import SearchableT
@@ -13,4 +14,5 @@ class Role(NamedResource):
 
 class Roles(SearchableT[Role]):
     RESOURCE_TYPE = Role
+    def __init__(self, client: Client) -> None: ...
     def create(self, name: str, **kwargs) -> Role: ...

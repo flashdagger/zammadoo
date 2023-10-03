@@ -4,8 +4,9 @@
 import atexit
 import logging
 from dataclasses import dataclass
+from functools import cached_property
 from textwrap import shorten
-from typing import Dict, List, Optional, Tuple, Type
+from typing import List, Optional, Tuple
 
 import requests
 from requests import HTTPError, JSONDecodeError
@@ -53,43 +54,56 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
         return response.text
 
 
-class ClientMeta(type):
-    def __init__(cls, name, bases, attributes):
-        super().__init__(name, bases, attributes)
-        mapping = getattr(cls, "resource_types")
-        for base_cls in reversed(cls.mro()):
-            annotations = base_cls.__dict__.get("__annotations__", {})
-            mapping.update(
-                (key, value)
-                for key, value in annotations.items()
-                if isinstance(value, type) and issubclass(value, ResourcesT)
-            )
-
-
 # pylint: disable=too-many-instance-attributes
-class Client(metaclass=ClientMeta):
-    groups: Groups
+class Client:
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
-    organizations: Organizations
-    roles: Roles
     # ticket_article_plain: Resources
-    ticket_articles: Articles
-    # ticket_attachment: Resources
-    ticket_priorities: Priorities
-    ticket_states: States
-    tickets: Tickets
-    users: Users
+    # ticket_at
+    # attachment: Resources
+
+    @cached_property
+    def groups(self) -> Groups:
+        return Groups(self)
+
+    @cached_property
+    def organizations(self) -> Organizations:
+        return Organizations(self)
+
+    @cached_property
+    def roles(self) -> Roles:
+        return Roles(self)
+
+    @cached_property
+    def tags(self) -> Tags:
+        return Tags(self)
+
+    @cached_property
+    def ticket_articles(self) -> Articles:
+        return Articles(self)
+
+    @cached_property
+    def ticket_priorities(self) -> Priorities:
+        return Priorities(self)
+
+    @cached_property
+    def ticket_states(self) -> States:
+        return States(self)
+
+    @cached_property
+    def tickets(self) -> Tickets:
+        return Tickets(self)
+
+    @cached_property
+    def users(self) -> Users:
+        return Users(self)
 
     @dataclass
     class Pagination:
         page: int = 1
         per_page: int = 10
         expand: bool = False
-
-    resource_types: Dict[str, Type[BaseResources]] = {}
-    __resource_inst: Dict[str, BaseResources] = {}
 
     class ConfigException(Exception):
         pass
@@ -107,7 +121,6 @@ class Client(metaclass=ClientMeta):
     ) -> None:
         self.url = url.rstrip("/")
         self.pagination = self.Pagination()
-        self._tags = Tags(self)
 
         self._username = username
         self._password = password
@@ -146,21 +159,6 @@ class Client(metaclass=ClientMeta):
             raise Client.ConfigException("Missing username in config")
         if self._password is None:
             raise Client.ConfigException("Missing password in config")
-
-    def __getattr__(self, item) -> BaseResources:
-        instance_map = self.__resource_inst
-        instance = instance_map.get(item)
-        if instance:
-            return instance
-
-        klass = self.resource_types.get(item)
-        if not klass:
-            raise AttributeError(item)
-        return instance_map.setdefault(item, klass(self, item))
-
-    @property
-    def tags(self) -> Tags:
-        return self._tags
 
     def request(
         self,
