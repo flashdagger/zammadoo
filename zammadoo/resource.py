@@ -25,8 +25,7 @@ def resource_property(endpoint, key=None):
         @wraps(_func)
         def property_func(self: "Resource"):
             uid = self[_key]
-            client = getattr(self, "_resources").client
-            return uid and getattr(client, _endpoint)(uid)
+            return uid and getattr(self.parent.client, _endpoint)(uid)
 
         return property_func
 
@@ -48,8 +47,7 @@ def resourcelist_property(endpoint, key=None):
         @wraps(_func)
         def propertylist_func(self: "Resource"):
             uids = self[_key]
-            client = getattr(self, "_resources").client
-            return list(map(getattr(client, _endpoint), uids))
+            return list(map(getattr(self.parent.client, _endpoint), uids))
 
         return propertylist_func
 
@@ -61,13 +59,11 @@ def resourcelist_property(endpoint, key=None):
 
 
 class Resource:
-    def __init__(
-        self, resources: "ResourcesT", rid: int, info: Optional[JsonDict] = None
-    ):
+    def __init__(self, parent: "ResourcesT", rid: int, info: Optional[JsonDict] = None):
         self._id = rid
-        self._resources = resources
+        self.parent = parent
         self._info: JsonDict = info or {}
-        self.url = resources.url(rid)
+        self.url = parent.url(rid)
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
@@ -107,12 +103,12 @@ class Resource:
     def _initialize(self):
         if self._info:
             return
-        self._info.update(self._resources.cached_info(self._id, refresh=False))
+        self._info.update(self.parent.cached_info(self._id, refresh=False))
 
     def reload(self):
         info = self._info
         info.clear()
-        info.update(self._resources.cached_info(self._id), refresh=True)
+        info.update(self.parent.cached_info(self._id), refresh=True)
 
 
 class MutableResource(Resource):
@@ -125,16 +121,16 @@ class MutableResource(Resource):
         ...
 
     def update(self, **kwargs):
-        resources = self._resources
-        updated_info = resources.client.put(resources.endpoint, self._id, json=kwargs)
-        return resources(updated_info["id"], info=updated_info)
+        parent = self.parent
+        updated_info = parent.client.put(parent.endpoint, self._id, json=kwargs)
+        return parent(updated_info["id"], info=updated_info)
 
     def delete(self):
-        resources = self._resources
-        resources.client.delete(resources.endpoint, self._id)
+        parent = self.parent
+        parent.client.delete(parent.endpoint, self._id)
         url = self.url
-        if url in resources.cache:
-            del resources.cache[url]
+        if url in parent.cache:
+            del parent.cache[url]
 
 
 class NamedResource(MutableResource):

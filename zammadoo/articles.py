@@ -100,12 +100,12 @@ class Attachment:
 class Article(Resource):
     @property
     def ticket(self):
-        return self._resources.client.tickets(self["ticket_id"])
+        return self.parent.client.tickets(self["ticket_id"])
 
     @property
     def attachments(self):
         attachment_list = []
-        client = self._resources.client
+        client = self.parent.client
         for info in self["attachments"]:
             url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self._id}/{info['id']}"
             attachment = Attachment(client.session, url, info)

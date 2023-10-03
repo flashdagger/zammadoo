@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Dict, Iterable, List, Literal, Optional, Tuple, Union
+from typing import Dict, List, Literal, Optional, Tuple, Union
 
 from .articles import Article
 from .client import Client
@@ -9,7 +9,7 @@ from .organizations import Organization
 from .resource import MutableResource, NamedResource
 from .resources import IterableT, SearchableT
 from .users import User
-from .utils import JsonContainer, JsonDict
+from .utils import JsonDict
 
 LINK_TYPES: Tuple[str, ...]
 LINK_TYPE = Literal["normal", "parent", "child"]
@@ -36,6 +36,8 @@ class States(IterableT[State]):
     def create(self, name: str, state_type_id: int, **kwargs) -> State: ...
 
 class Ticket(MutableResource):
+    parent: "Tickets"
+
     articles: List[Article]
     customer: User
     group: User
@@ -59,7 +61,6 @@ class Ticket(MutableResource):
 class Tickets(SearchableT[Ticket]):
     RESOURCE_TYPE = Ticket
 
-    def _iter_items(self, items: JsonContainer) -> Iterable[Ticket]: ...
     def create(
         self,
         title: str,

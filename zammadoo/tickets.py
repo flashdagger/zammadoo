@@ -58,7 +58,7 @@ class Ticket(MutableResource):
 
     @property
     def articles(self):
-        articles = self._resources.client.ticket_articles
+        articles = self.parent.client.ticket_articles
 
         try:
             rids = self["article_ids"]
@@ -68,32 +68,30 @@ class Ticket(MutableResource):
         return [articles(rid) for rid in rids]
 
     def tags(self):
-        return self._resources.client.tags.by_ticket(self.id)
+        return self.parent.client.tags.by_ticket(self.id)
 
     def add_tags(self, *names):
-        return self._resources.client.tags.add_to_ticket(self.id, *names)
+        return self.parent.client.tags.add_to_ticket(self.id, *names)
 
     def remove_tags(self, *names):
-        return self._resources.client.tags.remove_from_ticket(self.id, *names)
+        return self.parent.client.tags.remove_from_ticket(self.id, *names)
 
     def links(self):
-        resources = self._resources
+        parent = self.parent
+        client = parent.client
         params = {"link_object": "Ticket", "link_object_value": self.id}
         link_map = dict((key, []) for key in LINK_TYPES)
 
-        items = resources.client.get("links", params=params)
-        cache_assets(resources.client, items.get("assets", {}))
+        items = client.get("links", params=params)
+        cache_assets(client, items.get("assets", {}))
         for item in items["links"]:
             assert item["link_object"] == "Ticket"
             link_type = item["link_type"]
-            link_map.setdefault(link_type, []).append(
-                resources(item["link_object_value"])
-            )
+            link_map.setdefault(link_type, []).append(parent(item["link_object_value"]))
 
         return link_map
 
     def link_with(self, target_id, link_type="normal"):
-        resources = self._resources
         params = {
             "link_type": link_type,
             "link_object_target": "Ticket",
@@ -101,10 +99,9 @@ class Ticket(MutableResource):
             "link_object_source": "Ticket",
             "link_object_source_number": self["number"],
         }
-        resources.client.post("links/add", json=params)
+        self.parent.client.post("links/add", json=params)
 
     def unlink_from(self, target_id, link_type="any"):
-        resources = self._resources
         if link_type not in LINK_TYPES:
             link_type = "normal"
             for _link_type, tickets in self.links().items():
@@ -118,14 +115,14 @@ class Ticket(MutableResource):
             "link_object_source": "Ticket",
             "link_object_source_value": target_id,
         }
-        resources.client.delete("links/remove", json=params)
+        self.parent.client.delete("links/remove", json=params)
 
     def merge_with(self, target_id):
-        resources = self._resources
-        info = resources.client.put("ticket_merge", target_id, self["number"])
+        parent = self.parent
+        info = parent.client.put("ticket_merge", target_id, self["number"])
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
-        return self._resources(merged_info["id"], info=merged_info)
+        return parent(merged_info["id"], info=merged_info)
 
 
 class Tickets(SearchableT[Ticket], Creatable):

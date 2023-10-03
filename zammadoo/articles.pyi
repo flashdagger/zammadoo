@@ -37,6 +37,8 @@ class Attachment:
     def iter_bytes(self, chunk_size: int = ...) -> Iterator[bytes]: ...
 
 class Article(Resource):
+    parent: "Articles"
+
     attachments: List[Attachment]
     body: str
     cc: str
