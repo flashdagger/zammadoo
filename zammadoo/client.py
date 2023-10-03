@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from textwrap import shorten
-from typing import Optional, Sequence, Tuple
+from typing import Optional, Sequence, Tuple, Union
 
 import requests
 from requests import HTTPError, JSONDecodeError
@@ -117,7 +117,7 @@ class Client:
         self.url = url.rstrip("/")
         self.pagination = self.Pagination()
 
-        def check_config():
+        def check_config() -> None:
             if http_token is not None:
                 return
             if oauth2_token is not None:
@@ -143,9 +143,9 @@ class Client:
         self.session.headers.update(additional_headers)
 
     @contextmanager
-    def on_behalf_of(self, user: str):
+    def on_behalf_of(self, user: Union[str, int]):
         try:
-            self.session.headers["X-On-Behalf-Of"] = user
+            self.session.headers["X-On-Behalf-Of"] = str(user)
             yield
         finally:
             self.session.headers.pop("X-On-Behalf-Of", None)

@@ -64,11 +64,5 @@ class Users(SearchableT[User], Creatable):
 
     # pylint: disable=invalid-name
     def me(self) -> User:
-        cache = self.cache
-        endpoint = "users/me"
-        callback = partial(self.client.get, endpoint)
-
-        info = cache.setdefault_by_callback(self.url(endpoint), callback)
-        uid = info["id"]
-        cache[self.url(uid)] = info
-        return self.RESOURCE_TYPE(self, uid)
+        info = self.client.get(self.endpoint, "me")
+        return self.RESOURCE_TYPE(self, info["id"], info)
