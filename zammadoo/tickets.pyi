@@ -41,6 +41,7 @@ class States(IterableT[State]):
 class Ticket(MutableResource):
     parent: "Tickets"
 
+    article_count: Optional[int]
     articles: List[Article]
     customer: User
     group: User
@@ -60,7 +61,7 @@ class Ticket(MutableResource):
     def unlink_from(self, target_id: int, link_type: LINK_TYPE = ...) -> None: ...
     def merge_with(self, target_id: int) -> "Ticket": ...
     def update(self, **kwargs) -> "Ticket": ...
-    def new_article(
+    def create_article(
         self, body: str, type: str = ..., internal: bool = ..., **kwargs
     ) -> Article: ...
 

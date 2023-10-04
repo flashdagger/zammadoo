@@ -131,9 +131,9 @@ class Ticket(MutableResource):
         merged_info = info["target_ticket"]
         return parent(merged_info["id"], info=merged_info)
 
-    def new_article(self, body, type="note", internal=True, **kwargs):
+    def create_article(self, body, typ="note", internal=True, **kwargs):
         return self.parent.client.ticket_articles.create(
-            self._id, body=body, type=type, internal=internal, **kwargs
+            self._id, body=body, type=typ, internal=internal, **kwargs
         )
 
 

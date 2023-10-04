@@ -19,13 +19,13 @@ userlist_property = partial(resourcelist_property("users"))
 
 class User(NamedResource):
     @property
+    def fullname(self):
+        firstname, lastname = self["firstname"], self["lastname"]
+        return f"{firstname}{' ' if firstname and lastname else ''}{lastname}"
+
+    @property
     def name(self):
-        name = f"{self.firstname} {self.lastname}".strip()
-        if not name:
-            name = self.email
-        if not name:
-            name = self.phone
-        return name
+        return self["email"] or self["phone"]
 
     @resourcelist_property
     def groups(self):

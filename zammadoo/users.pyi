@@ -17,9 +17,13 @@ userlist_property: Callable[..., "User"]
 class User(NamedResource):
     email: str
     firstname: str
+    @property
+    def fullname(self) -> str: ...
     groups: List[Group]
     last_login: Optional[datetime]
     lastname: str
+    login: str
+    name: str
     organization: Optional[Organization]
     organizations: List[Organization]
     phone: str
