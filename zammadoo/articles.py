@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Optional
 import requests
 
 from .resource import Resource
-from .resources import ResourcesT
+from .resources import Creatable, ResourcesT
 
 if TYPE_CHECKING:
     pass
@@ -82,10 +82,9 @@ class Attachment:
         return preferences.get("Charset")
 
     def iter_text(self, chunk_size=8192):
-        encoding = self.encoding
-        return self._response(encoding=encoding).iter_content(
-            chunk_size=chunk_size, decode_unicode=bool(encoding)
-        )
+        response = self._response(encoding=self.encoding)
+        assert response.encoding, "content is binary only, use .iter_bytes() instead"
+        return response.iter_content(chunk_size=chunk_size, decode_unicode=True)
 
     def iter_bytes(self, chunk_size=8192):
         return self._response().iter_content(chunk_size=chunk_size)
@@ -107,7 +106,7 @@ class Article(Resource):
         return attachment_list
 
 
-class Articles(ResourcesT[Article]):
+class Articles(Creatable, ResourcesT[Article]):
     RESOURCE_TYPE = Article
 
     def __init__(self, client):
@@ -116,3 +115,11 @@ class Articles(ResourcesT[Article]):
     def by_ticket(self, tid: int):
         items = self.client.get(self.endpoint, "by_ticket", tid)
         return [self(item["id"], info=item) for item in items]
+
+    def create(self, ticket_id, body, **kwargs):
+        info = {
+            "ticket_id": ticket_id,
+            "body": body,
+            **kwargs,
+        }
+        return super()._create(info)

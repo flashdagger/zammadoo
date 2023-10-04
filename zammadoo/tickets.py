@@ -98,8 +98,9 @@ class Ticket(MutableResource):
         return link_map
 
     def link_with(self, target_id, link_type="normal"):
+        switch_map = {"parent": "child", "child": "parent"}
         params = {
-            "link_type": link_type,
+            "link_type": switch_map.get(link_type, link_type),
             "link_object_target": "Ticket",
             "link_object_target_value": target_id,
             "link_object_source": "Ticket",
@@ -129,6 +130,11 @@ class Ticket(MutableResource):
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
         return parent(merged_info["id"], info=merged_info)
+
+    def new_article(self, body, type="note", internal=True, **kwargs):
+        return self.parent.client.ticket_articles.create(
+            self._id, body=body, type=type, internal=internal, **kwargs
+        )
 
 
 class Tickets(SearchableT[Ticket], Creatable):
