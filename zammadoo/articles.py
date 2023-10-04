@@ -2,29 +2,28 @@
 # -*- coding: UTF-8 -*-
 
 from base64 import b64encode
-from logging import getLogger
 from mimetypes import guess_type
 from pathlib import Path
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Optional
 
 import requests
-from requests import Session
 
 from .resource import Resource
 from .resources import ResourcesT
 
 if TYPE_CHECKING:
-    from .utils import JsonDict
+    pass
 
 
 class Attachment:
-    def __init__(self, session: Session, content_url: str, info: "JsonDict"):
-        self._session = session
-        self._content_url = content_url
+    def __init__(self, client, content_url, info):
+        self._client = client
+        self._url = content_url
         self._info = info
 
     def __repr__(self):
-        return f"<{self.__class__.__qualname__} {self._content_url!r}>"
+        return f"<{self.__class__.__qualname__} {self._url!r}>"
 
     def __getattr__(self, item):
         return self._info[item]
@@ -35,7 +34,7 @@ class Attachment:
         for path in paths:
             filepath = Path(path)
             assert filepath.is_file()
-            mime_type, encoding = guess_type(filepath, strict=True)
+            mime_type, _encoding = guess_type(filepath, strict=True)
             info_list.append(
                 {
                     "filename": filepath.name,
@@ -45,27 +44,22 @@ class Attachment:
             )
         return info_list
 
+    def view(self):
+        return MappingProxyType(self._info)
+
     @property
     def url(self):
-        return self._content_url
+        return self._url
 
     def _response(self, encoding: Optional[str] = None) -> requests.Response:
-        url = self._content_url
-        response = self._session.get(url, stream=True)
-
-        # debug info
-        headers = response.headers
-        mapping = dict.fromkeys(("Content-Length", "Content-Type"))
-        for key in mapping:
-            mapping[key] = headers.get(key)
-        info = ", ".join(f"{key}: {value}" for key, value in mapping.items() if value)
-        getLogger("zammadoo.client").debug("[GET] %s [%s]", url, info)
-
+        response = self._client.response("GET", self._url, stream=True)
+        response.raise_for_status()
         if encoding:
             response.encoding = encoding
+
         return response
 
-    def download(self, path=".") -> Path:
+    def download(self, path="."):
         filepath = Path(path)
         if filepath.is_dir():
             filepath = filepath / self.filename
@@ -87,13 +81,13 @@ class Attachment:
         preferences = self._info.get("preferences", {})
         return preferences.get("Charset")
 
-    def iter_text(self, chunk_size=4096):
+    def iter_text(self, chunk_size=8192):
         encoding = self.encoding
         return self._response(encoding=encoding).iter_content(
             chunk_size=chunk_size, decode_unicode=bool(encoding)
         )
 
-    def iter_bytes(self, chunk_size=4096):
+    def iter_bytes(self, chunk_size=8192):
         return self._response().iter_content(chunk_size=chunk_size)
 
 
@@ -108,7 +102,7 @@ class Article(Resource):
         client = self.parent.client
         for info in self["attachments"]:
             url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self._id}/{info['id']}"
-            attachment = Attachment(client.session, url, info)
+            attachment = Attachment(client, url, info)
             attachment_list.append(attachment)
         return attachment_list
 

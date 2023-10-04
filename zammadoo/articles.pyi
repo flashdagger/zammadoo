@@ -4,15 +4,14 @@
 from datetime import datetime
 from os import PathLike
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any, Dict, Iterator, List, Optional, Union
-
-from requests import Session
 
 from . import Client
 from .resource import Resource
 from .resources import ResourcesT
 from .tickets import Ticket
-from .utils import JsonDict
+from .utils import JsonDict, JsonType
 
 PathType = Union[str, PathLike]
 
@@ -23,12 +22,13 @@ class Attachment:
     size: int
     store_file_id: int
 
-    def __init__(self, session: Session, content_url: str, info: JsonDict) -> None: ...
+    def __init__(self, client: Client, content_url: str, info: JsonDict) -> None: ...
     def __getattr__(self, item): ...
     @staticmethod
     def info_from_files(*paths: PathType) -> List[Dict[str, str]]: ...
     @property
-    def url(self): ...
+    def url(self) -> str: ...
+    def view(self) -> MappingProxyType[str, JsonType]: ...
     def read_bytes(self) -> bytes: ...
     def read_text(self) -> str: ...
     def download(self, path: PathType = ...) -> Path: ...
@@ -42,7 +42,7 @@ class Article(Resource):
 
     attachments: List[Attachment]
     body: str
-    cc: str
+    cc: Optional[str]
     content_type: str
     created_at: datetime
     created_by: str
@@ -50,9 +50,9 @@ class Article(Resource):
     internal: bool
     message_id: Optional[str]
     message_id_md5: Optional[str]
-    subject: str
+    subject: Optional[str]
     ticket: Ticket
-    to: str
+    to: Optional[str]
     updated_at: datetime
     updated_by: str
 

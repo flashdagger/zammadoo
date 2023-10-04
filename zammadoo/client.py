@@ -10,7 +10,7 @@ from textwrap import shorten
 from typing import Optional, Sequence, Tuple, Union
 
 import requests
-from requests import HTTPError, JSONDecodeError
+from requests import HTTPError, JSONDecodeError, Response
 
 from .articles import Articles
 from .groups import Groups
@@ -171,9 +171,18 @@ class Client:
         params: Optional[StringKeyDict] = None,
         json: Optional[StringKeyDict] = None,
         **kwargs,
-    ):
+    ) -> Response:
         response = self.session.request(method, url, params=params, json=json, **kwargs)
-        if json and LOG.level == logging.DEBUG:
+        if kwargs.get("stream") and LOG.level == logging.DEBUG:
+            headers = response.headers
+            mapping = dict.fromkeys(("Content-Length", "Content-Type"))
+            for key in mapping:
+                mapping[key] = headers.get(key)
+            info = ", ".join(
+                f"{key}: {value}" for key, value in mapping.items() if value
+            )
+            LOG.debug("[%s] %s [%s]", method, response.url, info)
+        elif json and LOG.level == logging.DEBUG:
             LOG.debug("[%s] %s json=%r", method, response.url, json)
         else:
             LOG.info("[%s] %s", method, response.url)
