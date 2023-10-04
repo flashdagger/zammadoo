@@ -62,8 +62,9 @@ class Resource:
     def __init__(self, parent: "ResourcesT", rid: int, info: Optional[JsonDict] = None):
         self._id = rid
         self.parent = parent
-        self._info: JsonDict = info or {}
         self.url = parent.url(rid)
+        self._info: JsonDict = info or {}
+        self._frozen = True
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
@@ -84,6 +85,16 @@ class Resource:
                 return datetime.fromisoformat(value)
 
         return value
+
+    def __setattr__(self, name, value):
+        try:
+            self.__getattribute__("_frozen")
+        except AttributeError:
+            return super().__setattr__(name, value)
+        else:
+            raise AttributeError(
+                f"{self.__class__.__name__!r} object attribute {name!r} is read-only"
+            )
 
     def __getitem__(self, item: str):
         self._initialize()
