@@ -5,3 +5,5 @@ Client
 
 .. autoclass:: Client
     :members:
+    :undoc-members:
+    :exclude-members: Pagination

@@ -31,6 +31,13 @@ extensions = [
 autoclass_content = "both"
 autodoc_member_order = "bysource"
 
+# Automatically extract typehints when specified and place them in
+# descriptions of the relevant function/method.
+autodoc_typehints = "description"
+
+# Don't show class signature with the class' name.
+# autodoc_class_signature = "separated"
+
 templates_path = ["_templates"]
 
 
@@ -77,7 +84,7 @@ html_theme_options = {
     # Toc options
     "collapse_navigation": True,
     "sticky_navigation": True,
-    "navigation_depth": 4,
+    "navigation_depth": 3,
     "includehidden": True,
     "titles_only": False,
 }

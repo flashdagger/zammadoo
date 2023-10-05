@@ -52,6 +52,19 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
 
 
 class Client:
+    """
+    The root class that interacts with the REST API.
+
+    Almost every object keeps the initialized instance of Client as reference.
+
+    Example::
+
+        from zammadoo import Client
+
+        client = Client("https://myhost.com/api/v1/", username="<username>", password="<mysecret>")
+
+    """
+
     # links: Resources
     # object_manager_attributes: Resources
     # online_notifications: Resources
@@ -60,38 +73,47 @@ class Client:
 
     @cached_property
     def groups(self) -> Groups:
+        """managing the /groups endpoint"""
         return Groups(self)
 
     @cached_property
     def organizations(self) -> Organizations:
+        """managing the /organizations endpoint"""
         return Organizations(self)
 
     @cached_property
     def roles(self) -> Roles:
+        """managing the /roles endpoint"""
         return Roles(self)
 
     @cached_property
     def tags(self) -> Tags:
+        """managing the /tags /tag_list and /tag_search endpoint"""
         return Tags(self)
 
     @cached_property
     def ticket_articles(self) -> Articles:
+        """managing the /ticket_articles endpoint"""
         return Articles(self)
 
     @cached_property
     def ticket_priorities(self) -> Priorities:
+        """managing the /ticket_priorities endpoint"""
         return Priorities(self)
 
     @cached_property
     def ticket_states(self) -> States:
+        """managing the /ticket_states endpoint"""
         return States(self)
 
     @cached_property
     def tickets(self) -> Tickets:
+        """managing the /tickets endpoint"""
         return Tickets(self)
 
     @cached_property
     def users(self) -> Users:
+        """managing the ``/users`` endpoint"""
         return Users(self)
 
     @dataclass
@@ -104,12 +126,34 @@ class Client:
     def __init__(
         self,
         url: str,
+        *,
         username: Optional[str] = None,
         password: Optional[str] = None,
         http_token: Optional[str] = None,
         oauth2_token: Optional[str] = None,
         additional_headers: Sequence[Tuple[str, str]] = (),
     ) -> None:
+        """
+        For authentication use either username and password or http_token or oauth2_token
+
+        :param url: the zammad API url like ``https://myhost.com/api/v1``
+        :type url: string
+        :param username: the username for HTTP Basic Authentication
+        :type username: string
+        :param password: the password for HTTP Basic Authentication
+        :type password: string
+        :param http_token: access token when using HTTP Token Authentication
+        :type http_token: string
+        :param oauth2_token: access token when using OAuth 2 Authentication
+        :type oauth2_token: string
+        :param additional_headers: additional name, value pairs that will be
+                appended to the requests header ``[(name, value), ...]``
+        :type additional_headers:
+
+        :raises ValueError: When authentication settings are not correct.
+
+
+        """
         self.url = url.rstrip("/")
         self.pagination = self.Pagination()
 
