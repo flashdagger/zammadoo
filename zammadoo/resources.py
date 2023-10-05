@@ -4,7 +4,16 @@
 from copy import copy
 from dataclasses import asdict
 from functools import partial
-from typing import TYPE_CHECKING, Generic, Iterable, Literal, Optional, Type
+from typing import (
+    TYPE_CHECKING,
+    Generic,
+    Iterable,
+    Literal,
+    MutableMapping,
+    Optional,
+    Type,
+)
+from weakref import WeakValueDictionary
 
 from .cache import LruCache
 from .resource import T
@@ -16,12 +25,13 @@ if TYPE_CHECKING:
 
 class ResourcesT(Generic[T]):
     RESOURCE_TYPE: Type[T]
-    CACHE_SIZE = -1
+    DEFAULT_CACHE_SIZE = -1
 
     def __init__(self, client: "Client", endpoint: str):
-        self.client: "Client" = client
+        self.client = client
         self.endpoint: str = endpoint
-        self.cache = LruCache(max_size=self.CACHE_SIZE)
+        self.cache = LruCache(max_size=self.DEFAULT_CACHE_SIZE)
+        self._instance_cache: MutableMapping[int, T] = WeakValueDictionary()
 
     def __call__(self, rid: int, *, info: Optional[JsonDict] = None) -> T:
         if info:
@@ -29,7 +39,12 @@ class ResourcesT(Generic[T]):
                 info.get("id") == rid
             ), "parameter info must contain 'id' and be equal with rid"
             self.cache[self.url(rid)] = info
-        return self.RESOURCE_TYPE(self, rid, info=info)
+
+        instance_map = self._instance_cache
+        instance = instance_map.get(rid)
+        if not instance or info:
+            instance = instance_map[rid] = self.RESOURCE_TYPE(self, rid, info=info)
+        return instance
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url()!r}>"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
 
 from .utils import StringKeyDict
 
@@ -30,15 +30,14 @@ class Tags:
     def _reload(self):
         cache = self._map
         cache.clear()
-        items = cast(ItemList, self.client.get(self.endpoint))
-        cache.update((info["name"], info) for info in items)
+        cache.update((info["name"], info) for info in self.client.get(self.endpoint))
 
     def as_list(self) -> List[str]:
         self._reload()
         return list(self._map.keys())
 
     def search(self, term: str) -> List[str]:
-        items = cast(ItemList, self.client.get("tag_search", params={"term": term}))
+        items = self.client.get("tag_search", params={"term": term})
 
         for info in items:
             name = info.pop("value")
@@ -79,7 +78,5 @@ class Tags:
             self.client.delete("tags/remove", json=params)
 
     def by_ticket(self, tid: int) -> List[str]:
-        items = cast(
-            ItemDict, self.client.get("tags", params={"object": "Ticket", "o_id": tid})
-        )
+        items = self.client.get("tags", params={"object": "Ticket", "o_id": tid})
         return items.get("tags", [])

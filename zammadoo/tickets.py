@@ -139,7 +139,7 @@ class Ticket(MutableResource):
 
 class Tickets(SearchableT[Ticket], Creatable):
     RESOURCE_TYPE = Ticket
-    CACHE_SIZE = 100
+    DEFAULT_CACHE_SIZE = 100
 
     def __init__(self, client):
         super().__init__(client, "tickets")
