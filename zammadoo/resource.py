@@ -5,12 +5,9 @@ from contextlib import suppress
 from datetime import datetime
 from functools import wraps
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Optional, TypeVar
+from typing import TypeVar
 
 from .utils import JsonDict
-
-if TYPE_CHECKING:
-    from .resources import ResourcesT
 
 T = TypeVar("T", bound="Resource")
 
@@ -59,7 +56,7 @@ def resourcelist_property(endpoint, key=None):
 
 
 class Resource:
-    def __init__(self, parent: "ResourcesT", rid: int, info: Optional[JsonDict] = None):
+    def __init__(self, parent, rid, info=None):
         self._id = rid
         self.parent = parent
         self.url = parent.url(rid)
@@ -69,7 +66,7 @@ class Resource:
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
 
-    def __getattr__(self, item: str):
+    def __getattr__(self, item):
         self._initialize()
         info = self._info
 
@@ -91,12 +88,12 @@ class Resource:
             self.__getattribute__("_frozen")
         except AttributeError:
             return super().__setattr__(name, value)
-        else:
-            raise AttributeError(
-                f"{self.__class__.__name__!r} object attribute {name!r} is read-only"
-            )
 
-    def __getitem__(self, item: str):
+        raise AttributeError(
+            f"{self.__class__.__name__!r} object attribute {name!r} is read-only"
+        )
+
+    def __getitem__(self, item):
         self._initialize()
         return self._info[item]
 
