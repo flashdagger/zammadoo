@@ -7,7 +7,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Dict, Iterator, List, Optional, Union
 
-from . import Client
+from .client import Client
 from .resource import Resource
 from .resources import ResourcesT
 from .tickets import Ticket

@@ -27,7 +27,7 @@ class Tags:
         self._reload()
         yield from self._map.values()
 
-    def _reload(self):
+    def _reload(self) -> None:
         cache = self._map
         cache.clear()
         cache.update((info["name"], info) for info in self.client.get(self.endpoint))
@@ -78,5 +78,7 @@ class Tags:
             self.client.delete("tags/remove", json=params)
 
     def by_ticket(self, tid: int) -> List[str]:
-        items = self.client.get("tags", params={"object": "Ticket", "o_id": tid})
+        items: StringKeyDict = self.client.get(
+            "tags", params={"object": "Ticket", "o_id": tid}
+        )
         return items.get("tags", [])

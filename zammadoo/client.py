@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from textwrap import shorten
-from typing import Optional, Sequence, Tuple, Union
+from typing import Optional, Sequence, Tuple, Union, cast
 
 import requests
 from requests import HTTPError, JSONDecodeError, Response
@@ -15,15 +15,11 @@ from requests import HTTPError, JSONDecodeError, Response
 from .articles import Articles
 from .groups import Groups
 from .organizations import Organizations
-from .resource import Resource
-from .resources import ResourcesT
 from .roles import Roles
 from .tags import Tags
 from .tickets import Priorities, States, Tickets
 from .users import Users
 from .utils import JsonType, StringKeyDict
-
-BaseResources = ResourcesT[Resource]
 
 LOG = logging.getLogger(__name__)
 
@@ -50,7 +46,7 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
             ) from exc
 
     try:
-        return response.json()
+        return cast(JsonType, response.json())
     except JSONDecodeError:
         return response.text
 

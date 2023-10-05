@@ -73,11 +73,12 @@ html = {directory = "report"}
 [tool.mypy]
 python_version = "3.9"
 cache_dir = ".cache/mypy"
-namespace_packages = true
 exclude = "build|venv"
-ignore_missing_imports = true
-allow_empty_bodies = true
 
+allow_empty_bodies = true
+disable_error_code = "no-untyped-def"
+ignore_missing_imports = true
+strict = true
 
 [tool.pylint.main]
 # Analyse import fallback blocks. This can be used to support both Python 2 and 3

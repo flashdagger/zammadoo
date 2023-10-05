@@ -3,7 +3,7 @@
 
 from typing import List
 
-from . import Client
+from .client import Client
 from .resource import MutableResource
 from .resources import SearchableT
 from .users import User

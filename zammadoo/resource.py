@@ -5,11 +5,8 @@ from contextlib import suppress
 from datetime import datetime
 from functools import wraps
 from types import MappingProxyType
-from typing import TypeVar
 
 from .utils import JsonDict
-
-T = TypeVar("T", bound="Resource")
 
 
 def resource_property(endpoint, key=None):
