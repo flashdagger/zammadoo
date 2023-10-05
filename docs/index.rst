@@ -3,12 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to zammadoo's documentation!
-====================================
+zammadoo
+========
+an object-oriented Zammad REST API Client for Python
+----------------------------------------------------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    api/index
 
