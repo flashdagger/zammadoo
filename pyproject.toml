@@ -36,7 +36,7 @@ version_pattern = "MAJOR.MINOR.PATCH"
 "pyproject.toml" = [
     'version = "{version}"',
 ]
-"doc/conf.py" = [
+"docs/conf.py" = [
     'release = "{version}"',
 ]
 

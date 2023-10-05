@@ -5,8 +5,8 @@
 .coverage
 /*.egg-info
 *_
-/doc/html
-/doc/_build
+/docs/html
+/docs/_build
 /cache
 /out
 /.idea/workspace.xml
