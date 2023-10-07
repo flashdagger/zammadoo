@@ -62,12 +62,12 @@ class Tags:
             name_or_tid = self._map[name_or_tid]["id"]
         self.client.put(self.endpoint, name_or_tid, json={"name": new_name})
 
-    def add_to_ticket(self, tid: int, *names: str):
+    def add_to_ticket(self, tid: int, *names: str) -> None:
         for name in names:
             params = {"item": name, "object": "Ticket", "o_id": tid}
             self.client.post("tags/add", json=params)
 
-    def remove_from_ticket(self, tid: int, *names: str):
+    def remove_from_ticket(self, tid: int, *names: str) -> None:
         for name in names:
             params = {"item": name, "object": "Ticket", "o_id": tid}
             self.client.delete("tags/remove", json=params)

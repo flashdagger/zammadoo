@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-from typing import TYPE_CHECKING, List, Optional
 
-from .resource import MutableResource, NamedResource, resource_property
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
+
+from .resource import MutableResource, NamedResource
 from .resources import Creatable, IterableT, SearchableT
-from .users import user_property
-from .utils import LINK_TYPES
+from .utils import LINK_TYPE, LINK_TYPES
 
 if TYPE_CHECKING:
     from .articles import Article
+    from .client import Client
     from .groups import Group
     from .organizations import Organization
+    from .types import JsonDict
     from .users import User
 
 
@@ -18,63 +20,71 @@ class Priority(NamedResource):
     pass
 
 
-class Priorities(IterableT[Priority], Creatable):
+class Priorities(IterableT[Priority], Creatable[Priority]):
     RESOURCE_TYPE = Priority
 
     create = Creatable.create_with_name
 
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         super().__init__(client, "ticket_priorities")
 
 
 class State(MutableResource):
-    @resource_property("ticket_states")
+    @property
     def next_state(self) -> "State":
-        ...
+        sid = self["next_state_id"]
+        return self.parent.client.ticket_states(sid)
 
 
-class States(IterableT[State], Creatable):
+class States(IterableT[State], Creatable[State]):
     RESOURCE_TYPE = State
 
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         super().__init__(client, "ticket_states")
 
-    def create(self, name, state_type_id, **kwargs):
+    def create(self, name, state_type_id, **kwargs) -> "State":
         return super()._create({"name": name, "state_type_id": state_type_id, **kwargs})
 
 
 class Ticket(MutableResource):
-    article_count: Optional[int]
-    note: str
-    number: str
-    title: str
+    article_count: Optional[int]  #:
+    note: str  #:
+    number: str  #:
+    title: str  #:
 
-    @user_property
+    @property
     def customer(self) -> "User":
-        ...
+        uid = self["customer_id"]
+        return self.parent.client.users(uid)
 
-    @resource_property
+    @property
     def group(self) -> "Group":
-        ...
+        gid = self["group_id"]
+        return self.parent.client.groups(gid)
 
-    @resource_property
+    @property
     def organization(self) -> Optional["Organization"]:
-        ...
+        oid = self["organization_id"]
+        return oid and self.parent.client.organizations(oid)
 
-    @user_property
+    @property
     def owner(self) -> "User":
         """
         .. note::
            unassigned tickets will be represented by User(id=1)
         """
+        uid = self["owner_id"]
+        return self.parent.client.users(uid)
 
-    @resource_property("ticket_priorities")
+    @property
     def priority(self) -> Priority:
-        ...
+        pid = self["priority_id"]
+        return self.parent.client.ticket_priorities(pid)
 
-    @resource_property("ticket_states")
+    @property
     def state(self) -> State:
-        ...
+        sid = self["state_id"]
+        return self.parent.client.ticket_states(sid)
 
     @property
     def articles(self) -> List["Article"]:
@@ -90,7 +100,7 @@ class Ticket(MutableResource):
 
         return [articles(rid) for rid in rids]
 
-    def tags(self):
+    def tags(self) -> List[str]:
         """
         all tags that are related to the ticket as sent by ``/tags?object=Ticket&o_id={ticket id}``
 
@@ -98,7 +108,7 @@ class Ticket(MutableResource):
         """
         return self.parent.client.tags.by_ticket(self.id)
 
-    def add_tags(self, *names):
+    def add_tags(self, *names: str) -> None:
         """
         link given tags with ticket, if the tag is already linked with the ticket
         it will be ignored
@@ -108,7 +118,7 @@ class Ticket(MutableResource):
         """
         return self.parent.client.tags.add_to_ticket(self.id, *names)
 
-    def remove_tags(self, *names):
+    def remove_tags(self, *names: str) -> None:
         """
         remove given tags from ticket, if the tag is not linked with the ticket
         it will be ignored
@@ -118,7 +128,7 @@ class Ticket(MutableResource):
         """
         return self.parent.client.tags.remove_from_ticket(self.id, *names)
 
-    def links(self):
+    def links(self) -> Dict[str, List["Ticket"]]:
         """
         returns all linked tickets grouped by link type
 
@@ -138,7 +148,7 @@ class Ticket(MutableResource):
 
         return link_map
 
-    def link_with(self, target_id, link_type="normal"):
+    def link_with(self, target_id: int, link_type: LINK_TYPE = "normal"):
         """
         link the ticket with another one, if the link already
         exists it will be ignored
@@ -158,7 +168,9 @@ class Ticket(MutableResource):
         }
         self.parent.client.post("links/add", json=params)
 
-    def unlink_from(self, target_id, link_type="any"):
+    def unlink_from(
+        self, target_id: int, link_type: Optional[LINK_TYPE] = None
+    ) -> None:
         """
         remove link with another, if the link does not exist it will be ignored
 
@@ -168,22 +180,23 @@ class Ticket(MutableResource):
                         will be looked up for every link_type
         :type link_type: ``"normal"``, ``"parent"``, ``"child"``
         """
-        if link_type not in LINK_TYPES:
-            link_type = "normal"
-            for _link_type, tickets in self.links().items():
-                if target_id in {ticket.id for ticket in tickets}:
-                    link_type = _link_type
+        for _link_type, tickets in self.links().items():
+            if link_type not in {None, _link_type}:
+                continue
 
-        params = {
-            "link_type": link_type,
-            "link_object_target": "Ticket",
-            "link_object_target_value": self._id,
-            "link_object_source": "Ticket",
-            "link_object_source_value": target_id,
-        }
-        self.parent.client.delete("links/remove", json=params)
+            if target_id not in {ticket.id for ticket in tickets}:
+                continue
 
-    def merge_with(self, target_id):
+            params = {
+                "link_type": _link_type,
+                "link_object_target": "Ticket",
+                "link_object_target_value": self._id,
+                "link_object_source": "Ticket",
+                "link_object_source_value": target_id,
+            }
+            self.parent.client.delete("links/remove", json=params)
+
+    def merge_with(self, target_id: int) -> "Ticket":
         """
         merges the ticket with another one
 
@@ -196,9 +209,11 @@ class Ticket(MutableResource):
         info = parent.client.put("ticket_merge", target_id, self["number"])
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
-        return parent(merged_info["id"], info=merged_info)
+        return cast("Ticket", parent(merged_info["id"], info=merged_info))
 
-    def create_article(self, body, typ="note", internal=True, **kwargs):
+    def create_article(
+        self, body: str, typ: str = "note", internal: bool = True, **kwargs
+    ) -> "Article":
         """
         Create a new article for the ticket.
 
@@ -217,11 +232,11 @@ class Ticket(MutableResource):
         )
 
 
-class Tickets(SearchableT[Ticket], Creatable):
+class Tickets(SearchableT[Ticket], Creatable[Ticket]):
     RESOURCE_TYPE = Ticket
     DEFAULT_CACHE_SIZE = 100
 
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         super().__init__(client, "tickets")
 
     def _iter_items(self, items):
@@ -235,7 +250,14 @@ class Tickets(SearchableT[Ticket], Creatable):
         for rid in items.get("tickets", ()):
             yield self.RESOURCE_TYPE(self, rid)
 
-    def create(self, title, *, group, customer, body=None, **kwargs):
+    def create(
+        self,
+        title: str,
+        group: Union[str, int],
+        customer: Union[str, int],
+        body: Optional[str] = None,
+        **kwargs,
+    ) -> Ticket:
         """
         Create a new ticket.
 
@@ -268,7 +290,7 @@ class Tickets(SearchableT[Ticket], Creatable):
         return super()._create(info)
 
 
-def cache_assets(client, assets):
+def cache_assets(client: "Client", assets: Dict[str, Dict[str, "JsonDict"]]) -> None:
     for key, asset in assets.items():
         resources = getattr(client, f"{key.lower()}s")
         for rid_s, info in asset.items():
