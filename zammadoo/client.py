@@ -141,19 +141,12 @@ class Client:
         or ``http_token`` or ``oauth2_token``.
 
         :param url: the zammad API url (e.g. ``https://myhost.com/api/v1``)
-        :type url: :class:`str`
         :param username: the username for HTTP Basic Authentication
-        :type username: :class:`str`
         :param password: the password for HTTP Basic Authentication
-        :type password: :class:`str`
         :param http_token: access token when using HTTP Token Authentication
-        :type http_token: :class:`str`
         :param oauth2_token: access token when using OAuth 2 Authentication
-        :type oauth2_token: :class:`str`
         :param additional_headers: additional name, value pairs that will be
                 appended to the requests header ``[(name, value), ...]``
-        :type additional_headers:
-
         :raises: :exc:`ValueError` if authentication settings are missing.
 
 
@@ -198,7 +191,6 @@ class Client:
 
 
         :param user: user id or login_name
-        :type user: :class:`int` | :class:`str`
         """
         try:
             self.session.headers["X-On-Behalf-Of"] = str(user)
@@ -218,12 +210,9 @@ class Client:
         Performs a request on the API url.
 
         :param method: HTTP method: ``GET``, ``POST``, ``PUT``, ``DELETE``
-        :type method: :class:`str`
         :param args: endpoint specifiers
         :param params: url parameter (usually for ``GET``)
-        :type params: :class:`dict[str, Any]`
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
-        :type json: :class:`dict[str, Any]`
         :param kwargs: additional parameters passed to ``request()``
         :returns: the server JSON response
         :rtype: :class:`dict[str, Any]`
@@ -248,13 +237,9 @@ class Client:
         Performs a request on the API url.
 
         :param method: the HTTP method (e.g. ``GET``, ``POST``, ``PUT``, ``DELETE``)
-        :type method: :class:`str`
         :param url: full resource URL
-        :type url: :class:`str`
         :param params: url parameter (usually for ``GET``)
-        :type params: :class:`dict[str, Any]`
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
-        :type json: :class:`dict[str, Any]`
         :param kwargs: additional parameters passed to ``request()``
         :rtype: :class:`requests.Response`
         """

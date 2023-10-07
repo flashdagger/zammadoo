@@ -111,9 +111,8 @@ class Ticket(MutableResource):
 
     def tags(self) -> List[str]:
         """
-        all tags that are related to the ticket as sent by ``/tags?object=Ticket&o_id={ticket id}``
-
-        :rtype: :class:`List[str]`
+        :return: | all tags that are related to the ticket as sent by
+                 | ``/tags?object=Ticket&o_id={ticket id}``
         """
         return self.parent.client.tags.by_ticket(self.id)
 
@@ -123,7 +122,6 @@ class Ticket(MutableResource):
         it will be ignored
 
         :param names: tag names
-        :type names: :class:`str`
         """
         return self.parent.client.tags.add_to_ticket(self.id, *names)
 
@@ -133,7 +131,6 @@ class Ticket(MutableResource):
         it will be ignored
 
         :param names: tag names
-        :type names: :class:`str`
         """
         return self.parent.client.tags.remove_from_ticket(self.id, *names)
 
@@ -163,9 +160,7 @@ class Ticket(MutableResource):
         exists it will be ignored
 
         :param target_id: the id of the related ticket
-        :type target_id: :class:`int`
         :param link_type: specifies the relationship type
-        :type link_type: ``"normal"``, ``"parent"``, ``"child"``
         """
         switch_map = {"parent": "child", "child": "parent"}
         params = {
@@ -184,10 +179,8 @@ class Ticket(MutableResource):
         remove link with another, if the link does not exist it will be ignored
 
         :param target_id: the id of the related ticket
-        :type target_id: :class:`int`
         :param link_type: specifies the relationship type, if omitted the ticket_id
-                        will be looked up for every link_type
-        :type link_type: ``"normal"``, ``"parent"``, ``"child"``
+                          will be looked up for every link_type
         """
         for _link_type, tickets in self.links().items():
             if link_type not in {None, _link_type}:
@@ -210,7 +203,6 @@ class Ticket(MutableResource):
         merges the ticket with another one
 
         :param target_id: the id of the ticket to be merged with
-        :type target_id: :class:`int`
         :return: the merged ticket objects
         :rtype: :class:`Ticket`
         """
@@ -227,14 +219,10 @@ class Ticket(MutableResource):
         Create a new article for the ticket.
 
         :param body: article body text
-        :type body: :class:`str`
         :param typ: article type
-        :type typ: :class:`str`
         :param internal: article visibility
-        :type internal: :class:`bool`
         :param kwargs: additional article properties
         :return: the newly created article
-        :rtype: :class:`.articles.Article`
         """
         return self.parent.client.ticket_articles.create(
             self._id, body=body, type=typ, internal=internal, **kwargs
@@ -271,16 +259,11 @@ class Tickets(SearchableT[Ticket], Creatable[Ticket]):
         Create a new ticket.
 
         :param title: ticket title
-        :type title: :class:`str`
         :param group: group name or id
-        :type group: :class:`str` | :class:`int`
         :param customer: customer name or id
-        :type customer: :class:`str` | :class:`int`
         :param body: the text body of the first ticket articke
-        :type body: :class:`str` | :class:`None`
         :param kwargs: additional ticket properties
         :returns: An instance of the created ticket.
-        :rtype: :class:`Ticket`
         """
         group_key = "group_id" if isinstance(group, int) else "group"
         customer_key = "customer_id" if isinstance(customer, int) else "customer"

@@ -79,7 +79,6 @@ class Creatable(ResourcesT[_T_co]):
         Create a new resource.
 
         :param name: resource identifier
-        :type name: :class:`str`
         :param kwargs: additional resource properties
         :return: the newly created object
         :rtype: :attr:`RESOURCE_TYPE`
@@ -173,7 +172,6 @@ class SearchableT(IterableT[_T_co]):
         :param query: query string
         :param sort_by: sort by a specific property (e.g. ``name``)
         :param order_by: sort direction
-        :type order_by: ``"asc"`` | ``"desc"``
         :param kwargs: additional pagination options like ``page``, ``page_size``, ``extend``
         """
         yield from self.iter(
