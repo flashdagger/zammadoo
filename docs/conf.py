@@ -80,7 +80,6 @@ html_theme = "sphinx_rtd_theme"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#
 html_theme_options = {
     "canonical_url": "",
     "analytics_id": "",
@@ -88,8 +87,6 @@ html_theme_options = {
     "display_version": True,
     "prev_next_buttons_location": "bottom",
     "style_external_links": False,
-    # 'vcs_pageview_mode': '',
-    # Toc options
     "collapse_navigation": True,
     "sticky_navigation": True,
     "navigation_depth": 3,
@@ -98,20 +95,5 @@ html_theme_options = {
 }
 
 
-def ultimate_replace(app, _docname, source):
-    result = source[0]
-    for key in app.config.ultimate_replacements:
-        result = result.replace(key, app.config.ultimate_replacements[key])
-    source[0] = result
-
-
-ultimate_replacements = {"{VERSION}": release}
-
-
-def setup(app):
-    app.add_css_file("css/custom.css")
-    app.add_config_value("ultimate_replacements", {}, True)
-    app.connect("source-read", ultimate_replace)
-
-
 html_static_path = ["_static"]
+html_css_files = ["css/custom.css"]
