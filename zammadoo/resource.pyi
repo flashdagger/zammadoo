@@ -36,10 +36,12 @@ class Resource:
     parent: ResourcesT["Resource"]
 
 class MutableResource(Resource):
-    created_by: User
-    updated_by: User
     created_at: datetime
     updated_at: datetime
+    @property
+    def created_by(self) -> "User": ...
+    @property
+    def updated_by(self) -> "User": ...
     def update(self: _T_co, **kwargs) -> _T_co: ...
     def delete(self) -> None: ...
 

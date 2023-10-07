@@ -28,9 +28,15 @@ extensions = [
     "sphinx.ext.coverage",
 ]
 
-autoclass_content = "both"
+autodoc_default_options = {
+    "undoc-members": True,
+    "member-order": "groupwise",
+    "exclude-members": "cached_info, create_with_name",
+    "inherited-members": True,
+}
+autoclass_content = "class"
 autodoc_typehints = "description"
-autodoc_member_order = "groupwise"
+# autodoc_member_order = "groupwise"
 # autodoc_class_signature = "separated"
 autodoc_typehints_description_target = "documented"
 autodoc_typehints_format = "short"

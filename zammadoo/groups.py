@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class Group(NamedResource):
-    shared_drafts: bool
+    shared_drafts: bool  #:
 
     @property
     def users(self) -> List["User"]:

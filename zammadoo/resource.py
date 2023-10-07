@@ -131,16 +131,18 @@ class Resource:
 
 
 class MutableResource(Resource):
-    created_at: datetime
-    updated_at: datetime
+    created_at: datetime  #:
+    updated_at: datetime  #:
 
-    @resource_property("users")
+    @property
     def created_by(self) -> "User":
-        ...
+        uid = self["created_by_id"]
+        return self.parent.client.users(uid)
 
-    @resource_property("users")
+    @property
     def updated_by(self) -> "User":
-        ...
+        uid = self["updated_by_id"]
+        return self.parent.client.users(uid)
 
     def update(self, **kwargs):
         """
@@ -163,6 +165,6 @@ class MutableResource(Resource):
 
 
 class NamedResource(MutableResource):
-    active: bool
-    name: str
-    note: Optional[str]
+    active: bool  #:
+    name: str  #:
+    note: Optional[str]  #:

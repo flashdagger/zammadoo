@@ -75,6 +75,15 @@ class ResourcesT(Generic[_T_co]):
 
 class Creatable(ResourcesT[_T_co]):
     def create_with_name(self, name, **kwargs) -> _T_co:
+        """
+        Create a new resource.
+
+        :param name: resource identifier
+        :type name: :class:`str`
+        :param kwargs: additional resource properties
+        :return: the newly created object
+        :rtype: :attr:`RESOURCE_TYPE`
+        """
         return self._create({"name": name, **kwargs})
 
     def _create(self, json: "JsonDict") -> _T_co:

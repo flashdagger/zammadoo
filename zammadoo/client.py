@@ -275,17 +275,17 @@ class Client:
         return response
 
     def get(self, *args, params: Optional["StringKeyDict"] = None):
-        """shortcut for :py:meth:`request` with parameter ``("GET", *args, params)``"""
+        """shortcut for :meth:`request` with parameter ``("GET", *args, params)``"""
         return self.request("GET", *args, params=params)
 
     def post(self, *args, json: Optional["StringKeyDict"] = None):
-        """shortcut for :py:meth:`request` with parameter ``("POST", *args, json)``"""
+        """shortcut for :meth:`request` with parameter ``("POST", *args, json)``"""
         return self.request("POST", *args, json=json)
 
     def put(self, *args, json: Optional["StringKeyDict"] = None):
-        """shortcut for :py:meth:`request` with parameter ``("PUT", *args, json)``"""
+        """shortcut for :meth:`request` with parameter ``("PUT", *args, json)``"""
         return self.request("PUT", *args, json=json)
 
     def delete(self, *args, json: Optional["StringKeyDict"] = None):
-        """shortcut for :py:meth:`request` with parameter ``("DELETE", *args, json)``"""
+        """shortcut for :meth:`request` with parameter ``("DELETE", *args, json)``"""
         return self.request("DELETE", *args, json=json)
