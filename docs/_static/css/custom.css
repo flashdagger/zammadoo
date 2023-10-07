@@ -1,5 +1,108 @@
-@import url("theme.css");
+.wy-side-nav-search {
+    background-color: #19191a;
+}
 
 .property {
     display:inline !important;
+}
+
+.toctree-l3 code {
+    font-size:110%;
+}
+
+.wy-nav-content {
+    max-width: 1050px;
+}
+
+.wy-table-responsive table td {
+    white-space: normal !important;
+}
+
+.wy-table-responsive table td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.border-green {
+    border-color: #31af68;
+}
+
+.border-charcoal {
+    border-color: #43484c;
+}
+
+.border-yellow {
+    border-color: #fcac01;
+}
+
+.border-red {
+    border-color: #f45801;
+}
+
+.cfloat-left, .cfloat-right {
+    width: 49%;
+}
+
+.cfloat-left {
+    float: left;
+}
+
+.cfloat-right {
+    float: right;
+}
+
+.cfloat-clear {
+    /* Can be used with containers to clear earlier floats */
+    /* By this any character in the container works to do the trick */
+    clear: both;
+    height: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: 100%;
+}
+
+@media (max-width: 600px) {
+    .cfloat-left, .cfloat-right {
+        width: 100% !important;
+        float: none !important;
+    }
+}
+
+.admonition {
+    /* Ensure custom floats don't break following admonitions */
+    display: inline-block;
+    width:  100%;
+}
+
+/*
+ * Sphinx RTD theme compatibility layer
+ */
+
+.wy-plain-list-disc li ul,
+.rst-content .section ul li ul,
+.rst-content .toctree-wrapper ul li ul,
+article ul li ul {
+    margin-bottom: 12px;
+}
+
+.wy-menu-vertical header,
+.wy-menu-vertical p.caption {
+    color: #55a5d9;
+    font-weight: 700;
+    font-size: 85%;
+}
+
+.wy-menu-vertical a {
+    color: #d9d9d9;
+}
+
+.wy-menu-vertical li.current a {
+    color: #404040;
+}
+
+.wy-side-nav-search > a img.logo {
+    width: 70px;
+    height: 61px;
 }

@@ -6,12 +6,12 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath(os.path.join(__file__, "..", "..")))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "zammadoo"
+project = "Zammadoo Client Documentation"
 copyright = "2023, MK"
 author = "Marcel Kuszak"
 
@@ -22,6 +22,8 @@ version = ".".join(release.split(".")[:2])
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+html_logo = "images/zammad_logo_white.png"
+html_favicon = "images/favicon.ico"
 
 extensions = [
     "sphinx.ext.autodoc",
