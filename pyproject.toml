@@ -75,9 +75,7 @@ python_version = "3.9"
 cache_dir = ".cache/mypy"
 exclude = "build|venv"
 
-allow_empty_bodies = true
 disable_error_code = "no-untyped-def"
-ignore_missing_imports = true
 strict = true
 
 [tool.pylint.main]
