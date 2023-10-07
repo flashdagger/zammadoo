@@ -25,6 +25,8 @@ LOG = logging.getLogger(__name__)
 
 
 class APIException(HTTPError):
+    """Raised when the API server indicates an error."""
+
     pass
 
 
@@ -53,11 +55,11 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
 
 class Client:
     """
-    The root class that interacts with the REST API.
+    The root class to interact with the *REST API*.
 
-    Almost every object keeps the initialized instance of Client as reference.
+    Almost every object keeps the initialized instance of :class:`Client` as reference.
 
-    Example::
+    *Example*::
 
         from zammadoo import Client
 
@@ -73,47 +75,47 @@ class Client:
 
     @cached_property
     def groups(self) -> Groups:
-        """managing the /groups endpoint"""
+        """Manages the ``/groups`` endpoint."""
         return Groups(self)
 
     @cached_property
     def organizations(self) -> Organizations:
-        """managing the /organizations endpoint"""
+        """Manages the ``/organizations`` endpoint."""
         return Organizations(self)
 
     @cached_property
     def roles(self) -> Roles:
-        """managing the /roles endpoint"""
+        """Manages the ``/roles`` endpoint."""
         return Roles(self)
 
     @cached_property
     def tags(self) -> Tags:
-        """managing the /tags /tag_list and /tag_search endpoint"""
+        """Manages the ``/tags``, ``/tag_list``, ``/tag_search`` endpoint."""
         return Tags(self)
 
     @cached_property
     def ticket_articles(self) -> Articles:
-        """managing the /ticket_articles endpoint"""
+        """Manages the ``/ticket_articles`` endpoint."""
         return Articles(self)
 
     @cached_property
     def ticket_priorities(self) -> Priorities:
-        """managing the /ticket_priorities endpoint"""
+        """Manages the ``/ticket_priorities`` endpoint."""
         return Priorities(self)
 
     @cached_property
     def ticket_states(self) -> States:
-        """managing the /ticket_states endpoint"""
+        """Manages the ``/ticket_states`` endpoint."""
         return States(self)
 
     @cached_property
     def tickets(self) -> Tickets:
-        """managing the /tickets endpoint"""
+        """Manages the ``/tickets`` endpoint."""
         return Tickets(self)
 
     @cached_property
     def users(self) -> Users:
-        """managing the ``/users`` endpoint"""
+        """Manages the ``/users`` endpoint."""
         return Users(self)
 
     @dataclass
@@ -134,23 +136,24 @@ class Client:
         additional_headers: Sequence[Tuple[str, str]] = (),
     ) -> None:
         """
-        For authentication use either username and password or http_token or oauth2_token
+        For authentication use either ``username`` + ``password``
+        or ``http_token`` or ``oauth2_token``.
 
-        :param url: the zammad API url like ``https://myhost.com/api/v1``
-        :type url: string
+        :param url: the zammad API url (e.g. ``https://myhost.com/api/v1``)
+        :type url: :class:`str`
         :param username: the username for HTTP Basic Authentication
-        :type username: string
+        :type username: :class:`str`
         :param password: the password for HTTP Basic Authentication
-        :type password: string
+        :type password: :class:`str`
         :param http_token: access token when using HTTP Token Authentication
-        :type http_token: string
+        :type http_token: :class:`str`
         :param oauth2_token: access token when using OAuth 2 Authentication
-        :type oauth2_token: string
+        :type oauth2_token: :class:`str`
         :param additional_headers: additional name, value pairs that will be
                 appended to the requests header ``[(name, value), ...]``
         :type additional_headers:
 
-        :raises ValueError: When authentication settings are not correct.
+        :raises: :class:`ValueError` if authentication settings are missing.
 
 
         """
@@ -184,6 +187,18 @@ class Client:
 
     @contextmanager
     def impersonation_of(self, user: Union[str, int]):
+        """
+        Temporarily perform requests on behalf of another user.
+
+        To be used as context manager::
+
+            with client.impersonation_of(1):
+                print(client.users.me().id)  # output: 1
+
+
+        :param user: user id or login_name
+        :type user: :class:`int` | :class:`str`
+        """
         try:
             self.session.headers["X-On-Behalf-Of"] = str(user)
             yield
@@ -198,6 +213,22 @@ class Client:
         json: Optional[StringKeyDict] = None,
         **kwargs,
     ):
+        """
+        Performs a request on the API url.
+
+        :param method: HTTP method: ``GET``, ``POST``, ``PUT``, ``DELETE``
+        :type method: :class:`str`
+        :param args: endpoint specifiers
+        :param params: url parameter (usually for ``GET``)
+        :type params: :class:`dict[str, Any]`
+        :param json: data as dictionary (usually for ``POST`` or ``PUT``)
+        :type json: :class:`dict[str, Any]`
+        :param kwargs: additional parameters passed to ``request()``
+        :returns: the server JSON response
+        :rtype: :class:`dict[str, Any]`
+
+        :raises: :class:`APIException`, :class:`requests.HTTPError`
+        """
         url = "/".join(map(str, (self.url, *args)))
         response = self.response(method, url, json=json, params=params, **kwargs)
         value = raise_or_return_json(response)
@@ -212,6 +243,20 @@ class Client:
         json: Optional[StringKeyDict] = None,
         **kwargs,
     ) -> Response:
+        """
+        Performs a request on the API url.
+
+        :param method: the HTTP method (e.g. ``GET``, ``POST``, ``PUT``, ``DELETE``)
+        :type method: :class:`str`
+        :param url: full resource URL
+        :type url: :class:`str`
+        :param params: url parameter (usually for ``GET``)
+        :type params: :class:`dict[str, Any]`
+        :param json: data as dictionary (usually for ``POST`` or ``PUT``)
+        :type json: :class:`dict[str, Any]`
+        :param kwargs: additional parameters passed to ``request()``
+        :rtype: :class:`requests.Response`
+        """
         response = self.session.request(method, url, params=params, json=json, **kwargs)
         if kwargs.get("stream") and LOG.level == logging.DEBUG:
             headers = response.headers
@@ -229,13 +274,17 @@ class Client:
         return response
 
     def get(self, *args, params: Optional[StringKeyDict] = None):
+        """shortcut for :py:meth:`request` with parameter ``("GET", *args, params)``"""
         return self.request("GET", *args, params=params)
 
     def post(self, *args, json: Optional[StringKeyDict] = None):
+        """shortcut for :py:meth:`request` with parameter ``("POST", *args, json)``"""
         return self.request("POST", *args, json=json)
 
     def put(self, *args, json: Optional[StringKeyDict] = None):
+        """shortcut for :py:meth:`request` with parameter ``("PUT", *args, json)``"""
         return self.request("PUT", *args, json=json)
 
     def delete(self, *args, json: Optional[StringKeyDict] = None):
+        """shortcut for :py:meth:`request` with parameter ``("DELETE", *args, json)``"""
         return self.request("DELETE", *args, json=json)

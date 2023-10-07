@@ -30,6 +30,11 @@ extensions = [
 
 autoclass_content = "both"
 autodoc_member_order = "bysource"
+autodoc_typehints_description_target = "documented"
+autodoc_typehints_format = "short"
+autodoc_inherit_docstrings = False
+maximum_signature_line_length = None
+add_module_names = False
 
 # Automatically extract typehints when specified and place them in
 # descriptions of the relevant function/method.
