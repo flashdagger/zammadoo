@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Any, Dict, Iterable, List, TypeVar, Union
+from typing import Iterable, Literal, TypeVar, get_args
 
 _T = TypeVar("_T")
+LINK_TYPE = Literal["normal", "parent", "child"]  # pylint: disable=invalid-name
+LINK_TYPES = get_args(LINK_TYPE)
 
 
 class YieldCounter:
@@ -19,10 +21,3 @@ class YieldCounter:
         for count, item in enumerate(itr, 1):
             self._counter = count
             yield item
-
-
-JsonType = Union[None, bool, int, float, str, List["JsonType"], Dict[str, "JsonType"]]
-JsonDict = Dict[str, JsonType]
-JsonDictList = List[JsonDict]
-JsonContainer = Union[JsonDict, JsonDictList]
-StringKeyDict = Dict[str, Any]

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from textwrap import shorten
-from typing import Optional, Sequence, Tuple, Union, cast
+from typing import TYPE_CHECKING, Optional, Sequence, Tuple, Union, cast
 
 import requests
 from requests import HTTPError, JSONDecodeError, Response
@@ -19,7 +19,10 @@ from .roles import Roles
 from .tags import Tags
 from .tickets import Priorities, States, Tickets
 from .users import Users
-from .utils import JsonType, StringKeyDict
+
+if TYPE_CHECKING:
+    from .types import JsonType, StringKeyDict
+
 
 LOG = logging.getLogger(__name__)
 
@@ -28,7 +31,7 @@ class APIException(HTTPError):
     """Raised when the API server indicates an error."""
 
 
-def raise_or_return_json(response: requests.Response) -> JsonType:
+def raise_or_return_json(response: requests.Response) -> "JsonType":
     try:
         response.raise_for_status()
     except HTTPError as exc:
@@ -46,7 +49,7 @@ def raise_or_return_json(response: requests.Response) -> JsonType:
             ) from exc
 
     try:
-        return cast(JsonType, response.json())
+        return cast("JsonType", response.json())
     except JSONDecodeError:
         return response.text
 
@@ -207,8 +210,8 @@ class Client:
         self,
         method: str,
         *args,
-        params: Optional[StringKeyDict] = None,
-        json: Optional[StringKeyDict] = None,
+        params: Optional["StringKeyDict"] = None,
+        json: Optional["StringKeyDict"] = None,
         **kwargs,
     ):
         """
@@ -237,8 +240,8 @@ class Client:
         self,
         method: str,
         url: str,
-        params: Optional[StringKeyDict] = None,
-        json: Optional[StringKeyDict] = None,
+        params: Optional["StringKeyDict"] = None,
+        json: Optional["StringKeyDict"] = None,
         **kwargs,
     ) -> Response:
         """
@@ -271,18 +274,18 @@ class Client:
             LOG.info("[%s] %s", method, response.url)
         return response
 
-    def get(self, *args, params: Optional[StringKeyDict] = None):
+    def get(self, *args, params: Optional["StringKeyDict"] = None):
         """shortcut for :py:meth:`request` with parameter ``("GET", *args, params)``"""
         return self.request("GET", *args, params=params)
 
-    def post(self, *args, json: Optional[StringKeyDict] = None):
+    def post(self, *args, json: Optional["StringKeyDict"] = None):
         """shortcut for :py:meth:`request` with parameter ``("POST", *args, json)``"""
         return self.request("POST", *args, json=json)
 
-    def put(self, *args, json: Optional[StringKeyDict] = None):
+    def put(self, *args, json: Optional["StringKeyDict"] = None):
         """shortcut for :py:meth:`request` with parameter ``("PUT", *args, json)``"""
         return self.request("PUT", *args, json=json)
 
-    def delete(self, *args, json: Optional[StringKeyDict] = None):
+    def delete(self, *args, json: Optional["StringKeyDict"] = None):
         """shortcut for :py:meth:`request` with parameter ``("DELETE", *args, json)``"""
         return self.request("DELETE", *args, json=json)

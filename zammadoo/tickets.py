@@ -5,14 +5,13 @@ from typing import TYPE_CHECKING, List, Optional
 from .resource import MutableResource, NamedResource, resource_property
 from .resources import Creatable, IterableT, SearchableT
 from .users import user_property
+from .utils import LINK_TYPES
 
 if TYPE_CHECKING:
     from .articles import Article
     from .groups import Group
     from .organizations import Organization
     from .users import User
-
-LINK_TYPES = ("normal", "parent", "child")
 
 
 class Priority(NamedResource):

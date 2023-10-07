@@ -11,7 +11,7 @@ from .client import Client
 from .resource import Resource
 from .resources import ResourcesT
 from .tickets import Ticket
-from .utils import JsonDict, JsonType
+from .types import JsonDict, JsonType
 
 PathType = Union[str, PathLike]
 

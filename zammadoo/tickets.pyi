@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import Dict, List, Literal, Optional, Tuple, Union
+from typing import Dict, List, Optional, Union
 
 from .articles import Article
 from .client import Client
 from .organizations import Organization
 from .resource import MutableResource, NamedResource
 from .resources import IterableT, SearchableT
+from .types import JsonDict
 from .users import User
-from .utils import JsonDict
-
-LINK_TYPES: Tuple[str, ...]
-LINK_TYPE = Literal["normal", "parent", "child"]
+from .utils import LINK_TYPE
 
 class Priority(NamedResource):
     default_create: bool

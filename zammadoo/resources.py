@@ -19,10 +19,11 @@ from weakref import WeakValueDictionary
 
 from .cache import LruCache
 from .resource import Resource
-from .utils import JsonContainer, JsonDict, YieldCounter
+from .utils import YieldCounter
 
 if TYPE_CHECKING:
     from .client import Client
+    from .types import JsonContainer, JsonDict
 
 _T_co = TypeVar("_T_co", bound=Resource, covariant=True)
 
@@ -34,10 +35,10 @@ class ResourcesT(Generic[_T_co]):
     def __init__(self, client: "Client", endpoint: str):
         self.client = client
         self.endpoint: str = endpoint
-        self.cache = LruCache[JsonContainer](max_size=self.DEFAULT_CACHE_SIZE)
+        self.cache = LruCache["JsonContainer"](max_size=self.DEFAULT_CACHE_SIZE)
         self._instance_cache: MutableMapping[int, _T_co] = WeakValueDictionary()
 
-    def __call__(self, rid: int, *, info: Optional[JsonDict] = None) -> _T_co:
+    def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
         if info:
             assert (
                 info.get("id") == rid
@@ -56,10 +57,10 @@ class ResourcesT(Generic[_T_co]):
     def url(self, *args) -> str:
         return "/".join(map(str, (self.client.url, self.endpoint, *args)))
 
-    def cached_info(self, rid: int, refresh=True) -> JsonContainer:
+    def cached_info(self, rid: int, refresh=True) -> "JsonContainer":
         item = self.url(rid)
         cache = self.cache
-        callback: Callable[[], JsonContainer] = partial(
+        callback: Callable[[], "JsonContainer"] = partial(
             self.client.get, self.endpoint, rid
         )
 
@@ -75,7 +76,7 @@ class Creatable(ResourcesT[_T_co]):
     def _create_with_name(self, name, **kwargs):
         return self._create({"name": name, **kwargs})
 
-    def _create(self, json: JsonDict) -> _T_co:
+    def _create(self, json: "JsonDict") -> _T_co:
         created_info = self.client.post(self.endpoint, json=json)
         return self(created_info["id"], info=created_info)
 
@@ -85,7 +86,7 @@ class IterableT(ResourcesT[_T_co]):
         super().__init__(client, endpoint)
         self.pagination = copy(client.pagination)
 
-    def _iter_items(self, items: JsonContainer) -> Iterable[_T_co]:
+    def _iter_items(self, items: "JsonContainer") -> Iterable[_T_co]:
         assert isinstance(items, list)
         for item in items:
             yield self.RESOURCE_TYPE(self, item["id"], info=item)  # type: ignore[arg-type]

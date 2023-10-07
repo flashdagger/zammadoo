@@ -6,8 +6,8 @@ from types import MappingProxyType
 from typing import Any, Callable, Optional
 
 from .resources import ResourcesT
+from .types import JsonDict, JsonType
 from .users import User
-from .utils import JsonDict, JsonType
 
 def resource_property(
     endpoint, key: Optional[str] = ...

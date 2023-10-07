@@ -7,9 +7,8 @@ from functools import wraps
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Optional
 
-from .utils import JsonDict
-
 if TYPE_CHECKING:
+    from .types import JsonDict
     from .users import User
 
 
@@ -61,7 +60,7 @@ class Resource:
         self._id = rid
         self.parent = parent
         self.url = parent.url(rid)
-        self._info: JsonDict = info or {}
+        self._info: "JsonDict" = info or {}
         self._frozen = True
 
     def __repr__(self):

@@ -3,14 +3,9 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
 
-from .utils import StringKeyDict
-
 if TYPE_CHECKING:
     from .client import Client
-
-
-ItemDict = Dict[str, List[str]]
-ItemList = List[StringKeyDict]
+    from .types import StringKeyDict
 
 
 class Tags:
@@ -23,7 +18,7 @@ class Tags:
         url = f"{self.client.url}/{self.endpoint}"
         return f"<{self.__class__.__qualname__} {url!r}>"
 
-    def __iter__(self) -> Iterable[StringKeyDict]:
+    def __iter__(self) -> Iterable["StringKeyDict"]:
         self._reload()
         yield from self._map.values()
 
@@ -78,7 +73,7 @@ class Tags:
             self.client.delete("tags/remove", json=params)
 
     def by_ticket(self, tid: int) -> List[str]:
-        items: StringKeyDict = self.client.get(
+        items: "StringKeyDict" = self.client.get(
             "tags", params={"object": "Ticket", "o_id": tid}
         )
         return items.get("tags", [])
