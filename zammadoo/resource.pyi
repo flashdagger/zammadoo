@@ -47,5 +47,7 @@ class MutableResource(Resource):
 
 class NamedResource(MutableResource):
     active: bool
-    name: str
     note: Optional[str]
+
+    @property
+    def name(self) -> str: ...

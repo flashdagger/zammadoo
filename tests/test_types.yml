@@ -44,7 +44,7 @@
       client.ticket_states(0).update())         # N: Revealed type is "zammadoo.tickets.State"
 
     reveal_type(client.users)                   # N: Revealed type is "zammadoo.users.Users"
-    reveal_type(client.users.create(""))        # N: Revealed type is "zammadoo.users.User"
+    reveal_type(client.users.create(email=""))        # N: Revealed type is "zammadoo.users.User"
     reveal_type(client.users(0).update())       # N: Revealed type is "zammadoo.users.User"
 
 

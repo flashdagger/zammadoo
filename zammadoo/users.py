@@ -1,62 +1,75 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from functools import partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, List, cast
 
-from .resource import NamedResource, resource_property, resourcelist_property
+from .resource import NamedResource
 from .resources import Creatable, SearchableT
 
 if TYPE_CHECKING:
+    from .client import Client
+    from .groups import Group
     from .organizations import Organization
-
-    _ = Organization
-
-
-user_property = partial(resource_property("users"))
-userlist_property = partial(resourcelist_property("users"))
+    from .roles import Role
 
 
 class User(NamedResource):
     @property
-    def fullname(self):
+    def fullname(self) -> str:
+        """Users firstname and lastname combined."""
         firstname, lastname = self["firstname"], self["lastname"]
         return f"{firstname}{' ' if firstname and lastname else ''}{lastname}"
 
     @property
-    def name(self):
-        """
-        alias for users login name
-        :rtype: :class:`str`
-        """
-        return self["login"]
+    def name(self) -> str:
+        """Alias for users login name."""
+        return cast(str, self["login"])
 
-    @resourcelist_property
-    def groups(self):
-        ...
+    @property
+    def groups(self) -> List["Group"]:
+        groups = self.parent.client.groups
+        return list(map(groups, self["group_ids"]))
 
-    @resource_property
-    def organization(self):
-        ...
+    @property
+    def organization(self) -> Optional["Organization"]:
+        oid = self["organization_id"]
+        return oid and self.parent.client.organizations(oid)
 
-    @resourcelist_property
-    def organizations(self):
-        ...
+    @property
+    def organizations(self) -> List["Organization"]:
+        organizations = self.parent.client.organizations
+        return list(map(organizations, self["organization_ids"]))
 
-    @resourcelist_property
-    def roles(self):
-        ...
+    @property
+    def roles(self) -> List["Role"]:
+        roles = self.parent.client.roles
+        return list(map(roles, self["role_ids"]))
 
 
-class Users(SearchableT[User], Creatable):
+class Users(SearchableT[User], Creatable[User]):
     RESOURCE_TYPE = User
 
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         super().__init__(client, "users")
 
     def create(
-        self, *, firstname=None, lastname=None, email=None, phone=None, **kwargs
-    ):
+        self,
+        *,
+        firstname: Optional[str] = None,
+        lastname: Optional[str] = None,
+        email: Optional[str] = None,
+        phone: Optional[str] = None,
+        **kwargs,
+    ) -> "User":
+        """
+        Create a new zammad user.
+
+        :param firstname:
+        :param lastname:
+        :param email:
+        :param phone:
+        :param kwargs: additional user parameter
+        """
         info = {
             "firstname": firstname,
             "lastname": lastname,
@@ -68,5 +81,6 @@ class Users(SearchableT[User], Creatable):
 
     # pylint: disable=invalid-name
     def me(self) -> User:
+        """Return the authenticated user."""
         info = self.client.get(self.endpoint, "me")
         return self.RESOURCE_TYPE(self, info["id"], info)
