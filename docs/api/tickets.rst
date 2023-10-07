@@ -6,7 +6,13 @@ Tickets
 .. autoclass:: State
     :members:
 
+.. autoclass:: States
+    :members:
+
 .. autoclass:: Priority
+    :members:
+
+.. autoclass:: Priorities
     :members:
 
 .. autoclass:: Ticket

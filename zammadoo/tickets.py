@@ -42,7 +42,16 @@ class States(IterableT[State], Creatable[State]):
     def __init__(self, client: "Client"):
         super().__init__(client, "ticket_states")
 
-    def create(self, name, state_type_id, **kwargs) -> "State":
+    def create(self, name: str, state_type_id: int, **kwargs) -> "State":
+        """
+        Create a new state.
+
+        :param name: state name
+        :param state_type_id: the states type id
+        :param kwargs: additional resource properties
+        :return: the newly created object
+        :rtype: :class:`State`
+        """
         return super()._create({"name": name, "state_type_id": state_type_id, **kwargs})
 
 
