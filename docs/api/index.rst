@@ -8,4 +8,5 @@ API Reference
     client
     groups
     organizations
+    roles
     tickets

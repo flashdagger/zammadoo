@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from typing import TYPE_CHECKING, List
 
 from .resource import MutableResource

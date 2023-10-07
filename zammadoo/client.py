@@ -154,7 +154,7 @@ class Client:
                 appended to the requests header ``[(name, value), ...]``
         :type additional_headers:
 
-        :raises: :class:`ValueError` if authentication settings are missing.
+        :raises: :exc:`ValueError` if authentication settings are missing.
 
 
         """
@@ -228,7 +228,7 @@ class Client:
         :returns: the server JSON response
         :rtype: :class:`dict[str, Any]`
 
-        :raises: :class:`APIException`, :class:`requests.HTTPError`
+        :raises: :exc:`APIException`, :class:`requests.HTTPError`
         """
         url = "/".join(map(str, (self.url, *args)))
         response = self.response(method, url, json=json, params=params, **kwargs)
