@@ -27,8 +27,6 @@ LOG = logging.getLogger(__name__)
 class APIException(HTTPError):
     """Raised when the API server indicates an error."""
 
-    pass
-
 
 def raise_or_return_json(response: requests.Response) -> JsonType:
     try:

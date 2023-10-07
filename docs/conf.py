@@ -29,19 +29,14 @@ extensions = [
 ]
 
 autoclass_content = "both"
-autodoc_member_order = "bysource"
+autodoc_typehints = "description"
+autodoc_member_order = "groupwise"
+# autodoc_class_signature = "separated"
 autodoc_typehints_description_target = "documented"
 autodoc_typehints_format = "short"
 autodoc_inherit_docstrings = False
 maximum_signature_line_length = None
 add_module_names = False
-
-# Automatically extract typehints when specified and place them in
-# descriptions of the relevant function/method.
-autodoc_typehints = "description"
-
-# Don't show class signature with the class' name.
-# autodoc_class_signature = "separated"
 
 templates_path = ["_templates"]
 

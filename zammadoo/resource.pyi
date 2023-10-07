@@ -43,4 +43,4 @@ class MutableResource(Resource):
 class NamedResource(MutableResource):
     active: bool
     name: str
-    note: str
+    note: Optional[str]

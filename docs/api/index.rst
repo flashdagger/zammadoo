@@ -6,4 +6,4 @@ API Reference
    :maxdepth: 1
 
    client
-   ticket
+   tickets

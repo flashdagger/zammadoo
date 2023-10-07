@@ -25,7 +25,11 @@ class User(NamedResource):
 
     @property
     def name(self):
-        return self["email"] or self["phone"]
+        """
+        alias for users login name
+        :rtype: :class:`str`
+        """
+        return self["login"]
 
     @resourcelist_property
     def groups(self):

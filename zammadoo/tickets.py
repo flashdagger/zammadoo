@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+from typing import TYPE_CHECKING, List, Optional
 
 from .resource import MutableResource, NamedResource, resource_property
 from .resources import Creatable, IterableT, SearchableT
 from .users import user_property
+
+if TYPE_CHECKING:
+    from .articles import Article
+    from .groups import Group
+    from .organizations import Organization
+    from .users import User
 
 LINK_TYPES = ("normal", "parent", "child")
 
@@ -23,7 +30,7 @@ class Priorities(IterableT[Priority], Creatable):
 
 class State(MutableResource):
     @resource_property("ticket_states")
-    def next_state(self):
+    def next_state(self) -> "State":
         ...
 
 
@@ -38,47 +45,42 @@ class States(IterableT[State], Creatable):
 
 
 class Ticket(MutableResource):
+    article_count: Optional[int]
+    note: str
+    number: str
+    title: str
+
     @user_property
-    def customer(self):
-        """:rtype: :class:`.users.User`"""
+    def customer(self) -> "User":
         ...
 
     @resource_property
-    def group(self):
-        """:rtype: :class:`.groups.Group`"""
+    def group(self) -> "Group":
         ...
 
     @resource_property
-    def organization(self):
-        """:rtype: :class:`.organizations.Organization` | :class:`None`"""
+    def organization(self) -> Optional["Organization"]:
         ...
 
     @user_property
-    def owner(self):
+    def owner(self) -> "User":
         """
         .. note::
            unassigned tickets will be represented by User(id=1)
-
-        :rtype: :class:`.users.User`
         """
-        ...
 
     @resource_property("ticket_priorities")
-    def priority(self):
-        """:rtype: :class:`Priority`"""
+    def priority(self) -> Priority:
         ...
 
     @resource_property("ticket_states")
-    def state(self):
-        """:rtype: :class:`State`"""
+    def state(self) -> State:
         ...
 
     @property
-    def articles(self):
+    def articles(self) -> List["Article"]:
         """
         all articles related to the ticket as sent by ``/ticket_articles/by_ticket/{ticket id}``
-
-        :rtype: list[:class:`.article.Article`]
         """
         articles = self.parent.client.ticket_articles
 
@@ -121,7 +123,7 @@ class Ticket(MutableResource):
         """
         returns all linked tickets grouped by link type
 
-        :rtype: ``{"normal": [:class:Ticket, ...], "parent": [...], "child": [...]}``
+        :returns: ``{"normal": [Ticket, ...], "parent": [...], "child": [...]}``
         """
         parent = self.parent
         client = parent.client
@@ -145,7 +147,7 @@ class Ticket(MutableResource):
         :param target_id: the id of the related ticket
         :type target_id: :class:`int`
         :param link_type: specifies the relationship type
-        :type link_type: "normal", "parent", "child"
+        :type link_type: ``"normal"``, ``"parent"``, ``"child"``
         """
         switch_map = {"parent": "child", "child": "parent"}
         params = {
@@ -165,7 +167,7 @@ class Ticket(MutableResource):
         :type target_id: :class:`int`
         :param link_type: specifies the relationship type, if omitted the ticket_id
                         will be looked up for every link_type
-        :type link_type: "normal", "parent", "child"
+        :type link_type: ``"normal"``, ``"parent"``, ``"child"``
         """
         if link_type not in LINK_TYPES:
             link_type = "normal"
@@ -199,7 +201,7 @@ class Ticket(MutableResource):
 
     def create_article(self, body, typ="note", internal=True, **kwargs):
         """
-        create a new article and add it to the ticket
+        Create a new article for the ticket.
 
         :param body: article body text
         :type body: :class:`str`

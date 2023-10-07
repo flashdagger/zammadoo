@@ -5,8 +5,12 @@ from contextlib import suppress
 from datetime import datetime
 from functools import wraps
 from types import MappingProxyType
+from typing import TYPE_CHECKING, Optional
 
 from .utils import JsonDict
+
+if TYPE_CHECKING:
+    from .users import User
 
 
 def resource_property(endpoint, key=None):
@@ -98,10 +102,15 @@ class Resource:
         return isinstance(other, Resource) and other.url == self.url
 
     @property
-    def id(self):
+    def id(self) -> int:
         return self._id
 
     def view(self):
+        """
+        A mapping view of the objects internal properties as returned by the REST API.
+
+        :rtype: :class:`MappingProxyType[str, Any]`
+        """
         self._initialize()
         return MappingProxyType(self._info)
 
@@ -111,26 +120,37 @@ class Resource:
         self._info.update(self.parent.cached_info(self._id, refresh=False))
 
     def reload(self):
+        """Updates the object properties by requesting the current data from the server."""
         info = self._info
         info.clear()
         info.update(self.parent.cached_info(self._id), refresh=True)
 
 
 class MutableResource(Resource):
+    created_at: datetime
+    updated_at: datetime
+
     @resource_property("users")
-    def created_by(self):
+    def created_by(self) -> "User":
         ...
 
     @resource_property("users")
-    def updated_by(self):
+    def updated_by(self) -> "User":
         ...
 
     def update(self, **kwargs):
+        """
+        Update the resource properties.
+
+        :param kwargs: values to be updated (depends on the resource)
+        :return: a new instance of the updated resource
+        """
         parent = self.parent
         updated_info = parent.client.put(parent.endpoint, self._id, json=kwargs)
         return parent(updated_info["id"], info=updated_info)
 
     def delete(self):
+        """Delete the resource. Requires corresponding permission."""
         parent = self.parent
         parent.client.delete(parent.endpoint, self._id)
         url = self.url
@@ -139,4 +159,6 @@ class MutableResource(Resource):
 
 
 class NamedResource(MutableResource):
-    pass
+    active: bool
+    name: str
+    note: Optional[str]
