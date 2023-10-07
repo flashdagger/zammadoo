@@ -95,7 +95,7 @@ class Ticket(MutableResource):
         """
         all tags that are related to the ticket as sent by ``/tags?object=Ticket&o_id={ticket id}``
 
-        :rtype: :class:`list[str]`
+        :rtype: :class:`List[str]`
         """
         return self.parent.client.tags.by_ticket(self.id)
 
@@ -237,6 +237,21 @@ class Tickets(SearchableT[Ticket], Creatable):
             yield self.RESOURCE_TYPE(self, rid)
 
     def create(self, title, *, group, customer, body=None, **kwargs):
+        """
+        Create a new ticket.
+
+        :param title: ticket title
+        :type title: :class:`str`
+        :param group: group name or id
+        :type group: :class:`str` | :class:`int`
+        :param customer: customer name or id
+        :type customer: :class:`str` | :class:`int`
+        :param body: the text body of the first ticket articke
+        :type body: :class:`str` | :class:`None`
+        :param kwargs: additional ticket properties
+        :returns: An instance of the created ticket.
+        :rtype: :class:`Ticket`
+        """
         group_key = "group_id" if isinstance(group, int) else "group"
         customer_key = "customer_id" if isinstance(customer, int) else "customer"
         article = kwargs.pop("article", {})

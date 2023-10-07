@@ -91,6 +91,20 @@ class IterableT(ResourcesT[_T_co]):
             yield self.RESOURCE_TYPE(self, item["id"], info=item)  # type: ignore[arg-type]
 
     def iter(self, *args, **params) -> Iterable[_T_co]:
+        """
+        Iterate through all objects. The returned iterable can be used in for loops
+        or fill a Python container like :class:`list` or :class:`tuple`.
+
+        ::
+
+            items = tuple(resource.iter(...))
+
+            for item in resource.iter(...):
+                print(item)
+
+        :param args: additional endpoint arguments
+        :param params: additional pagination options like ``page``, ``page_size``, ``extend``
+        """
         # preserve the kwargs order
         params.update(
             (
@@ -129,6 +143,28 @@ class SearchableT(IterableT[_T_co]):
         order_by: Literal["asc", "desc", None] = None,
         **kwargs,
     ) -> Iterable[_T_co]:
+        """
+        Search for objects with
+        `query syntax <https://user-docs.zammad.org/en/latest/advanced/search.html>`_.
+
+        The returned iterable can be used in for loops
+        or fill a Python container like :class:`list` or :class:`tuple`.
+
+        ::
+
+            items = tuple(resource.search(...))
+
+            for item in resource.search(...):
+                print(item)
+
+
+
+        :param query: query string
+        :param sort_by: sort by a specific property (e.g. ``name``)
+        :param order_by: sort direction
+        :type order_by: ``"asc"`` | ``"desc"``
+        :param kwargs: additional pagination options like ``page``, ``page_size``, ``extend``
+        """
         yield from self.iter(
             "search", query=query, sort_by=sort_by, order_by=order_by, **kwargs
         )
