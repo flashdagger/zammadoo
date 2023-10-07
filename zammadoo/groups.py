@@ -1,21 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
 from .resources import Creatable, SearchableT
-from .users import userlist_property
+
+if TYPE_CHECKING:
+    from .client import Client
+    from .users import User
 
 
 class Group(NamedResource):
-    @userlist_property
-    def users(self):
-        ...
+    shared_drafts: bool
+
+    @property
+    def users(self) -> List["User"]:
+        users = self.parent.client.users
+        return list(map(users, self["user_ids"]))
 
 
-class Groups(SearchableT[Group], Creatable):
+class Groups(SearchableT[Group], Creatable[Group]):
     RESOURCE_TYPE = Group
 
-    create = Creatable._create_with_name
+    create = Creatable.create_with_name
 
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         super().__init__(client, "groups")

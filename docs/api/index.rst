@@ -6,4 +6,5 @@ API Reference
    :maxdepth: 1
 
    client
+   groups
    tickets

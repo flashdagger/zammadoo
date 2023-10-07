@@ -21,7 +21,7 @@ class Priority(NamedResource):
 class Priorities(IterableT[Priority], Creatable):
     RESOURCE_TYPE = Priority
 
-    create = Creatable._create_with_name
+    create = Creatable.create_with_name
 
     def __init__(self, client):
         super().__init__(client, "ticket_priorities")

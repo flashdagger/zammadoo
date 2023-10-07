@@ -14,6 +14,7 @@ from typing import (
     Optional,
     Type,
     TypeVar,
+    cast,
 )
 from weakref import WeakValueDictionary
 
@@ -73,7 +74,7 @@ class ResourcesT(Generic[_T_co]):
 
 
 class Creatable(ResourcesT[_T_co]):
-    def _create_with_name(self, name, **kwargs):
+    def create_with_name(self, name, **kwargs) -> _T_co:
         return self._create({"name": name, **kwargs})
 
     def _create(self, json: "JsonDict") -> _T_co:
@@ -89,7 +90,7 @@ class IterableT(ResourcesT[_T_co]):
     def _iter_items(self, items: "JsonContainer") -> Iterable[_T_co]:
         assert isinstance(items, list)
         for item in items:
-            yield self.RESOURCE_TYPE(self, item["id"], info=item)  # type: ignore[arg-type]
+            yield self.RESOURCE_TYPE(self, cast(int, item["id"]), info=item)
 
     def iter(self, *args, **params) -> Iterable[_T_co]:
         """

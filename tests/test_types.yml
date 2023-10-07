@@ -8,6 +8,8 @@
       client.groups.create(name=""))      # N: Revealed type is "zammadoo.groups.Group"
     reveal_type(
       client.groups(0).update())          # N: Revealed type is "zammadoo.groups.Group"
+    reveal_type(
+      client.groups(0).users)             # N: Revealed type is "builtins.list[zammadoo.users.User]"
 
     reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
     reveal_type(client.roles(0).update()) # N: Revealed type is "zammadoo.roles.Role"

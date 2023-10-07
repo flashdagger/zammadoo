@@ -5,7 +5,7 @@ from datetime import datetime
 from types import MappingProxyType
 from typing import Any, Callable, Optional
 
-from .resources import ResourcesT
+from .resources import ResourcesT, _T_co
 from .types import JsonDict, JsonType
 from .users import User
 
@@ -33,13 +33,14 @@ class Resource:
     def url(self) -> str: ...
     def view(self) -> MappingProxyType[str, JsonType]: ...
     def reload(self) -> None: ...
+    parent: ResourcesT["Resource"]
 
 class MutableResource(Resource):
     created_by: User
     updated_by: User
     created_at: datetime
     updated_at: datetime
-    def update(self, **kwargs): ...
+    def update(self: _T_co, **kwargs) -> _T_co: ...
     def delete(self) -> None: ...
 
 class NamedResource(MutableResource):
