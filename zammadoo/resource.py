@@ -59,7 +59,7 @@ class Resource:
     def __init__(self, parent, rid, info=None):
         self._id = rid
         self.parent = parent
-        self.url = parent.url(rid)
+        self._url = parent.url(rid)
         self._info: "JsonDict" = info or {}
         self._frozen = True
 
@@ -103,6 +103,11 @@ class Resource:
     @property
     def id(self) -> int:
         return self._id
+
+    @property
+    def url(self) -> str:
+        """the API endpoint URL"""
+        return self._url
 
     def view(self):
         """
