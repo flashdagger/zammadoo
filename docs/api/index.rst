@@ -3,8 +3,9 @@ API Reference
 =============
 
 .. toctree::
-   :maxdepth: 1
+    :maxdepth: 1
 
-   client
-   groups
-   tickets
+    client
+    groups
+    organizations
+    tickets

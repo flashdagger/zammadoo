@@ -1,20 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+from typing import TYPE_CHECKING, List
 
 from .resource import MutableResource
 from .resources import Creatable, SearchableT
-from .users import userlist_property
+
+if TYPE_CHECKING:
+    from .client import Client
+    from .users import User
 
 
 class Organization(MutableResource):
-    @userlist_property
-    def members(self):
-        ...
+    @property
+    def members(self) -> List["User"]:
+        users = self.parent.client.users
+        return list(map(users, self["member_ids"]))
 
 
-class Organizations(SearchableT[Organization], Creatable):
+class Organizations(SearchableT[Organization], Creatable[Organization]):
     RESOURCE_TYPE = Organization
-    create = Creatable.create_with_name
 
-    def __init__(self, client):
+    def __init__(self, client: "Client"):
         super().__init__(client, "organizations")
+
+    create = Creatable.create_with_name

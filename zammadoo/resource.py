@@ -148,7 +148,7 @@ class MutableResource(Resource):
         """
         Update the resource properties.
 
-        :param kwargs: values to be updated (depends on the resource)
+        :param kwargs: values to be updated (depending on the resource)
         :return: a new instance of the updated resource
         """
         parent = self.parent
@@ -156,7 +156,7 @@ class MutableResource(Resource):
         return parent(updated_info["id"], info=updated_info)
 
     def delete(self):
-        """Delete the resource. Requires corresponding permission."""
+        """Delete the resource. Requires the respective permission."""
         parent = self.parent
         parent.client.delete(parent.endpoint, self._id)
         url = self.url
