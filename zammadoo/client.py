@@ -126,7 +126,6 @@ class Client:
         """Manages the ``/users`` endpoint."""
         return Users(self)
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         url: str,
