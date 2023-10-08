@@ -85,14 +85,14 @@ class Resource:
         if self._info:
             return
         info = self.parent.cached_info(self._id, refresh=False)
-        self._info.update(cast("JsonDict", info))
+        self._info.update(info)
 
     def reload(self) -> None:
         """Updates the object properties by requesting the current data from the server."""
         info = self._info
         info.clear()
         new_info = self.parent.cached_info(self._id, refresh=True)
-        info.update(cast("JsonDict", new_info))
+        info.update(new_info)
 
 
 class MutableResource(Resource):

@@ -37,7 +37,7 @@ class ResourcesT(Generic[_T_co]):
     def __init__(self, client: "Client", endpoint: str):
         self.client = client
         self.endpoint: str = endpoint
-        self.cache = LruCache["JsonContainer"](max_size=self.DEFAULT_CACHE_SIZE)
+        self.cache = LruCache["JsonDict"](max_size=self.DEFAULT_CACHE_SIZE)
         self._instance_cache: MutableMapping[int, _T_co] = WeakValueDictionary()
 
     def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
@@ -59,10 +59,10 @@ class ResourcesT(Generic[_T_co]):
     def url(self, *args) -> str:
         return "/".join(map(str, (self.client.url, self.endpoint, *args)))
 
-    def cached_info(self, rid: int, refresh=True) -> "JsonContainer":
+    def cached_info(self, rid: int, refresh=True) -> "JsonDict":
         item = self.url(rid)
         cache = self.cache
-        callback: Callable[[], "JsonContainer"] = partial(
+        callback: Callable[[], "JsonDict"] = partial(
             self.client.get, self.endpoint, rid
         )
 
