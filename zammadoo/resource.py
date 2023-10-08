@@ -4,7 +4,7 @@
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Optional, cast, Any
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from .resources import ResourcesT, _T_co
 
@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 class Resource:
     def __init__(
-        self,
-        parent: ResourcesT["Resource"],
+        self: _T_co,
+        parent: ResourcesT[_T_co],
         rid: int,
         info: Optional["JsonDict"] = None,
     ) -> None:
@@ -116,7 +116,7 @@ class MutableResource(Resource):
         :param kwargs: values to be updated (depending on the resource)
         :return: a new instance of the updated resource
         """
-        parent = cast(ResourcesT[_T_co], self.parent)
+        parent = self.parent
         updated_info = parent.client.put(parent.endpoint, self._id, json=kwargs)
         return parent(updated_info["id"], info=updated_info)
 

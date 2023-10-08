@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Optional, List, cast
+from typing import TYPE_CHECKING, List, Optional, cast
 
 from .resource import NamedResource
 from .resources import Creatable, SearchableT

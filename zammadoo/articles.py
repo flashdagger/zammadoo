@@ -6,7 +6,7 @@ from datetime import datetime
 from mimetypes import guess_type
 from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Iterator, cast
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, cast
 
 import requests
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from .resource import MutableResource, NamedResource
-from .resources import Creatable, IterableT, SearchableT
+from .resources import Creatable, IterableT, SearchableT, _T_co
 from .utils import LINK_TYPE, LINK_TYPES
 
 if TYPE_CHECKING:
@@ -198,7 +198,7 @@ class Ticket(MutableResource):
             }
             self.parent.client.delete("links/remove", json=params)
 
-    def merge_with(self, target_id: int) -> "Ticket":
+    def merge_with(self: _T_co, target_id: int) -> _T_co:
         """
         merges the ticket with another one
 
@@ -206,7 +206,7 @@ class Ticket(MutableResource):
         :return: the merged ticket objects
         :rtype: :class:`Ticket`
         """
-        parent = cast(SearchableT["Ticket"], self.parent)
+        parent = self.parent
         info = parent.client.put("ticket_merge", target_id, self["number"])
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
