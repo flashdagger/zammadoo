@@ -2,8 +2,8 @@
 zammadoo
 ========
 
-.. image:: https://img.shields.io/pypi/l/ansicolortags.svg
-        :target: https://pypi.python.org/pypi/ansicolortags/
+.. image:: https://img.shields.io/pypi/l/zammadoo.svg
+        :target: https://pypi.python.org/pypi/zammadoo/
         :alt: PyPI license
 
 .. image:: https://readthedocs.org/projects/zammadoo/badge/?version=latest
