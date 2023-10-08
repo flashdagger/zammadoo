@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from .client import Client
     from .groups import Group
     from .organizations import Organization
-    from .types import JsonDict
+    from .types import JsonDict, JsonDictList, StringKeyDict
     from .users import User
 
 
@@ -236,12 +236,11 @@ class Tickets(SearchableT[Ticket], Creatable[Ticket]):
     def __init__(self, client: "Client"):
         super().__init__(client, "tickets")
 
-    def _iter_items(self, items):
+    def _iter_items(self, items: Union["StringKeyDict", "JsonDictList"]):
         if isinstance(items, list):
             yield from super()._iter_items(items)
             return
 
-        assert isinstance(items, dict)
         cache_assets(self.client, items.get("assets", {}))
 
         for rid in items.get("tickets", ()):

@@ -23,7 +23,7 @@ from .utils import YieldCounter
 if TYPE_CHECKING:
     from .client import Client
     from .resource import Resource
-    from .types import JsonContainer, JsonDict
+    from .types import JsonDict, JsonDictList
 
     _ = Resource
 
@@ -92,8 +92,7 @@ class Creatable(ResourcesT[_T_co]):
 
 
 class IterableT(ResourcesT[_T_co]):
-    def _iter_items(self, items: "JsonContainer") -> Iterator[_T_co]:
-        assert isinstance(items, list)
+    def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
         for item in items:
             yield self.RESOURCE_TYPE(self, cast(int, item["id"]), info=item)
 
