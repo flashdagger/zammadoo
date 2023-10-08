@@ -31,6 +31,13 @@ class APIException(HTTPError):
     """Raised when the API server indicates an error."""
 
 
+@dataclass
+class Pagination:
+    page: int = 1
+    per_page: int = 10
+    expand: bool = False
+
+
 def raise_or_return_json(response: requests.Response) -> "JsonType":
     try:
         response.raise_for_status()
@@ -119,12 +126,6 @@ class Client:
         """Manages the ``/users`` endpoint."""
         return Users(self)
 
-    @dataclass
-    class Pagination:
-        page: int = 1
-        per_page: int = 10
-        expand: bool = False
-
     # pylint: disable=too-many-arguments
     def __init__(
         self,
@@ -152,7 +153,7 @@ class Client:
 
         """
         self.url = url.rstrip("/")
-        self.pagination = self.Pagination()
+        self.pagination = Pagination()
 
         def check_config() -> None:
             if http_token is not None:

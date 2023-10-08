@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from copy import copy
 from dataclasses import asdict
 from functools import partial
 from typing import (
@@ -93,10 +92,6 @@ class Creatable(ResourcesT[_T_co]):
 
 
 class IterableT(ResourcesT[_T_co]):
-    def __init__(self, client: "Client", endpoint: str):
-        super().__init__(client, endpoint)
-        self.pagination = copy(client.pagination)
-
     def _iter_items(self, items: "JsonContainer") -> Iterator[_T_co]:
         assert isinstance(items, list)
         for item in items:
@@ -121,7 +116,7 @@ class IterableT(ResourcesT[_T_co]):
         params.update(
             (
                 (key, value)
-                for key, value in asdict(self.pagination).items()
+                for key, value in asdict(self.client.pagination).items()
                 if key not in params
             )
         )
