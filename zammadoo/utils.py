@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
+from contextlib import suppress
 from os import PathLike
 from typing import (
     Any,
@@ -58,3 +58,11 @@ class YieldCounter:
         for count, item in enumerate(itr, 1):
             self._counter = count
             yield item
+
+
+def is_probably_text(data: bytes) -> bool:
+    for encoding in ("utf-8", "utf-16"):
+        with suppress(UnicodeDecodeError):
+            data.decode(encoding)
+            return True
+    return False

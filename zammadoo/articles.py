@@ -6,18 +6,22 @@ from datetime import datetime
 from mimetypes import guess_type
 from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional
 
 import requests
 
 from .resource import Resource
 from .resources import Creatable, ResourcesT
-from .utils import info_cast
+from .utils import info_cast, is_probably_text
 
 if TYPE_CHECKING:
+    from typing import Union
+
     from .client import Client
     from .tickets import Ticket
     from .utils import JsonDict, PathType
+
+    OptionalFiles = Union[None, "PathType", Iterable["PathType"]]
 
 
 class Attachment:
@@ -43,12 +47,20 @@ class Attachment:
         info_list = []
         for path in paths:
             filepath = Path(path)
-            assert filepath.is_file()
-            mime_type, _encoding = guess_type(filepath, strict=True)
+            assert filepath.is_file(), f"file {filepath} does not exist"
+            mime_type, encoding = guess_type(filepath, strict=True)
+            raw_bytes = filepath.read_bytes()
+            if mime_type is None:
+                mime_type = (
+                    "text/plain"
+                    if encoding or is_probably_text(raw_bytes[:512])
+                    else "application/octet-stream"
+                )
+
             info_list.append(
                 {
                     "filename": filepath.name,
-                    "data": b64encode(filepath.read_bytes()),
+                    "data": b64encode(raw_bytes).decode("utf-8"),
                     "mime-type": mime_type,
                 }
             )
@@ -140,10 +152,38 @@ class Articles(Creatable[Article], ResourcesT[Article]):
         items = self.client.get(self.endpoint, "by_ticket", tid)
         return [self(item["id"], info=item) for item in items]
 
-    def create(self, ticket_id: int, body: str, **kwargs) -> Article:
+    def create(
+        self,
+        ticket_id: int,
+        body: str,
+        files: "OptionalFiles" = None,
+        **kwargs,
+    ) -> Article:
+        """
+        Create a new ticket article.
+
+        :param ticket_id: the ticket id where the article will be appended
+        :param body: article text
+        :param files: file attachments
+        :param kwargs: additional article parameters
+        :return: the newly created article
+        """
+        if files is None:
+            files = ()
+        elif isinstance(files, str) or not isinstance(files, Iterable):
+            files = (files,)
+
+        attachments = kwargs.pop("attachments", [])
+        attachments.extend(Attachment.info_from_files(*files))
+        assert all(
+            attachment.keys() == {"filename", "data", "mime-type"}
+            for attachment in attachments
+        ), "improper attachment info"
         info = {
             "ticket_id": ticket_id,
             "body": body,
+            "attachments": attachments,
             **kwargs,
         }
+
         return super()._create(info)

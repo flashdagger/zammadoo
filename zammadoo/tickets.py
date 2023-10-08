@@ -8,7 +8,7 @@ from .resources import Creatable, IterableT, SearchableT, _T_co
 from .utils import LINK_TYPE, LINK_TYPES
 
 if TYPE_CHECKING:
-    from .articles import Article
+    from .articles import Article, OptionalFiles
     from .client import Client
     from .groups import Group
     from .organizations import Organization
@@ -213,7 +213,13 @@ class Ticket(MutableResource):
         return parent(merged_info["id"], info=merged_info)
 
     def create_article(
-        self, body: str, typ: str = "note", internal: bool = True, **kwargs
+        self,
+        body: str,
+        *,
+        typ: str = "note",
+        internal: bool = True,
+        files: "OptionalFiles" = None,
+        **kwargs,
     ) -> "Article":
         """
         Create a new article for the ticket.
@@ -221,11 +227,17 @@ class Ticket(MutableResource):
         :param body: article body text
         :param typ: article type
         :param internal: article visibility
+        :param files: attachment files
         :param kwargs: additional article properties
         :return: the newly created article
         """
         return self.parent.client.ticket_articles.create(
-            self._id, body=body, type=typ, internal=internal, **kwargs
+            self._id,
+            body=body,
+            files=files,
+            type=typ,
+            internal=internal,
+            **kwargs,
         )
 
 
