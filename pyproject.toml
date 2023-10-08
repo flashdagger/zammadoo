@@ -1,10 +1,24 @@
 [tool.poetry]
 name = "zammadoo"
 version = "0.1.0"
-description = "an object-oriented Zammad REST API Client for Python"
+description = "an object-oriented REST API client for zammad"
 authors = ["Marcel Kuszak <marcel.kuszak@gmx.de>"]
-readme = "README.md"
+license = "MIT"
+readme = "README.rst"
 packages = [{ include = "zammadoo" }]
+keywords = ["zammad"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: Implementation",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Operating System :: OS Independent",
+]
+homepage = "https://github.com/flashdagger/zammadoo"
+documentation = "https://zammadoo.readthedocs.io/"
+repository = "https://github.com/flashdagger/zammadoo.git"
 
 [tool.poetry.dependencies]
 python = "^3.9"
