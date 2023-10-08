@@ -13,17 +13,16 @@ from typing import (
     Optional,
     Type,
     TypeVar,
-    cast,
 )
 from weakref import WeakValueDictionary
 
 from .cache import LruCache
-from .utils import YieldCounter
+from .utils import YieldCounter, info_cast
 
 if TYPE_CHECKING:
     from .client import Client
     from .resource import Resource
-    from .types import JsonDict, JsonDictList
+    from .utils import JsonDict, JsonDictList
 
     _ = Resource
 
@@ -94,7 +93,7 @@ class Creatable(ResourcesT[_T_co]):
 class IterableT(ResourcesT[_T_co]):
     def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
         for item in items:
-            yield self.RESOURCE_TYPE(self, cast(int, item["id"]), info=item)
+            yield self.RESOURCE_TYPE(self, info_cast(item)["id"], info=item)
 
     def iter(self, *args, **params) -> Iterator[_T_co]:
         """

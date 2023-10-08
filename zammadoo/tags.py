@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
 
 if TYPE_CHECKING:
     from .client import Client
-    from .types import StringKeyDict
+    from .utils import StringKeyDict
 
 
 class Tags:

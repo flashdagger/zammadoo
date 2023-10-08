@@ -21,7 +21,7 @@ from .tickets import Priorities, States, Tickets
 from .users import Users
 
 if TYPE_CHECKING:
-    from .types import JsonType, StringKeyDict
+    from .utils import JsonType, StringKeyDict
 
 
 LOG = logging.getLogger(__name__)

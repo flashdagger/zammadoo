@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     from .client import Client
     from .groups import Group
     from .organizations import Organization
-    from .types import JsonDict, JsonDictList, StringKeyDict
     from .users import User
+    from .utils import JsonDict, JsonDictList, StringKeyDict
 
 
 class Priority(NamedResource):

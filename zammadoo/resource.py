@@ -4,13 +4,14 @@
 from contextlib import suppress
 from datetime import datetime
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Optional, cast
+from typing import TYPE_CHECKING, Any, Optional
 
 from .resources import ResourcesT, _T_co
+from .utils import info_cast
 
 if TYPE_CHECKING:
-    from .types import JsonDict, JsonType
     from .users import User
+    from .utils import JsonDict, JsonType
 
 
 class Resource:
@@ -135,4 +136,5 @@ class NamedResource(MutableResource):
 
     @property
     def name(self) -> str:
-        return cast(str, self["name"])
+        self._initialize()
+        return info_cast(self._info)["name"]

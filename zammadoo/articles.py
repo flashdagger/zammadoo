@@ -6,17 +6,18 @@ from datetime import datetime
 from mimetypes import guess_type
 from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, cast
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional
 
 import requests
 
 from .resource import Resource
 from .resources import Creatable, ResourcesT
+from .utils import info_cast
 
 if TYPE_CHECKING:
     from .client import Client
     from .tickets import Ticket
-    from .types import JsonDict, PathType
+    from .utils import JsonDict, PathType
 
 
 class Attachment:
@@ -87,7 +88,7 @@ class Attachment:
 
     @property
     def encoding(self) -> Optional[str]:
-        preferences = cast(Dict[str, str], self._info.get("preferences", {}))
+        preferences = info_cast(self._info).get("preferences", {})
         return preferences.get("Charset")
 
     def iter_text(self, chunk_size=8192):

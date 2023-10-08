@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, List, Optional, cast
+from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
 from .resources import Creatable, SearchableT
+from .utils import info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -23,7 +24,8 @@ class User(NamedResource):
     @property
     def name(self) -> str:
         """Alias for users login name."""
-        return cast(str, self["login"])
+        self._initialize()
+        return info_cast(self._info)["login"]
 
     @property
     def groups(self) -> List["Group"]:
