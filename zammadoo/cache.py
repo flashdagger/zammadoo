@@ -3,7 +3,7 @@
 
 from collections import OrderedDict
 from itertools import islice
-from typing import Callable, Generic, Hashable, TypeVar
+from typing import Callable, Generic, Hashable, TypeVar, Any
 
 _T = TypeVar("_T")
 
@@ -87,5 +87,5 @@ class LruCache(Generic[_T]):
             if 0 < max_size < len(cache):
                 cache.popitem(last=False)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: Any) -> None:
         del self._cache[key]

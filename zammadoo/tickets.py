@@ -206,11 +206,11 @@ class Ticket(MutableResource):
         :return: the merged ticket objects
         :rtype: :class:`Ticket`
         """
-        parent = self.parent
+        parent = cast(SearchableT["Ticket"], self.parent)
         info = parent.client.put("ticket_merge", target_id, self["number"])
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
-        return cast("Ticket", parent(merged_info["id"], info=merged_info))
+        return parent(merged_info["id"], info=merged_info)
 
     def create_article(
         self, body: str, typ: str = "note", internal: bool = True, **kwargs

@@ -8,7 +8,7 @@ from typing import (
     TYPE_CHECKING,
     Callable,
     Generic,
-    Iterable,
+    Iterator,
     Literal,
     MutableMapping,
     Optional,
@@ -19,14 +19,16 @@ from typing import (
 from weakref import WeakValueDictionary
 
 from .cache import LruCache
-from .resource import Resource
 from .utils import YieldCounter
 
 if TYPE_CHECKING:
     from .client import Client
+    from .resource import Resource
     from .types import JsonContainer, JsonDict
 
-_T_co = TypeVar("_T_co", bound=Resource, covariant=True)
+    _ = Resource
+
+_T_co = TypeVar("_T_co", bound="Resource", covariant=True)
 
 
 class ResourcesT(Generic[_T_co]):
@@ -74,7 +76,7 @@ class ResourcesT(Generic[_T_co]):
 
 
 class Creatable(ResourcesT[_T_co]):
-    def create_with_name(self, name, **kwargs) -> _T_co:
+    def create_with_name(self, name: str, **kwargs) -> _T_co:
         """
         Create a new resource.
 
@@ -95,12 +97,12 @@ class IterableT(ResourcesT[_T_co]):
         super().__init__(client, endpoint)
         self.pagination = copy(client.pagination)
 
-    def _iter_items(self, items: "JsonContainer") -> Iterable[_T_co]:
+    def _iter_items(self, items: "JsonContainer") -> Iterator[_T_co]:
         assert isinstance(items, list)
         for item in items:
             yield self.RESOURCE_TYPE(self, cast(int, item["id"]), info=item)
 
-    def iter(self, *args, **params) -> Iterable[_T_co]:
+    def iter(self, *args, **params) -> Iterator[_T_co]:
         """
         Iterate through all objects. The returned iterable can be used in for loops
         or fill a Python container like :class:`list` or :class:`tuple`.
@@ -140,8 +142,7 @@ class IterableT(ResourcesT[_T_co]):
 
             params["page"] += 1
 
-    def __iter__(self):
-        return self.iter()
+    __iter__ = iter
 
 
 class SearchableT(IterableT[_T_co]):
@@ -152,7 +153,7 @@ class SearchableT(IterableT[_T_co]):
         sort_by: Optional[str] = None,
         order_by: Literal["asc", "desc", None] = None,
         **kwargs,
-    ) -> Iterable[_T_co]:
+    ) -> Iterator[_T_co]:
         """
         Search for objects with
         `query syntax <https://user-docs.zammad.org/en/latest/advanced/search.html>`_.

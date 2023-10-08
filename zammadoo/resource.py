@@ -3,60 +3,23 @@
 
 from contextlib import suppress
 from datetime import datetime
-from functools import wraps
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast, Any
+
+from .resources import ResourcesT, _T_co
 
 if TYPE_CHECKING:
-    from .types import JsonDict
+    from .types import JsonDict, JsonType
     from .users import User
 
 
-def resource_property(endpoint, key=None):
-    def decorator(_func):
-        func_name = _func.__name__
-        _key = key or f"{func_name}_id"
-        _endpoint = endpoint or f"{func_name}s"
-
-        @property
-        @wraps(_func)
-        def property_func(self: "Resource"):
-            uid = self[_key]
-            return uid and getattr(self.parent.client, _endpoint)(uid)
-
-        return property_func
-
-    if isinstance(endpoint, str):
-        return decorator
-
-    func, endpoint = endpoint, None
-    return decorator(func)
-
-
-def resourcelist_property(endpoint, key=None):
-    def decorator(_func):
-        func_name = _func.__name__
-        assert func_name.endswith("s")
-        _key = key or f"{func_name[:-1]}_ids"
-        _endpoint = endpoint or func_name
-
-        @property
-        @wraps(_func)
-        def propertylist_func(self: "Resource"):
-            uids = self[_key]
-            return list(map(getattr(self.parent.client, _endpoint), uids))
-
-        return propertylist_func
-
-    if isinstance(endpoint, str):
-        return decorator
-
-    func, endpoint = endpoint, None
-    return decorator(func)
-
-
 class Resource:
-    def __init__(self, parent, rid, info=None):
+    def __init__(
+        self,
+        parent: ResourcesT["Resource"],
+        rid: int,
+        info: Optional["JsonDict"] = None,
+    ) -> None:
         self._id = rid
         self.parent = parent
         self._url = parent.url(rid)
@@ -66,14 +29,14 @@ class Resource:
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
 
-    def __getattr__(self, item):
+    def __getattr__(self, name: str) -> Any:
         self._initialize()
         info = self._info
 
-        key = item[:-1] if item in {"from_"} else item
+        key = name[:-1] if name in {"from_"} else name
         if key not in info:
             raise AttributeError(
-                f"{self.__class__.__name__!r} object has no attribute {item!r}"
+                f"{self.__class__.__name__!r} object has no attribute {name!r}"
             )
 
         value = info[key]
@@ -83,7 +46,7 @@ class Resource:
 
         return value
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any) -> None:
         try:
             self.__getattribute__("_frozen")
         except AttributeError:
@@ -93,11 +56,11 @@ class Resource:
             f"{self.__class__.__name__!r} object attribute {name!r} is read-only"
         )
 
-    def __getitem__(self, item):
+    def __getitem__(self, name: str) -> Any:
         self._initialize()
-        return self._info[item]
+        return self._info[name]
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Resource) and other.url == self.url
 
     @property
@@ -109,7 +72,7 @@ class Resource:
         """the API endpoint URL"""
         return self._url
 
-    def view(self):
+    def view(self) -> MappingProxyType[str, "JsonType"]:
         """
         A mapping view of the objects internal properties as returned by the REST API.
 
@@ -118,16 +81,18 @@ class Resource:
         self._initialize()
         return MappingProxyType(self._info)
 
-    def _initialize(self):
+    def _initialize(self) -> None:
         if self._info:
             return
-        self._info.update(self.parent.cached_info(self._id, refresh=False))
+        info = self.parent.cached_info(self._id, refresh=False)
+        self._info.update(cast("JsonDict", info))
 
-    def reload(self):
+    def reload(self) -> None:
         """Updates the object properties by requesting the current data from the server."""
         info = self._info
         info.clear()
-        info.update(self.parent.cached_info(self._id), refresh=True)
+        new_info = self.parent.cached_info(self._id, refresh=True)
+        info.update(cast("JsonDict", new_info))
 
 
 class MutableResource(Resource):
@@ -144,18 +109,18 @@ class MutableResource(Resource):
         uid = self["updated_by_id"]
         return self.parent.client.users(uid)
 
-    def update(self, **kwargs):
+    def update(self: _T_co, **kwargs) -> _T_co:
         """
         Update the resource properties.
 
         :param kwargs: values to be updated (depending on the resource)
         :return: a new instance of the updated resource
         """
-        parent = self.parent
+        parent = cast(ResourcesT[_T_co], self.parent)
         updated_info = parent.client.put(parent.endpoint, self._id, json=kwargs)
         return parent(updated_info["id"], info=updated_info)
 
-    def delete(self):
+    def delete(self) -> None:
         """Delete the resource. Requires the respective permission."""
         parent = self.parent
         parent.client.delete(parent.endpoint, self._id)
@@ -170,4 +135,4 @@ class NamedResource(MutableResource):
 
     @property
     def name(self) -> str:
-        return self["name"]
+        return cast(str, self["name"])
