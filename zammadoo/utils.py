@@ -3,6 +3,7 @@
 from contextlib import suppress
 from os import PathLike
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     Iterable,
@@ -15,9 +16,13 @@ from typing import (
     get_args,
 )
 
-from typing_extensions import TypeAlias
+if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
 
-LINK_TYPE: TypeAlias = Literal["normal", "parent", "child"]
+    LINK_TYPE: TypeAlias = Literal["normal", "parent", "child"]
+else:
+    LINK_TYPE = Literal["normal", "parent", "child"]
+
 LINK_TYPES = get_args(LINK_TYPE)
 
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
