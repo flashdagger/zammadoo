@@ -22,12 +22,17 @@ Real life examples
     from zammadoo import Client
 
     client = Client("https://myhost.com/api/v1/", username="<username>", password="<mysecret>")
+    # or use an API token created via https://myhost.com/#profile/token_access
+    client = Client("https://myhost.com/api/v1/", http_token="<token>")
 
     # I have a new ticket with id 17967 and I need to download the attachment file
     path = client.tickets(17967).articles[0].attachments[0].download()
     print(f"The downloaded file is {path}")
 
-    # I need to close all tickets with the tag "deprecated" and remove the tag
+    # I need to append a new ticket article with attached files
+    client.ticket(17967).create_article("Server down again. See logfiles.", files=["kern.log", "syslog"])
+
+    # I want to close all tickets with the tag "deprecated" and remove the tag
     for ticket in client.tickets.search("tags:deprecated"):
         ticket.update(state="closed")
         ticket.remove_tags("deprecated")
