@@ -2,7 +2,7 @@
   main: |
     from zammadoo import Client
 
-    client = Client("<url>")
+    client = Client("<url>", http_token="<token>")
     reveal_type(client.groups)            # N: Revealed type is "zammadoo.groups.Groups"
     reveal_type(
       client.groups.create(name=""))      # N: Revealed type is "zammadoo.groups.Group"
