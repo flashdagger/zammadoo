@@ -11,7 +11,7 @@ zammadoo
         :alt: Documentation Status
 
 
-an object-oriented REST API client for Zammad
+an object-oriented REST API client for the `Zammad helpdesk sytem <https://zammad.org/>`_
 
 
 Real life examples
@@ -41,5 +41,5 @@ Real life examples
 design principles
 -----------------
 
-Zammadoo provides a fluent workflow. Since the provided resources are wrapped in its own type
+Zammadoo provides a fluent workflow. Since the resources are wrapped in its own type,
 your IDE can show you many of the available properties and methods.
