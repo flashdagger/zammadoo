@@ -13,6 +13,7 @@ an object-oriented Zammad REST API Client for Python
 
    intro.rst
    api/index
+   history
 
 
 Indices and tables
