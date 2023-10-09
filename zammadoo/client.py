@@ -130,8 +130,7 @@ class Client:
         self,
         url: str,
         *,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        http_auth: Optional[Tuple[str, str]] = None,
         http_token: Optional[str] = None,
         oauth2_token: Optional[str] = None,
         additional_headers: Sequence[Tuple[str, str]] = (),
@@ -141,8 +140,7 @@ class Client:
         or ``http_token`` or ``oauth2_token``.
 
         :param url: the zammad API url (e.g. ``https://myhost.com/api/v1``)
-        :param username: the username for HTTP Basic Authentication
-        :param password: the password for HTTP Basic Authentication
+        :param http_auth: username and password for HTTP Basic Authentication
         :param http_token: access token when using HTTP Token Authentication
         :param oauth2_token: access token when using OAuth 2 Authentication
         :param additional_headers: additional name, value pairs that will be
@@ -153,29 +151,17 @@ class Client:
         """
         self.url = url.rstrip("/")
         self.pagination = Pagination()
-
-        def check_config() -> None:
-            if http_token is not None:
-                return
-            if oauth2_token is not None:
-                return
-            if username is None:
-                raise TypeError("Missing username in config")
-            if password is None:
-                raise TypeError("Missing password in config")
-
-        check_config()
         self.session = requests.Session()
         atexit.register(self.session.close)
-        self.session.headers["User-Agent"] = "Zammad API Python"
+        self.session.headers["User-Agent"] = "zammadoo Python client"
         if http_token:
             self.session.headers["Authorization"] = f"Token token={http_token}"
         elif oauth2_token:
             self.session.headers["Authorization"] = f"Bearer {oauth2_token}"
-        elif username and password:
-            self.session.auth = (username, password)
+        elif http_auth:
+            self.session.auth = http_auth
         else:
-            raise ValueError("Invalid Authentication information in config")
+            raise TypeError(f"{self.__class__} needs an authentication parameter.")
 
         self.session.headers.update(additional_headers)
 
@@ -192,11 +178,16 @@ class Client:
 
         :param user: user id or login_name
         """
+        headers = self.session.headers
+        restore_value = headers.pop("X-On-Behalf-Of", None)
         try:
-            self.session.headers["X-On-Behalf-Of"] = str(user)
+            headers["X-On-Behalf-Of"] = str(user)
             yield
         finally:
-            self.session.headers.pop("X-On-Behalf-Of", None)
+            if restore_value is None:
+                self.session.headers.pop("X-On-Behalf-Of", None)
+            else:
+                headers["X-On-Behalf-Of"] = restore_value
 
     def request(
         self,
@@ -238,7 +229,7 @@ class Client:
 
         :param method: the HTTP method (e.g. ``GET``, ``POST``, ``PUT``, ``DELETE``)
         :param url: full resource URL
-        :param params: url parameter (usually for ``GET``)
+        :param params: parameter that get urlencoded (usually for ``GET``)
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
         :param kwargs: additional parameters passed to ``request()``
         :rtype: :class:`requests.Response`
