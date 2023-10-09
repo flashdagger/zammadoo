@@ -25,7 +25,7 @@ Real life examples
     # or use an API token created via https://myhost.com/#profile/token_access
     client = Client("https://myhost.com/api/v1/", http_token="<token>")
 
-    # I have a new ticket with id 17967 and I need to download the attachment file
+    # I have a new ticket with id 17967 and need to download the attachment file
     path = client.tickets(17967).articles[0].attachments[0].download()
     print(f"The downloaded file is {path}")
 
