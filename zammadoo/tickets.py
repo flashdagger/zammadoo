@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from .resource import MutableResource, NamedResource
 from .resources import Creatable, IterableT, SearchableT, _T_co
-from .utils import LINK_TYPE, LINK_TYPES
+from .utils import LINK_TYPES, LinkType
 
 if TYPE_CHECKING:
     from .articles import Article, OptionalFiles
@@ -160,7 +160,7 @@ class Ticket(MutableResource):
 
         return link_map
 
-    def link_with(self, target_id: int, link_type: LINK_TYPE = "normal"):
+    def link_with(self, target_id: int, link_type: LinkType = "normal"):
         """
         link the ticket with another one, if the link already
         exists it will be ignored
@@ -178,9 +178,7 @@ class Ticket(MutableResource):
         }
         self.parent.client.post("links/add", json=params)
 
-    def unlink_from(
-        self, target_id: int, link_type: Optional[LINK_TYPE] = None
-    ) -> None:
+    def unlink_from(self, target_id: int, link_type: Optional[LinkType] = None) -> None:
         """
         remove link with another, if the link does not exist it will be ignored
 

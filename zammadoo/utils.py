@@ -19,11 +19,11 @@ from typing import (
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
-    LINK_TYPE: TypeAlias = Literal["normal", "parent", "child"]
+    LinkType: TypeAlias = Literal["normal", "parent", "child"]
 else:
-    LINK_TYPE = Literal["normal", "parent", "child"]
+    LinkType = Literal["normal", "parent", "child"]
 
-LINK_TYPES = get_args(LINK_TYPE)
+LINK_TYPES = get_args(LinkType)
 
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]
