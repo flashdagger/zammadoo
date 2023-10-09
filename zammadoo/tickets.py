@@ -29,7 +29,13 @@ class Priorities(IterableT[Priority], Creatable[Priority]):
         super().__init__(client, "ticket_priorities")
 
 
-class State(MutableResource):
+class State(NamedResource):
+    default_create: bool  #:
+    default_follow_up: bool  #:
+    ignore_escalation: bool  #:
+    next_state_id: Optional[int]  #:
+    state_type_id: int  #:
+
     @property
     def next_state(self) -> "State":
         sid = self["next_state_id"]
