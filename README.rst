@@ -38,7 +38,7 @@ Real life examples
         ticket.remove_tags("deprecated")
 
 
-design principles
+Design principles
 -----------------
 
 Zammadoo provides a fluent workflow. Since the resources are wrapped in its own type,

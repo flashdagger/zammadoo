@@ -22,7 +22,7 @@ version = ".".join(release.split(".")[:2])
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-html_logo = "images/zammad_logo_white.png"
+html_logo = "images/zammadoo.svg"
 html_favicon = "images/favicon.ico"
 
 extensions = [
