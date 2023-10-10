@@ -71,7 +71,7 @@ class Ticket(MutableResource):
     """Ticket(...)"""
 
     article_count: Optional[int]  #:
-    note: str  #:
+    note: Optional[str]  #:
     number: str  #:
     title: str  #:
 
