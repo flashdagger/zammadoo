@@ -118,10 +118,10 @@ class IterableT(ResourcesT[_T_co]):
                 if key not in params
             )
         )
-        per_page = params["per_page"]
-        if params["page"] is None:
-            params["page"] = 1
-        assert params["page"] is not None  # make mypy happy
+        typed_params = info_cast(params)
+        per_page = typed_params["per_page"]
+        if typed_params["page"] is None:
+            typed_params["page"] = 1
 
         while True:
             items = self.client.get(self.endpoint, *args, params=params)
@@ -133,7 +133,7 @@ class IterableT(ResourcesT[_T_co]):
             if per_page and yielded < per_page or yielded == 0:
                 return
 
-            params["page"] += 1
+            typed_params["page"] += 1
 
     __iter__ = iter
 

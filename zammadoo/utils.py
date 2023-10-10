@@ -38,6 +38,8 @@ class TypedInfo(TypedDict, total=False):
     name: str
     login: str
     preferences: Dict[str, str]
+    page: int
+    per_page: int
 
 
 def info_cast(info: "JsonDict") -> TypedInfo:
