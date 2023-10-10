@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 
 class Group(NamedResource):
+    """Group(...)"""
+
     shared_drafts: bool  #:
 
     @property
@@ -20,6 +22,8 @@ class Group(NamedResource):
 
 
 class Groups(SearchableT[Group], Creatable[Group]):
+    """Groups(...)"""
+
     RESOURCE_TYPE = Group
 
     def __init__(self, client: "Client"):

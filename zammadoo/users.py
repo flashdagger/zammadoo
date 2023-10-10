@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 
 class User(NamedResource):
+    """User(...)"""
+
     @property
     def fullname(self) -> str:
         """Users firstname and lastname combined."""
@@ -49,6 +51,8 @@ class User(NamedResource):
 
 
 class Users(SearchableT[User], Creatable[User]):
+    """Users(...)"""
+
     RESOURCE_TYPE = User
 
     def __init__(self, client: "Client"):
@@ -83,6 +87,8 @@ class Users(SearchableT[User], Creatable[User]):
 
     # pylint: disable=invalid-name
     def me(self) -> User:
-        """Return the authenticated user."""
+        """
+        :return: Return the authenticated user.
+        """
         info = self.client.get(self.endpoint, "me")
         return self.RESOURCE_TYPE(self, info["id"], info)

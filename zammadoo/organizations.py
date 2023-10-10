@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 
 class Organization(MutableResource):
+    """Organization(...)"""
+
     @property
     def members(self) -> List["User"]:
         users = self.parent.client.users
@@ -19,6 +21,8 @@ class Organization(MutableResource):
 
 
 class Organizations(SearchableT[Organization], Creatable[Organization]):
+    """Organizations(...)"""
+
     RESOURCE_TYPE = Organization
 
     def __init__(self, client: "Client"):

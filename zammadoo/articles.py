@@ -25,6 +25,8 @@ if TYPE_CHECKING:
 
 
 class Attachment:
+    """Attachment(...)"""
+
     id: int  #:
     filename: str  #:
     preferences: Dict[str, Any]  #:
@@ -113,6 +115,8 @@ class Attachment:
 
 
 class Article(Resource):
+    """Article(...)"""
+
     body: str  #:
     cc: Optional[str]  #:
     content_type: str  #:
@@ -143,6 +147,8 @@ class Article(Resource):
 
 
 class Articles(Creatable[Article], ResourcesT[Article]):
+    """Articles(...)"""
+
     RESOURCE_TYPE = Article
 
     def __init__(self, client: "Client"):

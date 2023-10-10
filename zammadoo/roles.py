@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
 
 class Role(NamedResource):
+    """Role(...)"""
+
     @property
     def groups(self) -> List["Group"]:
         groups = self.parent.client.groups
@@ -27,6 +29,8 @@ class Role(NamedResource):
 
 
 class Roles(SearchableT[Role], Creatable[Role]):
+    """Roles(...)"""
+
     RESOURCE_TYPE = Role
 
     def __init__(self, client: "Client"):
