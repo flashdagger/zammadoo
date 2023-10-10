@@ -32,11 +32,20 @@ _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
 class ResourcesT(Generic[_T_co]):
     _RESOURCE_TYPE: Type[_T_co]
     DEFAULT_CACHE_SIZE = -1
+    """
+    controls the LRU cache behaviour
+
+        * LRU disabled, cache unbounded (-1)
+        * disable caching (0)
+        * limited LRU caching (>0)
+    """
 
     def __init__(self, client: "Client", endpoint: str):
         self.client = client
         self.endpoint: str = endpoint
-        self.cache = LruCache["JsonDict"](max_size=self.DEFAULT_CACHE_SIZE)  #:
+        self.cache = LruCache["JsonDict"](
+            max_size=self.DEFAULT_CACHE_SIZE
+        )  #: resource LRU cache
         self._instance_cache: MutableMapping[int, _T_co] = WeakValueDictionary()
 
     def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
