@@ -53,7 +53,7 @@ class User(NamedResource):
 class Users(SearchableT[User], Creatable[User]):
     """Users(...)"""
 
-    RESOURCE_TYPE = User
+    _RESOURCE_TYPE = User
 
     def __init__(self, client: "Client"):
         super().__init__(client, "users")
@@ -91,4 +91,4 @@ class Users(SearchableT[User], Creatable[User]):
         :return: Return the authenticated user.
         """
         info = self.client.get(self.endpoint, "me")
-        return self.RESOURCE_TYPE(self, info["id"], info)
+        return self._RESOURCE_TYPE(self, info["id"], info)

@@ -30,13 +30,13 @@ _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
 
 
 class ResourcesT(Generic[_T_co]):
-    RESOURCE_TYPE: Type[_T_co]
+    _RESOURCE_TYPE: Type[_T_co]
     DEFAULT_CACHE_SIZE = -1
 
     def __init__(self, client: "Client", endpoint: str):
         self.client = client
         self.endpoint: str = endpoint
-        self.cache = LruCache["JsonDict"](max_size=self.DEFAULT_CACHE_SIZE)
+        self.cache = LruCache["JsonDict"](max_size=self.DEFAULT_CACHE_SIZE)  #:
         self._instance_cache: MutableMapping[int, _T_co] = WeakValueDictionary()
 
     def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
@@ -49,7 +49,7 @@ class ResourcesT(Generic[_T_co]):
         instance_map = self._instance_cache
         instance = instance_map.get(rid)
         if not instance or info:
-            instance = instance_map[rid] = self.RESOURCE_TYPE(self, rid, info=info)
+            instance = instance_map[rid] = self._RESOURCE_TYPE(self, rid, info=info)
         return instance
 
     def __repr__(self):
@@ -93,7 +93,7 @@ class Creatable(ResourcesT[_T_co]):
 class IterableT(ResourcesT[_T_co]):
     def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
         for item in items:
-            yield self.RESOURCE_TYPE(self, info_cast(item)["id"], info=item)
+            yield self._RESOURCE_TYPE(self, info_cast(item)["id"], info=item)
 
     def iter(self, *args, **params) -> Iterator[_T_co]:
         """

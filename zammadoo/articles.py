@@ -149,7 +149,7 @@ class Article(Resource):
 class Articles(Creatable[Article], ResourcesT[Article]):
     """Articles(...)"""
 
-    RESOURCE_TYPE = Article
+    _RESOURCE_TYPE = Article
 
     def __init__(self, client: "Client"):
         super().__init__(client, "ticket_articles")

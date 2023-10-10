@@ -24,7 +24,7 @@ class Group(NamedResource):
 class Groups(SearchableT[Group], Creatable[Group]):
     """Groups(...)"""
 
-    RESOURCE_TYPE = Group
+    _RESOURCE_TYPE = Group
 
     def __init__(self, client: "Client"):
         super().__init__(client, "groups")

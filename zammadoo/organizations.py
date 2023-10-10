@@ -23,7 +23,7 @@ class Organization(MutableResource):
 class Organizations(SearchableT[Organization], Creatable[Organization]):
     """Organizations(...)"""
 
-    RESOURCE_TYPE = Organization
+    _RESOURCE_TYPE = Organization
 
     def __init__(self, client: "Client"):
         super().__init__(client, "organizations")

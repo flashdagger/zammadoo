@@ -19,13 +19,11 @@ if TYPE_CHECKING:
 class Priority(NamedResource):
     """Priority(...)"""
 
-    pass
-
 
 class Priorities(IterableT[Priority], Creatable[Priority]):
     """Priorities(...)"""
 
-    RESOURCE_TYPE = Priority
+    _RESOURCE_TYPE = Priority
 
     create = Creatable.create_with_name
 
@@ -51,7 +49,7 @@ class State(NamedResource):
 class States(IterableT[State], Creatable[State]):
     """States(...)"""
 
-    RESOURCE_TYPE = State
+    _RESOURCE_TYPE = State
 
     def __init__(self, client: "Client"):
         super().__init__(client, "ticket_states")
@@ -258,7 +256,7 @@ class Ticket(MutableResource):
 class Tickets(SearchableT[Ticket], Creatable[Ticket]):
     """Tickets(...)"""
 
-    RESOURCE_TYPE = Ticket
+    _RESOURCE_TYPE = Ticket
     DEFAULT_CACHE_SIZE = 100
 
     def __init__(self, client: "Client"):
@@ -272,7 +270,7 @@ class Tickets(SearchableT[Ticket], Creatable[Ticket]):
         cache_assets(self.client, items.get("assets", {}))
 
         for rid in items.get("tickets", ()):
-            yield self.RESOURCE_TYPE(self, rid)
+            yield self._RESOURCE_TYPE(self, rid)
 
     def create(
         self,

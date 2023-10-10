@@ -31,7 +31,7 @@ class Role(NamedResource):
 class Roles(SearchableT[Role], Creatable[Role]):
     """Roles(...)"""
 
-    RESOURCE_TYPE = Role
+    _RESOURCE_TYPE = Role
 
     def __init__(self, client: "Client"):
         super().__init__(client, "roles")
