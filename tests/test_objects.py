@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+from datetime import datetime
 from unittest.mock import patch
 
 import pytest
@@ -8,12 +9,16 @@ from zammadoo import Client
 from zammadoo.resource import Resource
 
 
-def mocked_initialize(self):
-    self._info["id"] = self._id
+def mocked_resource(items=()):
+    def mocked_initialize(self):
+        self._info["id"] = self._id
+        self._info.update(items)
+
+    return patch.object(Resource, "_initialize", new=mocked_initialize)
 
 
 @pytest.fixture
-def client():
+def client() -> Client:
     return Client("/", http_token="mysecret")
 
 
@@ -35,19 +40,32 @@ def test_client_resource_are_cached_if_referenced(client):
     assert tickets1_2 is tickets1_3
 
 
+@mocked_resource()
+def test_missing_attributes(client):
+    with pytest.raises(AttributeError, match="has no attribute"):
+        _ = client.tickets(1).missing
+
+
+@mocked_resource({"title": "some title"})
 def test_attributes_are_readonly(client):
     tickets = client.tickets
 
-    with pytest.raises(AttributeError):
-        tickets(1).id = tickets(2).id
-
-    with pytest.raises(AttributeError):
-        del tickets(1).id
+    with pytest.raises(AttributeError, match="is read-only"):
+        tickets(1).title = tickets(2).title
 
 
-@patch.object(Resource, "_initialize", new=mocked_initialize)
-def test_item_are_readonly(client):
+@mocked_resource()
+def test_items_are_readonly(client):
     tickets = client.tickets
 
     with pytest.raises(TypeError):
         tickets(1)["id"] = tickets(2)["id"]
+
+
+@mocked_resource({"created_at": "2021-11-03T11:51:13.759Z"})
+def test_datetime_attribute(client):
+    ticket = client.tickets(1)
+
+    created_at = ticket.created_at
+    assert isinstance(created_at, datetime)
+    assert created_at.tzname() == "UTC"
