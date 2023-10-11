@@ -209,7 +209,7 @@ class Client:
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
         :param kwargs: additional parameters passed to ``request()``
         :returns: the server JSON response
-        :rtype: :class:`dict[str, Any]`
+        :rtype: StringKeyDict
 
         :raises: :exc:`APIException`, :class:`requests.HTTPError`
         """
