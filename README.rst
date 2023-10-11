@@ -21,7 +21,7 @@ Real life examples
 
     from zammadoo import Client
 
-    client = Client("https://myhost.com/api/v1/", username="<username>", password="<mysecret>")
+    client = Client("https://myhost.com/api/v1/", http_auth=("<username>", "<mysecret>"))
     # or use an API token created via https://myhost.com/#profile/token_access
     client = Client("https://myhost.com/api/v1/", http_token="<token>")
 
