@@ -69,3 +69,13 @@ def test_datetime_attribute(client):
     created_at = ticket.created_at
     assert isinstance(created_at, datetime)
     assert created_at.tzname() == "UTC"
+
+
+@mocked_resource({"last_login": "2021-11-03T11:51:13.759Z"})
+def test_user_last_login_is_datetime(client):
+    assert isinstance(client.users(1).last_login, datetime)
+
+
+@mocked_resource({"last_login": None})
+def test_user_last_login_is_none(client):
+    assert client.users(1).last_login is None

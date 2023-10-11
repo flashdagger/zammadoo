@@ -41,7 +41,7 @@ class Resource:
             )
 
         value = info[key]
-        if isinstance(value, str) and (key.endswith("_at") or key in {"last_login"}):
+        if isinstance(value, str) and key.endswith("_at"):
             with suppress(ValueError):
                 return datetime.fromisoformat(value)
 

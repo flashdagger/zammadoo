@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(__file__, "..", "..")))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Zammadoo Client Documentation"
+project = "zammadoo"
 copyright = "2023, MK"
 author = "Marcel Kuszak"
 

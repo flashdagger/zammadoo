@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
+from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
@@ -33,6 +33,11 @@ class User(NamedResource):
     def groups(self) -> List["Group"]:
         groups = self.parent.client.groups
         return list(map(groups, self["group_ids"]))
+
+    @property
+    def last_login(self) -> Optional[datetime]:
+        last_login = self["last_login"]
+        return last_login and datetime.fromisoformat(last_login)
 
     @property
     def organization(self) -> Optional["Organization"]:
