@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
 from .resources import Creatable, IterableT, SearchableT, _T_co
@@ -214,6 +214,9 @@ class Ticket(MutableResource):
         """
         merges the ticket with another one
 
+        .. note::
+            this method uses an undocumented API endpoint
+
         :param target_id: the id of the ticket to be merged with
         :return: the merged ticket objects
         :rtype: :class:`Ticket`
@@ -251,6 +254,16 @@ class Ticket(MutableResource):
             internal=internal,
             **kwargs,
         )
+
+    def history(self) -> List["StringKeyDict"]:
+        """
+        .. note::
+            this method uses an undocumented API endpoint
+
+        :return: the ticket's history
+        """
+        info = self.parent.client.get("ticket_history", self._id)
+        return cast(List["StringKeyDict"], info["history"])
 
 
 class Tickets(SearchableT[Ticket], Creatable[Ticket]):
