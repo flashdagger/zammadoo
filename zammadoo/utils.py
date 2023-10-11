@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from contextlib import suppress
 from os import PathLike
 from typing import (
@@ -40,6 +41,7 @@ class TypedInfo(TypedDict, total=False):
     preferences: Dict[str, str]
     page: int
     per_page: int
+    version: str
 
 
 def info_cast(info: "JsonDict") -> TypedInfo:

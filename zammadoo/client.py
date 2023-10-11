@@ -19,6 +19,7 @@ from .roles import Roles
 from .tags import Tags
 from .tickets import Priorities, States, Tickets
 from .users import Users
+from .utils import info_cast
 
 if TYPE_CHECKING:
     from .utils import JsonType, StringKeyDict
@@ -269,8 +270,7 @@ class Client:
         """shortcut for :meth:`request` with parameter ``("DELETE", *args, json)``"""
         return self.request("DELETE", *args, json=json)
 
+    @cached_property
     def server_version(self) -> str:
-        """
-        :return: the Zammad server version
-        """
-        return self.get("version")["version"]
+        """the Zammad server version"""
+        return info_cast(self.get("version"))["version"]
