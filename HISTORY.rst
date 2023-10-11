@@ -2,6 +2,11 @@
 History
 =======
 
-0.2.0 (tbd)
+future release
+--------------
+* **[breaking change]** Client parameter: instead ``username`` and ``password`` now ``http_auth=(username, password)`` is provided
+* add Client.server_version()
+
+0.1.0 (2023-10-08)
 -----------
-* change Client parameter: instead ``username`` and ``password`` now ``http_auth=(username, password)`` is provided
+* initial release

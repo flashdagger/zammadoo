@@ -268,3 +268,9 @@ class Client:
     def delete(self, *args, json: Optional["StringKeyDict"] = None):
         """shortcut for :meth:`request` with parameter ``("DELETE", *args, json)``"""
         return self.request("DELETE", *args, json=json)
+
+    def server_version(self) -> str:
+        """
+        :return: the Zammad server version
+        """
+        return self.get("version")["version"]
