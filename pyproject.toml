@@ -50,6 +50,9 @@ version_pattern = "MAJOR.MINOR.PATCH"
 "pyproject.toml" = [
     'version = "{version}"',
 ]
+"zammadoo/__init__.py" = [
+    '__version__ = "{version}"',
+]
 "docs/conf.py" = [
     'release = "{version}"',
 ]
