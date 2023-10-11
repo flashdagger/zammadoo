@@ -28,7 +28,10 @@ LOG = logging.getLogger(__name__)
 
 
 class APIException(HTTPError):
-    """Raised when the API server indicates an error."""
+    """APIException(...)
+
+    Raised when the API server indicates an error.
+    """
 
 
 @dataclass
