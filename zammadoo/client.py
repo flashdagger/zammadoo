@@ -202,11 +202,11 @@ class Client:
         **kwargs,
     ):
         """
-        Performs a request on the API url.
+        Perform a request on the API URL.
 
         :param method: HTTP method: ``GET``, ``POST``, ``PUT``, ``DELETE``
         :param args: endpoint specifiers
-        :param params: url parameter (usually for ``GET``)
+        :param params: URL parameter (usually for ``GET``)
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
         :param kwargs: additional parameters passed to ``request()``
         :returns: the server JSON response
@@ -229,7 +229,7 @@ class Client:
         **kwargs,
     ) -> Response:
         """
-        Performs a request on the API url.
+        Perform a request on the API URL.
 
         :param method: the HTTP method (e.g. ``GET``, ``POST``, ``PUT``, ``DELETE``)
         :param url: full resource URL

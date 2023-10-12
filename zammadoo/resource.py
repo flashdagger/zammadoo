@@ -88,7 +88,7 @@ class Resource:
             self._info.update(info)
 
     def reload(self) -> None:
-        """Updates the object properties by requesting the current data from the server."""
+        """Update the object properties by requesting the current data from the server."""
         info = self._info
         info.clear()
         new_info = self.parent.cached_info(self._id, refresh=True)
@@ -115,6 +115,7 @@ class MutableResource(Resource):
 
         :param kwargs: values to be updated (depending on the resource)
         :return: a new instance of the updated resource
+        :rtype: same as object
         """
         parent = self.parent
         updated_info = parent.client.put(parent.endpoint, self._id, json=kwargs)
