@@ -102,7 +102,9 @@ class Creatable(ResourcesT[_T_co]):
 class IterableT(ResourcesT[_T_co]):
     def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
         for item in items:
-            yield self._RESOURCE_TYPE(self, info_cast(item)["id"], info=item)
+            oid = info_cast(item)["id"]
+            self.cache[self.url(oid)] = item
+            yield self._RESOURCE_TYPE(self, oid, info=item)
 
     def iter(self, *args, **params) -> Iterator[_T_co]:
         """
