@@ -36,10 +36,10 @@ autodoc_default_options = {
     "exclude-members": "cached_info, create_with_name",
     "inherited-members": True,
 }
-autoclass_content = "class"
+autoclass_content = "both"
 autodoc_typehints = "description"
-# autodoc_member_order = "groupwise"
-# autodoc_class_signature = "separated"
+autodoc_member_order = "groupwise"
+autodoc_class_signature = "mixed"
 autodoc_typehints_description_target = "documented"
 autodoc_typehints_format = "short"
 autodoc_inherit_docstrings = False

@@ -140,8 +140,7 @@ class Client:
         additional_headers: Sequence[Tuple[str, str]] = (),
     ) -> None:
         """
-        For authentication use either ``username`` + ``password``
-        or ``http_token`` or ``oauth2_token``.
+        For authentication use either ``http_auth`` or ``http_token`` or ``oauth2_token``.
 
         :param url: the zammad API url (e.g. ``https://myhost.com/api/v1``)
         :param http_auth: username and password for HTTP Basic Authentication
