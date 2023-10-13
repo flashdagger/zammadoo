@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 class User(NamedResource):
     """User(...)"""
 
+    login: str  #: users login name
+
     @property
     def fullname(self) -> str:
         """Users firstname and lastname combined."""
