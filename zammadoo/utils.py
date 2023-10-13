@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from contextlib import suppress
+from datetime import datetime
 from os import PathLike
 from typing import (
     TYPE_CHECKING,
@@ -41,6 +42,7 @@ class TypedInfo(TypedDict, total=False):
     preferences: Dict[str, str]
     page: int
     per_page: int
+    tags: List[str]
     version: str
 
 
@@ -75,3 +77,7 @@ def is_probably_text(data: bytes) -> bool:
             data.decode(encoding)
             return True
     return False
+
+
+def fromisoformat(timestamp: str) -> datetime:
+    return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))

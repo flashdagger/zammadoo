@@ -7,7 +7,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Optional
 
 from .resources import ResourcesT, _T_co
-from .utils import info_cast
+from .utils import fromisoformat, info_cast
 
 if TYPE_CHECKING:
     from .users import User
@@ -43,7 +43,7 @@ class Resource:
         value = info[key]
         if isinstance(value, str) and key.endswith("_at"):
             with suppress(ValueError):
-                return datetime.fromisoformat(value)
+                return fromisoformat(value)
 
         return value
 

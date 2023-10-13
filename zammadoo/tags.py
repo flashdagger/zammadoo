@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
+from .utils import info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -118,4 +119,4 @@ class Tags:
         items: "StringKeyDict" = self.client.get(
             "tags", params={"object": "Ticket", "o_id": tid}
         )
-        return items.get("tags", [])
+        return info_cast(items).get("tags", [])

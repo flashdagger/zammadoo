@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
 from .resources import Creatable, SearchableT
-from .utils import info_cast
+from .utils import fromisoformat, info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -37,7 +37,7 @@ class User(NamedResource):
     @property
     def last_login(self) -> Optional[datetime]:
         last_login = self["last_login"]
-        return last_login and datetime.fromisoformat(last_login)
+        return last_login and fromisoformat(last_login)
 
     @property
     def organization(self) -> Optional["Organization"]:
