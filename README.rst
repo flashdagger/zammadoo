@@ -2,6 +2,14 @@
 zammadoo
 ========
 
+.. image:: https://img.shields.io/pypi/v/zammadoo.svg
+   :target: https://pypi.python.org/pypi/zammadoo/
+   :alt: [Latest Version]
+
+.. image:: https://img.shields.io/pypi/pyversions/zammadoo.svg
+   :target: https://pypi.python.org/pypi/zammadoo/
+   :alt: [Python versions]
+
 .. image:: https://img.shields.io/pypi/l/zammadoo.svg
         :target: https://pypi.python.org/pypi/zammadoo/
         :alt: PyPI license
