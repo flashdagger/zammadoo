@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 from datetime import datetime
+from functools import cached_property
 from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
@@ -55,6 +56,11 @@ class User(NamedResource):
     def roles(self) -> List["Role"]:
         roles = self.parent.client.roles
         return list(map(roles, self["role_ids"]))
+
+    @cached_property
+    def weburl(self) -> str:
+        """URL of the user profile in the webclient"""
+        return f"{self.parent.client.weburl}/#user/profile/{self._id}"
 
 
 class Users(SearchableT[User], CreatableT[User]):

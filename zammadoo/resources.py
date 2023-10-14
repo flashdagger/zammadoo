@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from dataclasses import asdict
-from functools import partial
+from functools import cached_property, partial
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -64,7 +64,7 @@ class ResourcesT(Generic[_T_co]):
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
 
-    @property
+    @cached_property
     def url(self) -> str:
         """the resource's API URL"""
         return f"{self.client.url}/{self.endpoint}"

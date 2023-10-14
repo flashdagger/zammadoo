@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
+from functools import cached_property
 from typing import TYPE_CHECKING, List
 
 from .resource import MutableResource
@@ -18,6 +18,11 @@ class Organization(MutableResource):
     def members(self) -> List["User"]:
         users = self.parent.client.users
         return list(map(users, self["member_ids"]))
+
+    @cached_property
+    def weburl(self) -> str:
+        """URL of the organization profile in the webclient"""
+        return f"{self.parent.client.weburl}/#organization/profile/{self._id}"
 
 
 class Organizations(SearchableT[Organization], CreatableT[Organization]):

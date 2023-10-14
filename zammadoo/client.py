@@ -273,3 +273,9 @@ class Client:
     def server_version(self) -> str:
         """the Zammad server version"""
         return info_cast(self.get("version"))["version"]
+
+    @cached_property
+    def weburl(self) -> str:
+        url = self.url
+        idx = url.rfind("/api/v")
+        return url[:idx] if idx > -1 else ""

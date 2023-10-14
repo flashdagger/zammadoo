@@ -6,10 +6,16 @@ History
 
 future release
 --------------
-* **new feature**: added :meth:`tickets.Ticket.history` method
+* **new feature**
+
+    * added :meth:`tickets.Ticket.history` method
+    * added ``weburl`` property for :class:`client.Client`, :class:`tickets.Ticket`,
+      :class:`users.User` and :class:`organizations.Organization`
+
 * **breaking changes**
 
     * :class:`client.Client` now uses ``http_auth=(username, password)`` as authentication parameter
+    * for all ResourcesT like :class:`tickets.Tickets` ``.url`` is now a property
     * exchange ``tickets.Ticket.merge_with()`` with :meth:`tickets.Ticket.merge_into`
       mimicking the logic provided by the Web UI
 

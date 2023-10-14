@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
+from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
@@ -278,6 +278,11 @@ class Ticket(MutableResource):
         """
         info = self.parent.client.get("ticket_history", self._id)
         return cast(List["StringKeyDict"], info["history"])
+
+    @cached_property
+    def weburl(self) -> str:
+        """URL of the ticket in the webclient"""
+        return f"{self.parent.client.weburl}/#ticket/zoom/{self._id}"
 
 
 class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
