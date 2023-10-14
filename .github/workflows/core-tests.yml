@@ -19,16 +19,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Pipx cache for poetry
+      uses: actions/cache@v3
+      with:
+        path: |
+          /opt/pipx/venvs/poetry
+          /opt/pipx_bin/poetry
+        key: pipx-venvs
     - name: Install poetry
       run: |
         pipx install poetry
+        pipx list --verbose
         poetry config virtualenvs.create true --local
         poetry config virtualenvs.in-project true --local
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: actions/cache@v3
-      name: Define a cache for the tools
+    - name: Cache for poetry venv and tools
+      uses: actions/cache@v3
       with:
         path: |
           ./.cache
