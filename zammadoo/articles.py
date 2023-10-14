@@ -68,7 +68,7 @@ class Attachment:
             )
         return info_list
 
-    def view(self) -> MappingProxyType[str, Any]:
+    def view(self) -> "MappingProxyType[str, Any]":
         return MappingProxyType(self._info)
 
     @property

@@ -10,7 +10,7 @@ _T = TypeVar("_T")
 
 class LruCache(Generic[_T]):
     def __init__(self, max_size=-1) -> None:
-        self._cache: OrderedDict[Hashable, _T] = OrderedDict()
+        self._cache: "OrderedDict[Hashable, _T]" = OrderedDict()
         self._max_size = max_size
 
     @property

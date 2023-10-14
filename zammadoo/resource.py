@@ -73,7 +73,7 @@ class Resource:
         """the API endpoint URL"""
         return self._url
 
-    def view(self) -> MappingProxyType[str, "JsonType"]:
+    def view(self) -> "MappingProxyType[str, JsonType]":
         """
         A mapping view of the objects internal properties as returned by the REST API.
 
