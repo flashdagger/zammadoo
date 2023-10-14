@@ -6,10 +6,17 @@ History
 
 future release
 --------------
-* **breaking change**: :class:`client.Client` now uses ``http_auth=(username, password)`` as authentication parameter
-* **new feature**: :meth:`tickets.Ticket.history` method
-* **fix**: resource items are now cached when using iteration
-* **fix**: fromisoformat conversion in Python 3.9
+* **new feature**: added :meth:`tickets.Ticket.history` method
+* **breaking changes**
+
+    * :class:`client.Client` now uses ``http_auth=(username, password)`` as authentication parameter
+    * exchange ``tickets.Ticket.merge_with()`` with :meth:`tickets.Ticket.merge_into`
+      mimicking the logic provided by the Web UI
+
+* **fixes**
+
+    * resource items are now cached when using iteration
+    * fromisoformat conversion in Python 3.9 supporting Zulu offset format
 
 0.1.0 (2023-10-08)
 ------------------

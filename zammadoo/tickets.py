@@ -210,19 +210,22 @@ class Ticket(MutableResource):
             }
             self.parent.client.delete("links/remove", json=params)
 
-    def merge_with(self: _T_co, target_id: int) -> _T_co:
+    def merge_into(self: _T_co, target: Union[int, _T_co]) -> _T_co:
         """
-        merges the ticket with another one
+        merges the ticket into another
 
         .. note::
             this method uses an undocumented API endpoint
 
-        :param target_id: the id of the ticket to be merged with
-        :return: the merged ticket objects
+        :param target: the target ticket or its id
+        :type target: :class:`Ticket` | int
+        :return: the merged ticket object
         :rtype: :class:`Ticket`
         """
         parent = self.parent
-        info = parent.client.put("ticket_merge", target_id, self["number"])
+        if isinstance(target, int):
+            target = parent(target)
+        info = parent.client.put("ticket_merge", self._id, target["number"])
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
         return parent(merged_info["id"], info=merged_info)
