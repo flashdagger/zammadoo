@@ -3,6 +3,6 @@
 
 __version__ = "0.1.0"
 
-from .client import LOG, Client
+from .client import LOG, APIException, Client
 
 LOG.name = __name__

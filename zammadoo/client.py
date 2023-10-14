@@ -34,6 +34,10 @@ class APIException(HTTPError):
     Raised when the API server indicates an error.
     """
 
+    def __init__(self, error: str, *args, response: Response, **kwargs):
+        LOG.error("%s: %s", self.__class__.__name__, error)
+        super().__init__(error, *args, response=response, **kwargs)
+
 
 @dataclass
 class Pagination:
@@ -46,18 +50,20 @@ def raise_or_return_json(response: requests.Response) -> "JsonType":
     try:
         response.raise_for_status()
     except HTTPError as exc:
-        LOG.error("%s (%d): %s", response.reason, response.status_code, response.text)
         try:
             info = response.json()
-            error = info.get("error_human") or info["error"]
-            raise APIException(
-                error, request=exc.request, response=exc.response
-            ) from exc
+            exception: HTTPError = APIException(
+                info.get("error_human") or info["error"],
+                request=exc.request,
+                response=exc.response,
+            )
         except (JSONDecodeError, KeyError):
             message = response.text
-            raise HTTPError(
-                message, request=exc.request, response=exc.response
-            ) from exc
+            LOG.error(
+                "HTTP:%d (%s): %s", response.status_code, response.reason, message
+            )
+            exception = HTTPError(message, request=exc.request, response=exc.response)
+        raise exception from exc
 
     try:
         return cast("JsonType", response.json())
@@ -210,7 +216,7 @@ class Client:
         url = "/".join(map(str, (self.url, *args)))
         response = self.response(method, url, json=json, params=params, **kwargs)
         value = raise_or_return_json(response)
-        LOG.debug("[%s] returned %s", method, shorten(repr(value), width=120))
+        LOG.debug("HTTP:%s returned %s", method, shorten(repr(value), width=120))
         return value
 
     def response(
@@ -240,11 +246,11 @@ class Client:
             info = ", ".join(
                 f"{key}: {value}" for key, value in mapping.items() if value
             )
-            LOG.debug("[%s] %s [%s]", method, response.url, info)
+            LOG.debug("HTTP:%s %s [%s]", method, response.url, info)
         elif json and LOG.level == logging.DEBUG:
-            LOG.debug("[%s] %s json=%r", method, response.url, json)
+            LOG.debug("HTTP:%s %s json=%r", method, response.url, json)
         else:
-            LOG.info("[%s] %s", method, response.url)
+            LOG.info("HTTP:%s %s", method, response.url)
         return response
 
     def get(self, *args, params: Optional["StringKeyDict"] = None):
