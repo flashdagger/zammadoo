@@ -11,6 +11,5 @@
 /out
 /.idea/workspace.xml
 /.idea
-/poetry.lock
 /token.json
 /*.crt

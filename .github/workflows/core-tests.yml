@@ -1,0 +1,44 @@
+name: Core Tests
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+permissions:
+  contents: read
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install poetry
+      run: |
+        pipx install poetry
+        poetry config virtualenvs.create true --local
+        poetry config virtualenvs.in-project true --local
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/cache@v3
+      name: Define a cache for the tools
+      with:
+        path: |
+          ./.cache
+          ./.venv
+        key: venv-${{ hashFiles('poetry.lock') }}
+    - run: poetry install --without doc
+    - name: Unit tests with pytest
+      run: poetry run pytest
+    - name: Typechecking with mypy
+      run: poetry run mypy ./zammadoo
+    - name: Code analysis with pylint
+      run: |
+        poetry run pylint ./zammadoo
