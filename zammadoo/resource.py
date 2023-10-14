@@ -23,7 +23,7 @@ class Resource:
     ) -> None:
         self._id = rid
         self.parent = parent
-        self._url = parent.url(rid)
+        self._url = f"{parent.url}/{rid}"
         self._info: "JsonDict" = info or {}
         self._frozen = True
 

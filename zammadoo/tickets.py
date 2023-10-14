@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from .client import Client
     from .groups import Group
     from .organizations import Organization
+    from .resource import Resource
+    from .resources import ResourcesT
     from .users import User
     from .utils import JsonDict, JsonDictList, StringKeyDict
 
@@ -334,7 +336,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
 
 def cache_assets(client: "Client", assets: Dict[str, Dict[str, "JsonDict"]]) -> None:
     for key, asset in assets.items():
-        resources = getattr(client, f"{key.lower()}s")
+        resources: "ResourcesT[Resource]" = getattr(client, f"{key.lower()}s")
         for rid_s, info in asset.items():
-            url = resources.url(rid_s)
+            url = f"{resources.url}/{rid_s}"
             resources.cache[url] = info

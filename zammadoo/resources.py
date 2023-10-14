@@ -53,7 +53,7 @@ class ResourcesT(Generic[_T_co]):
             assert (
                 info.get("id") == rid
             ), "parameter info must contain 'id' and be equal with rid"
-            self.cache[self.url(rid)] = info
+            self.cache[f"{self.url}/{rid}"] = info
 
         instance_map = self._instance_cache
         instance = instance_map.get(rid)
@@ -62,13 +62,15 @@ class ResourcesT(Generic[_T_co]):
         return instance
 
     def __repr__(self):
-        return f"<{self.__class__.__qualname__} {self.url()!r}>"
+        return f"<{self.__class__.__qualname__} {self.url!r}>"
 
-    def url(self, *args) -> str:
-        return "/".join(map(str, (self.client.url, self.endpoint, *args)))
+    @property
+    def url(self) -> str:
+        """the resource's API URL"""
+        return f"{self.client.url}/{self.endpoint}"
 
     def cached_info(self, rid: int, refresh=True) -> "JsonDict":
-        item = self.url(rid)
+        item = f"{self.url}/{rid}"
         cache = self.cache
         callback: Callable[[], "JsonDict"] = partial(
             self.client.get, self.endpoint, rid
@@ -91,9 +93,9 @@ class CreatableT(ResourcesT[_T_co]):
 class IterableT(ResourcesT[_T_co]):
     def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
         for item in items:
-            oid = info_cast(item)["id"]
-            self.cache[self.url(oid)] = item
-            yield self._RESOURCE_TYPE(self, oid, info=item)
+            rid = info_cast(item)["id"]
+            self.cache[f"{self.url}/{rid}"] = item
+            yield self._RESOURCE_TYPE(self, rid, info=item)
 
     def iter(self, *args, **params) -> Iterator[_T_co]:
         """

@@ -79,3 +79,11 @@ def test_user_last_login_is_datetime(client):
 @mocked_resource({"last_login": None})
 def test_user_last_login_is_none(client):
     assert client.users(1).last_login is None
+
+
+def test_resources_url(client):
+    assert client.tickets.url == f"{client.url}/tickets"
+
+
+def test_resource_url(client):
+    assert client.tickets(12345).url == f"{client.url}/tickets/12345"
