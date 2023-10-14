@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING, List
 
 from .resource import MutableResource
-from .resources import Creatable, SearchableT
+from .resources import CreatableT, SearchableT
 
 if TYPE_CHECKING:
     from .client import Client
@@ -20,7 +20,7 @@ class Organization(MutableResource):
         return list(map(users, self["member_ids"]))
 
 
-class Organizations(SearchableT[Organization], Creatable[Organization]):
+class Organizations(SearchableT[Organization], CreatableT[Organization]):
     """Organizations(...)"""
 
     _RESOURCE_TYPE = Organization

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional
 import requests
 
 from .resource import Resource
-from .resources import Creatable, ResourcesT
+from .resources import CreatableT, ResourcesT
 from .utils import info_cast, is_probably_text
 
 if TYPE_CHECKING:
@@ -146,7 +146,7 @@ class Article(Resource):
         return attachment_list
 
 
-class Articles(Creatable[Article], ResourcesT[Article]):
+class Articles(CreatableT[Article], ResourcesT[Article]):
     """Articles(...)"""
 
     _RESOURCE_TYPE = Article

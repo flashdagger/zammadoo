@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
-from .resources import Creatable, SearchableT
+from .resources import CreatableT, SearchableT
 from .utils import fromisoformat, info_cast
 
 if TYPE_CHECKING:
@@ -57,7 +57,7 @@ class User(NamedResource):
         return list(map(roles, self["role_ids"]))
 
 
-class Users(SearchableT[User], Creatable[User]):
+class Users(SearchableT[User], CreatableT[User]):
     """Users(...)"""
 
     _RESOURCE_TYPE = User

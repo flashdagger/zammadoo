@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
-from .resources import Creatable, SearchableT
+from .resources import CreatableT, SearchableT
 
 if TYPE_CHECKING:
     from .client import Client
@@ -28,7 +28,7 @@ class Role(NamedResource):
         raise NotImplementedError("roles cannot be deletet via REST API")
 
 
-class Roles(SearchableT[Role], Creatable[Role]):
+class Roles(SearchableT[Role], CreatableT[Role]):
     """Roles(...)"""
 
     _RESOURCE_TYPE = Role

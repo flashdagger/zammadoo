@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
-from .resources import Creatable, IterableT, SearchableT, _T_co
+from .resources import CreatableT, IterableT, SearchableT, _T_co
 from .utils import LINK_TYPES, LinkType
 
 if TYPE_CHECKING:
@@ -20,7 +20,7 @@ class Priority(NamedResource):
     """Priority(...)"""
 
 
-class Priorities(IterableT[Priority], Creatable[Priority]):
+class Priorities(IterableT[Priority], CreatableT[Priority]):
     """Priorities(...)"""
 
     _RESOURCE_TYPE = Priority
@@ -55,7 +55,7 @@ class State(NamedResource):
         return self.parent.client.ticket_states(sid)
 
 
-class States(IterableT[State], Creatable[State]):
+class States(IterableT[State], CreatableT[State]):
     """States(...)"""
 
     _RESOURCE_TYPE = State
@@ -278,7 +278,7 @@ class Ticket(MutableResource):
         return cast(List["StringKeyDict"], info["history"])
 
 
-class Tickets(SearchableT[Ticket], Creatable[Ticket]):
+class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
     """Tickets(...)"""
 
     _RESOURCE_TYPE = Ticket
