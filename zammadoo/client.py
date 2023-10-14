@@ -79,12 +79,6 @@ class Client:
 
     """
 
-    # links: Resources
-    # object_manager_attributes: Resources
-    # online_notifications: Resources
-    # ticket_article_plain: Resources
-    # attachment: Resources
-
     @cached_property
     def groups(self) -> Groups:
         """Manages the ``/groups`` endpoint."""
@@ -203,7 +197,7 @@ class Client:
         """
         Perform a request on the API URL.
 
-        :param method: HTTP method: ``GET``, ``POST``, ``PUT``, ``DELETE``
+        :param method: HTTP method: e.g. ``GET``, ``POST``, ``PUT``, ``DELETE``
         :param args: endpoint specifiers
         :param params: URL parameter (usually for ``GET``)
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
