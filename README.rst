@@ -11,12 +11,17 @@ zammadoo
    :alt: [Python versions]
 
 .. image:: https://img.shields.io/pypi/l/zammadoo.svg
-        :target: https://pypi.python.org/pypi/zammadoo/
-        :alt: PyPI license
+    :target: https://pypi.python.org/pypi/zammadoo/
+    :alt: PyPI license
+
+.. image:: https://github.com/flashdagger/zammadoo/actions/workflows/core-tests.yml/badge.svg?event=push
+    :target: https://github.com/flashdagger/zammadoo/actions/workflows/core-tests.yml
+    :alt: Core Tests
+
 
 .. image:: https://readthedocs.org/projects/zammadoo/badge/?version=latest
-        :target: https://zammadoo.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
+    :target: https://zammadoo.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 
 an object-oriented REST API client for the `Zammad helpdesk sytem <https://zammad.org/>`_
