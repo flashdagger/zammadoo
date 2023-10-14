@@ -77,11 +77,11 @@ class Users(SearchableT[User], Creatable[User]):
         """
         Create a new zammad user.
 
-        :param firstname:
-        :param lastname:
-        :param email:
-        :param phone:
-        :param kwargs: additional user parameter
+        :param firstname: users first name
+        :param lastname: users last name
+        :param email: users email address
+        :param phone: users phone number
+        :param kwargs: additional user properties
         """
         info = {
             "firstname": firstname,

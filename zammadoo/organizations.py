@@ -28,4 +28,13 @@ class Organizations(SearchableT[Organization], Creatable[Organization]):
     def __init__(self, client: "Client"):
         super().__init__(client, "organizations")
 
-    create = Creatable.create_with_name
+    def create(self, name: str, **kwargs) -> Organization:
+        """
+        Create a new organization.
+
+        :param name: organization identifier name
+        :param kwargs: additional organization properties
+        :return: the newly created object
+        :rtype: :class:`Organization`
+        """
+        return self._create({"name": name, **kwargs})

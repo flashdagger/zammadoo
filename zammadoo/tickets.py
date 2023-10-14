@@ -25,7 +25,16 @@ class Priorities(IterableT[Priority], Creatable[Priority]):
 
     _RESOURCE_TYPE = Priority
 
-    create = Creatable.create_with_name
+    def create(self, name: str, **kwargs) -> Priority:
+        """
+        Create a new priority.
+
+        :param name: priority identifier name
+        :param kwargs: additional priority properties
+        :return: the newly created object
+        :rtype: :class:`Priority`
+        """
+        return self._create({"name": name, **kwargs})
 
     def __init__(self, client: "Client"):
         super().__init__(client, "ticket_priorities")

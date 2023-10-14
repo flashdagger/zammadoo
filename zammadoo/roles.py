@@ -36,4 +36,13 @@ class Roles(SearchableT[Role], Creatable[Role]):
     def __init__(self, client: "Client"):
         super().__init__(client, "roles")
 
-    create = Creatable.create_with_name
+    def create(self, name: str, **kwargs) -> Role:
+        """
+        Create a new role.
+
+        :param name: role identifier name
+        :param kwargs: additional role properties
+        :return: the newly created object
+        :rtype: :class:`Role`
+        """
+        return self._create({"name": name, **kwargs})

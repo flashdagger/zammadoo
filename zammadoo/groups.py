@@ -29,4 +29,13 @@ class Groups(SearchableT[Group], Creatable[Group]):
     def __init__(self, client: "Client"):
         super().__init__(client, "groups")
 
-    create = Creatable.create_with_name
+    def create(self, name: str, **kwargs) -> Group:
+        """
+        Create a new group.
+
+        :param name: group identifier name
+        :param kwargs: additional group properties
+        :return: the newly created object
+        :rtype: :class:`Group`
+        """
+        return self._create({"name": name, **kwargs})
