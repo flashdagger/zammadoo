@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from .resource import Resource
     from .utils import JsonDict, JsonDictList
 
-    _ = Resource
+    _ = Resource  # make PyCharm happy
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
 

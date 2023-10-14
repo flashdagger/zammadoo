@@ -6,3 +6,4 @@ __version__ = "0.1.0"
 from .client import LOG, APIException, Client
 
 LOG.name = __name__
+_ = APIException, Client  # make pyflakes happy
