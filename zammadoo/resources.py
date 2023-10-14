@@ -146,7 +146,8 @@ class IterableT(ResourcesT[_T_co]):
 
             typed_params["page"] += 1
 
-    __iter__ = iter
+    def __iter__(self) -> Iterator[_T_co]:
+        return self.iter()
 
 
 class SearchableT(IterableT[_T_co]):
