@@ -83,6 +83,8 @@
     reveal_type(user.organization)   # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
     reveal_type(user.organizations)  # N: Revealed type is "builtins.list[zammadoo.organizations.Organization]"
 
+    reveal_type(iter(client.users))  # N: Revealed type is "typing.Iterator[zammadoo.users.User]" 
+
     for user in client.users:
       reveal_type(user)             # N: Revealed type is "zammadoo.users.User"
     
