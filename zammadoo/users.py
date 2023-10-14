@@ -21,13 +21,13 @@ class User(NamedResource):
 
     @property
     def fullname(self) -> str:
-        """Users firstname and lastname combined."""
+        """users firstname and lastname combined"""
         firstname, lastname = self["firstname"], self["lastname"]
         return f"{firstname}{' ' if firstname and lastname else ''}{lastname}"
 
     @property
     def name(self) -> str:
-        """Alias for users login name."""
+        """alias for :attr:`login`"""
         self._initialize()
         return info_cast(self._info)["login"]
 

@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
+
 from .utils import info_cast
 
 if TYPE_CHECKING:

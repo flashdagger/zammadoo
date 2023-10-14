@@ -30,7 +30,7 @@ class Resource:
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> object:
         self._initialize()
         info = self._info
 
