@@ -132,13 +132,7 @@ class Ticket(MutableResource):
         all articles related to the ticket as sent by ``/ticket_articles/by_ticket/{ticket id}``
         """
         articles = self.parent.client.ticket_articles
-
-        try:
-            rids = self["article_ids"]
-        except KeyError:
-            return articles.by_ticket(self._id)
-
-        return [articles(rid) for rid in rids]
+        return articles.by_ticket(self._id)
 
     def tags(self) -> List[str]:
         """
