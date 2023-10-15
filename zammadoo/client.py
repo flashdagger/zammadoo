@@ -240,6 +240,12 @@ class Client:
         :param kwargs: additional parameters passed to ``request()``
         :rtype: :class:`requests.Response`
         """
+
+        if params:
+            for key, value in params.items():
+                if isinstance(value, bool):
+                    params[key] = str(value).lower()
+
         response = self.session.request(method, url, params=params, json=json, **kwargs)
         if kwargs.get("stream") and LOG.level == logging.DEBUG:
             headers = response.headers
