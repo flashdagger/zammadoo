@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 from datetime import datetime
+from sys import getrefcount
 from unittest.mock import patch
+from weakref import getweakrefcount, ref
 
 import pytest
 
 from zammadoo import Client
 from zammadoo.resource import Resource
+
+CLIENT_URL = "https://localhost/api/v1"
 
 
 def mocked_resource(items=()):
@@ -19,7 +23,7 @@ def mocked_resource(items=()):
 
 @pytest.fixture
 def client() -> Client:
-    return Client("/", http_token="mysecret")
+    return Client(CLIENT_URL, http_token="mysecret")
 
 
 def test_client_resources_are_singletons(client):
@@ -38,6 +42,27 @@ def test_client_resource_are_cached_if_referenced(client):
     tickets1_3 = client.tickets(1)
 
     assert tickets1_2 is tickets1_3
+
+
+def test_client_resource_instance_has_weak_reference(client):
+    tickets1_1 = client.tickets(1)
+    assert getrefcount(tickets1_1) == 2
+    assert getweakrefcount(tickets1_1) == 1
+
+    tickets1_2 = client.tickets(1)
+    assert getrefcount(tickets1_2) == 3
+    assert getweakrefcount(tickets1_2) == 1
+
+    del tickets1_2
+    assert getrefcount(tickets1_1) == 2
+    assert getweakrefcount(tickets1_1) == 1
+
+    tickets1_1_wref = ref(tickets1_1)
+    assert getrefcount(tickets1_1) == 2
+    assert getweakrefcount(tickets1_1) == 2
+
+    del tickets1_1
+    assert tickets1_1_wref() is None
 
 
 @mocked_resource()
@@ -60,6 +85,18 @@ def test_items_are_readonly(client):
 
     with pytest.raises(TypeError):
         tickets(1)["id"] = tickets(2)["id"]
+
+
+def test_representation_of_client(client):
+    assert repr(client) == f"<Client '{CLIENT_URL}'>"
+
+
+def test_representation_of_client_resources(client):
+    assert repr(client.users) == f"<Users '{CLIENT_URL}/users'>"
+
+
+def test_representation_of_client_resource(client):
+    assert repr(client.tickets(34)) == f"<Ticket '{CLIENT_URL}/tickets/34'>"
 
 
 @mocked_resource({"created_at": "2021-11-03T11:51:13.759Z"})

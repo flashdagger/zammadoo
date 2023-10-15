@@ -168,6 +168,9 @@ class Client:
 
         self.session.headers.update(additional_headers)
 
+    def __repr__(self):
+        return f"<{self.__class__.__qualname__} {self.url!r}>"
+
     @contextmanager
     def impersonation_of(self, user: Union[str, int]):
         """
