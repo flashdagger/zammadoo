@@ -21,6 +21,7 @@
       client.organizations(0).update()    # N: Revealed type is "zammadoo.organizations.Organization"
     )
     reveal_type(client.tags)              # N: Revealed type is "zammadoo.tags.Tags"
+    reveal_type(iter(client.tags))        # N: Revealed type is "typing.Iterator[TypedDict('zammadoo.utils.TypedTag', {'id': builtins.int, 'name': builtins.str, 'count': Union[builtins.int, None]})]"
 
     reveal_type(client.tickets)           # N: Revealed type is "zammadoo.tickets.Tickets"
     reveal_type(

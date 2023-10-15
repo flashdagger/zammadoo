@@ -11,6 +11,7 @@ from typing import (
     Iterable,
     List,
     Literal,
+    Optional,
     TypedDict,
     TypeVar,
     Union,
@@ -33,6 +34,12 @@ JsonDictList = List[JsonDict]
 JsonContainer = Union[JsonDict, JsonDictList]
 StringKeyDict = Dict[str, Any]
 PathType = Union[str, PathLike]
+
+
+class TypedTag(TypedDict):
+    id: int
+    name: str
+    count: Optional[int]
 
 
 class TypedInfo(TypedDict, total=False):

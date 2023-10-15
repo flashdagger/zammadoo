@@ -320,7 +320,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
         :param customer: customer name or id
         :param body: the text body of the first ticket articke
         :param kwargs: additional ticket properties
-        :returns: An instance of the created ticket.
+        :return: An instance of the created ticket.
         """
         group_key = "group_id" if isinstance(group, int) else "group"
         customer_key = "customer_id" if isinstance(customer, int) else "customer"

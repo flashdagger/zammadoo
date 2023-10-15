@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Union
+from typing import TYPE_CHECKING, Dict, Iterator, List, Union
 
-from .utils import info_cast
+from .utils import TypedTag, info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -17,28 +17,33 @@ class Tags:
 
     def __init__(self, client: "Client"):
         self.client = client
-        self._map: Dict[str, Dict[str, Any]] = {}
+        self.cache: Dict[str, TypedTag] = {}
         self.endpoint = "tag_list"
 
     def __repr__(self):
         url = f"{self.client.url}/{self.endpoint}"
         return f"<{self.__class__.__qualname__} {url!r}>"
 
-    def __iter__(self) -> Iterable["StringKeyDict"]:
-        self._reload()
-        yield from self._map.values()
+    def __iter__(self) -> Iterator[TypedTag]:
+        if not self.cache:
+            self.reload()
+        yield from self.cache.values()
 
-    def _reload(self) -> None:
-        cache = self._map
+    def __getitem__(self, item: str) -> TypedTag:
+        if not self.cache:
+            self.reload()
+        return self.cache[item]
+
+    def __contains__(self, item: str) -> bool:
+        if not self.cache:
+            self.reload()
+        return item in self.cache
+
+    def reload(self) -> None:
+        """reloads the tag cache"""
+        cache = self.cache
         cache.clear()
         cache.update((info["name"], info) for info in self.client.get(self.endpoint))
-
-    def as_list(self) -> List[str]:
-        """
-        :return: all existing tags (admin only)
-        """
-        self._reload()
-        return list(self._map.keys())
 
     def search(self, term: str) -> List[str]:
         """
@@ -48,30 +53,26 @@ class Tags:
         :return: search results
         """
         items = self.client.get("tag_search", params={"term": term})
-
-        for info in items:
-            name = info.pop("value")
-            info.update((("name", name), ("count", None)))
-            self._map.setdefault(name, info)
-
-        return list(info["name"] for info in items)
+        return list(info["value"] for info in items)
 
     def create(self, name: str) -> None:
-        """creates a new tag (admin only)"""
+        """
+        creates a new tag (admin only), if name already exists, it is ignored
+        """
         self.client.post(self.endpoint, json={"name": name})
 
     def delete(self, name_or_tid: Union[str, int]) -> None:
         """
         deletes an existing tag (admin only)
 
-        :param name_or_tid: the name or tag id, if not found it is ignored
+        :param name_or_tid: the name or tag id
+        :raises: :class:`KeyError` or :class:`client.APIException` if not found
         """
+        cache = self.cache
+        if not cache:
+            self.reload()
         if isinstance(name_or_tid, str):
-            if name_or_tid not in self._map:
-                self.search(name_or_tid)
-            if name_or_tid not in self._map:
-                raise ValueError(f"Couldn't find tag with name {name_or_tid!r}")
-            name_or_tid = self._map[name_or_tid]["id"]
+            name_or_tid = cache[name_or_tid]["id"]
         self.client.delete(self.endpoint, name_or_tid)
 
     def rename(self, name_or_tid: Union[str, int], new_name: str) -> None:
@@ -79,13 +80,13 @@ class Tags:
 
         :param name_or_tid: the name or tag id
         :param new_name: new name
+        :raises: :class:`KeyError` or :class:`client.APIException` if not found
         """
+        cache = self.cache
+        if not cache:
+            self.reload()
         if isinstance(name_or_tid, str):
-            if name_or_tid not in self._map:
-                self.search(name_or_tid)
-            if name_or_tid not in self._map:
-                raise ValueError(f"Couldn't find tag with name {name_or_tid!r}")
-            name_or_tid = self._map[name_or_tid]["id"]
+            name_or_tid = cache[name_or_tid]["id"]
         self.client.put(self.endpoint, name_or_tid, json={"name": new_name})
 
     def add_to_ticket(self, tid: int, *names: str) -> None:
@@ -114,8 +115,10 @@ class Tags:
 
     def by_ticket(self, tid: int) -> List[str]:
         """
+        all tags that are associated with a ticket
+
         :param tid: the ticket id
-        :return: all tags that are associated with a ticket
+        :return: ticket tags
         """
         items: "StringKeyDict" = self.client.get(
             "tags", params={"object": "Ticket", "o_id": tid}

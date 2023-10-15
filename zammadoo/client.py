@@ -211,7 +211,7 @@ class Client:
         :param params: URL parameter (usually for ``GET``)
         :param json: data as dictionary (usually for ``POST`` or ``PUT``)
         :param kwargs: additional parameters passed to ``request()``
-        :returns: the server JSON response
+        :return: the server JSON response
         :rtype: StringKeyDict
 
         :raises: :exc:`APIException`, :class:`requests.HTTPError`
