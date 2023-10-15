@@ -1,29 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from datetime import datetime
 from sys import getrefcount
-from unittest.mock import patch
 from weakref import getweakrefcount, ref
 
 import pytest
 
-from zammadoo import Client
-from zammadoo.resource import Resource
-
-CLIENT_URL = "https://localhost/api/v1"
-
-
-def mocked_resource(items=()):
-    def mocked_initialize(self):
-        self._info["id"] = self._id
-        self._info.update(items)
-
-    return patch.object(Resource, "_initialize", new=mocked_initialize)
-
-
-@pytest.fixture
-def client() -> Client:
-    return Client(CLIENT_URL, http_token="mysecret")
+from .mocked import CLIENT_URL, client, resource
 
 
 def test_client_resources_are_singletons(client):
@@ -65,13 +49,13 @@ def test_client_resource_instance_has_weak_reference(client):
     assert tickets1_1_wref() is None
 
 
-@mocked_resource()
+@resource()
 def test_missing_attributes(client):
     with pytest.raises(AttributeError, match="has no attribute"):
         _ = client.tickets(1).missing
 
 
-@mocked_resource({"title": "some title"})
+@resource({"title": "some title"})
 def test_attributes_are_readonly(client):
     tickets = client.tickets
 
@@ -79,7 +63,7 @@ def test_attributes_are_readonly(client):
         tickets(1).title = tickets(2).title
 
 
-@mocked_resource()
+@resource()
 def test_items_are_readonly(client):
     tickets = client.tickets
 
@@ -99,7 +83,7 @@ def test_representation_of_client_resource(client):
     assert repr(client.tickets(34)) == f"<Ticket '{CLIENT_URL}/tickets/34'>"
 
 
-@mocked_resource({"created_at": "2021-11-03T11:51:13.759Z"})
+@resource({"created_at": "2021-11-03T11:51:13.759Z"})
 def test_datetime_attribute(client):
     ticket = client.tickets(1)
 
@@ -108,14 +92,20 @@ def test_datetime_attribute(client):
     assert created_at.tzname() == "UTC"
 
 
-@mocked_resource({"last_login": "2021-11-03T11:51:13.759Z"})
+@resource({"last_login": "2021-11-03T11:51:13.759Z"})
 def test_user_last_login_is_datetime(client):
     assert isinstance(client.users(1).last_login, datetime)
 
 
-@mocked_resource({"last_login": None})
+@resource({"last_login": None})
 def test_user_last_login_is_none(client):
     assert client.users(1).last_login is None
+
+
+@resource({"from": "user@example.com"})
+def test_access_item_named_from(client):
+    # 'from' is a reserved word in python
+    assert client.users(1).from_ == "user@example.com"
 
 
 def test_resources_url(client):
