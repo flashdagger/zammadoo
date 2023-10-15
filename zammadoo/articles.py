@@ -126,6 +126,7 @@ class Article(Resource):
     internal: bool  #:
     message_id: Optional[str]  #:
     message_id_md5: Optional[str]  #:
+    sender: str  #:
     subject: Optional[str]  #:
     to: Optional[str]  #:
     updated_at: datetime  #:
