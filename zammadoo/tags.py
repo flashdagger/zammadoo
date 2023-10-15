@@ -66,7 +66,7 @@ class Tags:
         deletes an existing tag (admin only)
 
         :param name_or_tid: the name or tag id
-        :raises: :class:`KeyError` or :class:`client.APIException` if not found
+        :raises: :class:`KeyError` or :class:`zammadoo.client.APIException` if not found
         """
         cache = self.cache
         if not cache:
