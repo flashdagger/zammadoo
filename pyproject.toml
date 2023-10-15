@@ -84,6 +84,13 @@ cache_dir = ".cache/pytest"
 run = {source = ["zammadoo/*"]}
 html = {directory = "report"}
 
+[tool.coverage.report]
+    # regexes for lines to exclude from consideration
+    exclude_also = [
+        # don't complain about code intended for mypy
+        "if TYPE_CHECKING:",
+    ]
+
 [tool.mypy]
 python_version = "3.8"
 cache_dir = ".cache/mypy"
