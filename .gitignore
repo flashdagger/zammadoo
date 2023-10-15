@@ -11,5 +11,5 @@
 /out
 /.idea/workspace.xml
 /.idea
-/token.json
+/token.*
 /*.crt
