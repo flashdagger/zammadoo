@@ -12,6 +12,7 @@ future release
     * added :meth:`tickets.Ticket.history` method
     * added ``weburl`` property for :class:`client.Client`, :class:`tickets.Ticket`,
       :class:`users.User` and :class:`organizations.Organization`
+    * added property :attr:`tickets.Ticket.create_article_sender`
 
 * **breaking changes**
 

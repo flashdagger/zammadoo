@@ -3,12 +3,13 @@
 from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
+from .articles import Article
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
 from .utils import LINK_TYPES, LinkType
 
 if TYPE_CHECKING:
-    from .articles import Article, OptionalFiles
+    from .articles import OptionalFiles
     from .client import Client
     from .groups import Group
     from .organizations import Organization
@@ -85,6 +86,11 @@ class Ticket(MutableResource):
     note: Optional[str]  #:
     number: str  #:
     title: str  #:
+
+    @property
+    def create_article_sender(self) -> str:
+        casid = self["create_article_sender_id"]
+        return Article.SENDER_MAP.get(casid, "Unknown")
 
     @property
     def customer(self) -> "User":
