@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -45,8 +44,8 @@ jobs:
     - run: poetry install --without doc
     - name: Unit tests with pytest
       run: poetry run pytest
-    - name: Typechecking with mypy
+    - name: Static typechecking with mypy
       run: poetry run mypy ./zammadoo
-    - name: Code analysis with pylint
+    - name: Static code analysis with pylint
       run: |
         poetry run pylint ./zammadoo
