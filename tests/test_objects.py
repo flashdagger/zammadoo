@@ -6,7 +6,6 @@ from sys import getrefcount
 from weakref import getweakrefcount, ref
 
 import pytest
-
 from conftest import resource
 
 
