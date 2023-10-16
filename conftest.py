@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import os.path
+from http.client import responses
 from pathlib import Path
 from typing import Any, Dict, Generator
 from unittest.mock import patch
@@ -122,7 +123,9 @@ def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, N
         key = serialize(method, url, params)
         status, content = recorder[key].split(maxsplit=1)
         response = Response()
-        response.status_code = int(status)
+        status_code = int(status)
+        response.status_code = status_code
+        response.reason = responses[status_code]
         response._content = content.encode()
 
         return response
