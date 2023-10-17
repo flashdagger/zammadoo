@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
     from .client import Client
     from .tickets import Ticket
+    from .users import User
     from .utils import JsonDict, PathType
 
     OptionalFiles = Union[None, "PathType", Iterable["PathType"]]
@@ -127,7 +128,6 @@ class Article(Resource):
     cc: Optional[str]  #:
     content_type: str  #:
     created_at: datetime  #:
-    created_by: str  #:
     from_: str  #:
     internal: bool  #:
     message_id: Optional[str]  #:
@@ -136,7 +136,21 @@ class Article(Resource):
     subject: Optional[str]  #:
     to: Optional[str]  #:
     updated_at: datetime  #:
-    updated_by: str  #:
+
+    @property
+    def created_by(self) -> "User":
+        uid = self["created_by_id"]
+        return self.parent.client.users(uid)
+
+    @property
+    def origin_by(self) -> Optional["User"]:
+        oid = self["origin_by_id"]
+        return self.parent.client.users(oid)
+
+    @property
+    def updated_by(self) -> "User":
+        uid = self["updated_by_id"]
+        return self.parent.client.users(uid)
 
     @property
     def ticket(self) -> "Ticket":
