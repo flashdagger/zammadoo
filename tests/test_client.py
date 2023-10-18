@@ -12,8 +12,7 @@ def test_server_version(rclient):
 
 
 def test_raise_if_user_cannot_be_found(rclient):
-    with pytest.raises(APIException) as exc:
+    with pytest.raises(APIException, match="Couldn't find User") as exc:
         rclient.users(100).reload()
 
-    assert exc.match("Couldn't find User")
     assert exc.value.response.status_code == 404
