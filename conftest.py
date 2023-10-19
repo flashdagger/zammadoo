@@ -2,10 +2,11 @@
 # -*- coding: UTF-8 -*-
 
 import os.path
+from collections import deque
 from http.client import responses
-from mmap import mmap, ACCESS_READ
+from mmap import ACCESS_READ, mmap
 from pathlib import Path
-from typing import Any, Dict, Generator, Tuple
+from typing import Any, Deque, Dict, Generator, Tuple
 from unittest.mock import patch
 from urllib.parse import urlencode
 
@@ -47,7 +48,7 @@ def client(request) -> Client:
     http_token = request.config.getoption("--http-token")
 
     if os.path.exists(http_token):
-        with open(http_token, "utf-8") as fd:
+        with open(http_token, encoding="utf-8") as fd:
             http_token = fd.read()
 
     client = Client(client_url, http_token=http_token)
@@ -72,6 +73,8 @@ class FileWriter:
 
 
 class FileReader:
+    MAPPING_TYPE = Dict[str, Deque[Tuple[int, int]]]
+
     def __init__(self, path: Path) -> None:
         self.fd = fd = open(path, "rb")
         mm = mmap(fd.fileno(), 0, access=ACCESS_READ)
@@ -79,19 +82,19 @@ class FileReader:
         mm.close()
 
     @staticmethod
-    def build_index(mm) -> Dict[str, Tuple[int, int]]:
-        index: Dict[str, Tuple[int, int]] = {}
+    def build_index(mm) -> MAPPING_TYPE:
+        index: FileReader.MAPPING_TYPE = {}
 
         for line in iter(mm.readline, b""):
             key, bdata_len = line.decode("utf-8").rsplit("\0", maxsplit=1)
             data_len = int(bdata_len)
-            index[key] = (mm.tell(), data_len)
+            index.setdefault(key, deque()).append((mm.tell(), data_len))
             mm.seek(int(bdata_len) + 1, 1)
 
         return index
 
     def __getitem__(self, item: str) -> bytes:
-        offset, length = self.index[item]
+        offset, length = self.index[item].popleft()
         fd = self.fd
         fd.seek(offset)
         return fd.read(length)
