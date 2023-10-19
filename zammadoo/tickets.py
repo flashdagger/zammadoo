@@ -269,6 +269,22 @@ class Ticket(MutableResource):
             **kwargs,
         )
 
+    def update(self: _T_co, **kwargs) -> _T_co:
+        """
+        Update the ticket properties.
+
+        :param kwargs: additional values to be updated
+        :return: a new instance of the updated ticket
+        :rtype: :class:`Ticket`
+        """
+        body = kwargs.pop("body", None)
+        if body:
+            article = kwargs.setdefault("article", {})
+            article.setdefault("body", body)
+            article.setdefault("internal", kwargs.pop("internal", True))
+
+        return super().update(**kwargs)
+
     def history(self) -> List["StringKeyDict"]:
         """
         .. note::
