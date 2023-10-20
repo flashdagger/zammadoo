@@ -25,6 +25,12 @@ def pytest_addoption(parser):
         help="run the tests against a zammad server instance and record the responses",
     )
     parser.addoption(
+        "--record-missing",
+        action="store_true",
+        default=False,
+        help="run tests without logfile against a zammad server instance and record the responses",
+    )
+    parser.addoption(
         "--client-url", default="https://localhost/api/v1", help="the zammad server url"
     )
     parser.addoption(
@@ -40,20 +46,6 @@ def resource(items=()):
         self._info.update(items)
 
     return patch.object(Resource, "_initialize", new=initialize)
-
-
-@pytest.fixture(scope="session")
-def client(request) -> Client:
-    client_url = request.config.getoption("--client-url")
-    http_token = request.config.getoption("--http-token")
-
-    if os.path.exists(http_token):
-        with open(http_token, encoding="utf-8") as fd:
-            http_token = fd.read()
-
-    client = Client(client_url, http_token=http_token)
-    client.session.verify = "mylocalhost.crt"
-    return client
 
 
 class FileWriter:
@@ -104,12 +96,29 @@ class FileReader:
 
 
 @pytest.fixture(scope="function")
+def client(request) -> Client:
+    client_url = request.config.getoption("--client-url")
+    http_token = request.config.getoption("--http-token")
+
+    if os.path.exists(http_token):
+        with open(http_token, encoding="utf-8") as fd:
+            http_token = fd.read()
+
+    client = Client(client_url, http_token=http_token)
+    client.session.verify = "mylocalhost.crt"
+    return client
+
+
+@pytest.fixture(scope="function")
 def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, None]:
     session_request = Session.request
-    recording = request.config.getoption("--record")
+    missing_only = request.config.getoption("--record-missing")
+    recording = missing_only or request.config.getoption("--record")
 
     rpath = request.path
     record_file = rpath.with_name(rpath.stem) / f"{request.function.__name__}.log"
+    if recording and missing_only and record_file.is_file():
+        recording = False
 
     def serialize(method: str, url: str, params: Dict[str, Any]) -> str:
         param_items = params.items() if isinstance(params, dict) else params or ()

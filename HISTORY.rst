@@ -20,6 +20,7 @@ future release
     * for all ResourcesT like :class:`tickets.Tickets` ``.url`` is now a property
     * exchange ``tickets.Ticket.merge_with()`` with :meth:`tickets.Ticket.merge_into`
       mimicking the logic provided by the Web UI
+    * :meth:`tags.Tags.delete()` and :meth:`tags.Tags.delete()` now only accept the tag name
 
 * **fixes**
 

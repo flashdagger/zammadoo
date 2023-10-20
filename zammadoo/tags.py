@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, Iterator, List, Union
+from typing import TYPE_CHECKING, Dict, Iterator, List
 
 from .utils import TypedTag, info_cast
 
@@ -59,35 +59,40 @@ class Tags:
         """
         creates a new tag (admin only), if name already exists, it is ignored
         """
+        cache = self.cache
+        if name not in cache:
+            cache.clear()
         self.client.post(self.endpoint, json={"name": name})
 
-    def delete(self, name_or_tid: Union[str, int]) -> None:
+    def delete(self, name: str) -> None:
         """
         deletes an existing tag (admin only)
 
-        :param name_or_tid: the name or tag id
-        :raises: :class:`KeyError` or :class:`zammadoo.client.APIException` if not found
+        :param name: tag name
+        :raises: :class:`KeyError` if not found
         """
         cache = self.cache
         if not cache:
             self.reload()
-        if isinstance(name_or_tid, str):
-            name_or_tid = cache[name_or_tid]["id"]
-        self.client.delete(self.endpoint, name_or_tid)
+        self.client.delete(self.endpoint, cache.pop(name)["id"])
 
-    def rename(self, name_or_tid: Union[str, int], new_name: str) -> None:
-        """rename an existing tag (admin only)
+    def rename(self, name: str, new_name: str) -> None:
+        """
+        rename an existing tag (admin only)
 
-        :param name_or_tid: the name or tag id
+        if the new name already exists, the current name will be deleted
+
+        :param name: the current name
         :param new_name: new name
-        :raises: :class:`KeyError` or :class:`client.APIException` if not found
+        :raises: :class:`KeyError` if not found
         """
         cache = self.cache
         if not cache:
             self.reload()
-        if isinstance(name_or_tid, str):
-            name_or_tid = cache[name_or_tid]["id"]
-        self.client.put(self.endpoint, name_or_tid, json={"name": new_name})
+
+        tag = cache[new_name] = cache.pop(name)
+        tag["name"] = new_name
+        self.client.put(self.endpoint, tag["id"], json={"name": new_name})
 
     def add_to_ticket(self, tid: int, *names: str) -> None:
         """
