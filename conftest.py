@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+import json
 import os.path
 from collections import deque
-from http.client import responses
 from mmap import ACCESS_READ, mmap
 from pathlib import Path
 from typing import Any, Deque, Dict, Generator, Tuple
 from unittest.mock import patch
-from urllib.parse import urlencode
 
 import pytest
-from requests import Response, Session
+from requests import PreparedRequest, Response, Session
 
 from zammadoo import Client
 from zammadoo.resource import Resource
@@ -52,10 +51,14 @@ class FileWriter:
     def __init__(self, path: Path) -> None:
         self.fd = open(path, "ab")
 
-    def append(self, key: str, data: bytes) -> None:
-        assert "\0" not in key
+    def append(self, method: str, response: Response) -> None:
         fd = self.fd
-        fd.writelines((f"{key}\0{len(data)}\n".encode("utf-8"), data, b"\n"))
+        content = response.content
+        meta = {"method": method}
+        for item in ("url", "status_code", "encoding", "reason"):
+            meta[item] = getattr(response, item)
+        meta["content_size"] = len(content)
+        fd.writelines((json.dumps(meta).encode("utf-8"), b"\n", content, b"\n"))
 
     def clear(self) -> None:
         self.fd.truncate(0)
@@ -65,7 +68,7 @@ class FileWriter:
 
 
 class FileReader:
-    MAPPING_TYPE = Dict[str, Deque[Tuple[int, int]]]
+    MAPPING_TYPE = Dict[Tuple[str, str], Deque[Dict[str, Any]]]
 
     def __init__(self, path: Path) -> None:
         self.fd = fd = open(path, "rb")
@@ -78,18 +81,31 @@ class FileReader:
         index: FileReader.MAPPING_TYPE = {}
 
         for line in iter(mm.readline, b""):
-            key, bdata_len = line.decode("utf-8").rsplit("\0", maxsplit=1)
-            data_len = int(bdata_len)
-            index.setdefault(key, deque()).append((mm.tell(), data_len))
-            mm.seek(int(bdata_len) + 1, 1)
+            content_start = mm.tell()
+            meta = json.loads(line)
+            key = (meta["method"], meta["url"])
+            meta["content_start"] = content_start
+            index.setdefault(key, deque()).append(meta)
+            mm.seek(meta["content_size"] + 1, 1)
 
         return index
 
-    def __getitem__(self, item: str) -> bytes:
-        offset, length = self.index[item].popleft()
-        fd = self.fd
-        fd.seek(offset)
-        return fd.read(length)
+    def response(self, request):
+        key = (request.method, request.url)
+        meta = self.index[key].popleft()
+
+        resp = Response()
+        for item in ("url", "status_code", "encoding", "reason"):
+            setattr(resp, item, meta[item])
+
+        content_start = meta["content_start"]
+        mm = mmap(
+            self.fd.fileno(), content_start + meta["content_size"], access=ACCESS_READ
+        )
+        mm.seek(content_start)
+        resp.raw = mm
+
+        return resp
 
     def close(self) -> None:
         self.fd.close()
@@ -120,12 +136,6 @@ def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, N
     if recording and missing_only and record_file.is_file():
         recording = False
 
-    def serialize(method: str, url: str, params: Dict[str, Any]) -> str:
-        param_items = params.items() if isinstance(params, dict) else params or ()
-        query = urlencode(sorted(param_items))
-        join = "?" if query else ""
-        return f"{method} {url}{join}{query}"
-
     if recording:
         record_file.parent.mkdir(exist_ok=True)
         recorder = FileWriter(record_file)
@@ -135,13 +145,8 @@ def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, N
             recorder.close()
 
         def _request(self: Session, method, url, *args, **kwargs):
-            params = kwargs.get("params", None)
             response = session_request(self, method, url, *args, **kwargs)
-            key = serialize(method, url, params)
-            data = b"\0".join(
-                (bytes(str(response.status_code), "ascii"), response.content)
-            )
-            recorder.append(key, data)
+            recorder.append(method, response)
             return response
 
     else:
@@ -151,16 +156,9 @@ def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, N
             replay.close()
 
         def _request(self: Session, method, url, *args, **kwargs):
-            params = kwargs.pop("params", None)
-
-            response = Response()
-            key = serialize(method, url, params)
-            status, response._content = replay[key].split(b"\0", maxsplit=1)
-            status_code = int(status)
-            response.status_code = status_code
-            response.reason = responses[status_code]
-
-            return response
+            req = PreparedRequest()
+            req.prepare(method=method, url=url, *args, **kwargs)
+            return replay.response(req)
 
     with patch.object(Session, "request", new=_request):
         yield client
