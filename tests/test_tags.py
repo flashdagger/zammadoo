@@ -14,7 +14,7 @@ def test_representation_of_tags(request, client):
 
 def test_tag_iteration(rclient):
     for tag in rclient.tags:
-        assert tag.keys() == TypedTag.__required_keys__
+        assert tag.keys() == {"name", "id", "count"}
         break
 
 

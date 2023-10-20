@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+import sys
 from datetime import datetime
-from sys import getrefcount
 from weakref import getweakrefcount, ref
 
 import pytest
@@ -27,7 +27,12 @@ def test_client_resource_are_cached_if_referenced(client):
     assert tickets1_2 is tickets1_3
 
 
+@pytest.mark.skipif(
+    sys.implementation.name == "pypy", reason="pypy has not sys.getrefcount"
+)
 def test_client_resource_instance_has_weak_reference(client):
+    from sys import getrefcount
+
     tickets1_1 = client.tickets(1)
     assert getrefcount(tickets1_1) == 2
     assert getweakrefcount(tickets1_1) == 1
