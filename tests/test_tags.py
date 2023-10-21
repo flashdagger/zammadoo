@@ -7,10 +7,7 @@ import pytest
 
 
 @pytest.fixture(scope="function")
-def assert_existing_tags(request, zammad_api):
-    missing_only = request.config.getoption("--record-missing")
-    recording = missing_only or request.config.getoption("--record")
-
+def assert_existing_tags(zammad_api):
     def _cleanup(_tags):
         for tag_name in _tags:
             tag_infos = zammad_api("GET", f"tag_search?term={tag_name}").json()
@@ -21,10 +18,6 @@ def assert_existing_tags(request, zammad_api):
     @contextmanager
     def _create_temporary(*names, delete=()):
         temporary_tags = set(delete)
-        if not recording:
-            yield
-            return
-
         _cleanup(temporary_tags)
 
         for tag_name in names:
@@ -49,6 +42,12 @@ def test_tags_getitem(rclient, assert_existing_tags):
         assert "baztag" in rclient.tags
 
 
+def test_tag_search(rclient, assert_existing_tags):
+    with assert_existing_tags("footag", "baztag"):
+        found = rclient.tags.search("tag")
+        assert {"footag", "baztag"}.issubset(found)
+
+
 def test_tag_iteration(rclient, assert_existing_tags):
     tag_names = set()
     with assert_existing_tags("footag", "baztag"):
@@ -69,7 +68,6 @@ def test_create_tag(rclient, assert_existing_tags):
         tag_info = tags[tag_name]
         assert tag_info["name"] == tag_name
         assert tag_info["count"] == 0
-        assert tag_name in tags.search(tag_name)
 
 
 def test_rename_tag(rclient, assert_existing_tags):

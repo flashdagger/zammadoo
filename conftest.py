@@ -2,13 +2,14 @@
 # -*- coding: UTF-8 -*-
 
 import os.path
-from typing import Generator
+from pathlib import Path
+from typing import Generator, Tuple
 from unittest.mock import patch
 
 import pytest
 from requests import PreparedRequest, Session
 
-from tests.recording import ResponseRecorder, ResponsePlayback
+from tests.recording import ResponsePlayback, ResponseRecorder
 from zammadoo import Client
 from zammadoo.resource import Resource
 
@@ -61,8 +62,88 @@ def api_token(request):
     return http_token
 
 
-@pytest.fixture(scope="session")
-def zammad_api(request, client_url, api_token):
+@pytest.fixture(scope="function")
+def record_log(request) -> Tuple[Path, bool]:
+    missing_only = request.config.getoption("--record-missing")
+    recording = missing_only or request.config.getoption("--record")
+
+    rpath = request.path
+    record_file = rpath.with_name(rpath.stem) / f"{request.function.__name__}.log"
+    if recording and missing_only and record_file.is_file():
+        recording = False
+
+    return record_file, recording
+
+
+@pytest.fixture(scope="function")
+def recorded_session(record_log):
+    session_request = Session.request
+    record_file, recording = record_log
+
+    if recording:
+        record_file.parent.mkdir(exist_ok=True)
+        recorder = ResponseRecorder(record_file)
+        recorder.clear()
+
+        def cleanup() -> None:
+            recorder.close()
+
+        def _request(self: Session, method, url, *args, **kwargs):
+            response = session_request(self, method, url, *args, **kwargs)
+            recorder.dump(method, response)
+            return response
+
+    else:
+        replay = ResponsePlayback(record_file)
+
+        def cleanup() -> None:
+            replay.close()
+
+        def prepared_request(
+            method,
+            url,
+            params=None,
+            data=None,
+            headers=None,
+            cookies=None,
+            files=None,
+            auth=None,
+            _timeout=None,
+            _allow_redirects=True,
+            _proxies=None,
+            hooks=None,
+            _stream=None,
+            _verify=None,
+            _cert=None,
+            json=None,
+        ) -> PreparedRequest:
+            req = PreparedRequest()
+            req.prepare(
+                method=method,
+                url=url,
+                headers=headers,
+                files=files,
+                data=data,
+                params=params,
+                auth=auth,
+                cookies=cookies,
+                hooks=hooks,
+                json=json,
+            )
+            return req
+
+        def _request(self: Session, method, url, *args, **kwargs):
+            req = prepared_request(method, url, *args, **kwargs)
+            return replay.response_from_request(req)
+
+    with patch.object(Session, "request", new=_request):
+        yield
+
+    cleanup()
+
+
+@pytest.fixture(scope="function")
+def zammad_api(recorded_session, client_url, api_token):
     session = Session()
     session.headers["User-Agent"] = "zammadoo pytest"
     if api_token:
@@ -85,41 +166,5 @@ def client(client_url, api_token) -> Client:
 
 
 @pytest.fixture(scope="function")
-def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, None]:
-    session_request = Session.request
-    missing_only = request.config.getoption("--record-missing")
-    recording = missing_only or request.config.getoption("--record")
-
-    rpath = request.path
-    record_file = rpath.with_name(rpath.stem) / f"{request.function.__name__}.log"
-    if recording and missing_only and record_file.is_file():
-        recording = False
-
-    if recording:
-        record_file.parent.mkdir(exist_ok=True)
-        recorder = ResponseRecorder(record_file)
-        recorder.clear()
-
-        def cleanup() -> None:
-            recorder.close()
-
-        def _request(self: Session, method, url, *args, **kwargs):
-            response = session_request(self, method, url, *args, **kwargs)
-            recorder.dump(method, response)
-            return response
-
-    else:
-        replay = ResponsePlayback(record_file)
-
-        def cleanup() -> None:
-            replay.close()
-
-        def _request(self: Session, method, url, *args, **kwargs):
-            req = PreparedRequest()
-            req.prepare(method, url, *args, **kwargs)
-            return replay.response_from_request(req)
-
-    with patch.object(Session, "request", new=_request):
-        yield client
-
-    cleanup()
+def rclient(recorded_session, client) -> Generator[Client, None, None]:
+    yield client
