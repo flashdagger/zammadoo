@@ -1,53 +1,94 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-from contextlib import suppress
+
+from contextlib import contextmanager
 
 import pytest
 
-from zammadoo.utils import TypedTag
+
+@pytest.fixture(scope="function")
+def assert_existing_tags(request, zammad_api):
+    missing_only = request.config.getoption("--record-missing")
+    recording = missing_only or request.config.getoption("--record")
+
+    def _cleanup(_tags):
+        for tag_name in _tags:
+            tag_infos = zammad_api("GET", f"tag_search?term={tag_name}").json()
+            for info in tag_infos:
+                if info["value"] == tag_name:
+                    zammad_api("DELETE", f"tag_list/{info['id']}")
+
+    @contextmanager
+    def _create_temporary(*names, delete=()):
+        temporary_tags = set(delete)
+        if not recording:
+            yield
+            return
+
+        _cleanup(temporary_tags)
+
+        for tag_name in names:
+            if tag_name not in temporary_tags:
+                zammad_api("POST", "tag_list", {"name": tag_name})
+                temporary_tags.add(tag_name)
+
+        yield
+
+        _cleanup(temporary_tags)
+
+    return _create_temporary
 
 
-def test_representation_of_tags(request, client):
-    client_url = request.config.getoption("--client-url")
+def test_representation_of_tags(client_url, client):
     assert repr(client.tags) == f"<Tags '{client_url}/tag_list'>"
 
 
-def test_tag_iteration(rclient):
-    for tag in rclient.tags:
-        assert tag.keys() == {"name", "id", "count"}
-        break
+def test_tags_getitem(rclient, assert_existing_tags):
+    with assert_existing_tags("footag", "baztag"):
+        assert "footag" in rclient.tags
+        assert "baztag" in rclient.tags
 
 
-def test_mutable_tag_operations(rclient):
+def test_tag_iteration(rclient, assert_existing_tags):
+    tag_names = set()
+    with assert_existing_tags("footag", "baztag"):
+        for tag in rclient.tags:
+            assert tag.keys() == {"name", "id", "count"}
+            tag_names.add(tag["name"])
+
+    assert {"footag", "baztag"}.issubset(tag_names)
+
+
+def test_create_tag(rclient, assert_existing_tags):
+    tag_name = "__pytest__"
+    tags = rclient.tags
+
+    with assert_existing_tags(delete={tag_name}):
+        rclient.tags.create(tag_name)
+        assert tag_name in tags
+        tag_info = tags[tag_name]
+        assert tag_info["name"] == tag_name
+        assert tag_info["count"] == 0
+        assert tag_name in tags.search(tag_name)
+
+
+def test_rename_tag(rclient, assert_existing_tags):
     tag_name = "__pytest__"
     new_tag_name = "__pytest_new__"
     tags = rclient.tags
 
-    # make sure tag does not exist
-    with suppress(KeyError):
+    with assert_existing_tags(tag_name, delete={new_tag_name}):
+        tag_info = tags[tag_name]
+        tags.cache.clear()
+        tags.rename(tag_name, new_tag_name)
+        new_tag_info = tags[new_tag_name]
+        assert new_tag_info["id"] == tag_info["id"]
+
+
+def test_delete_tag(rclient, assert_existing_tags):
+    tag_name = "__pytest__"
+    tags = rclient.tags
+
+    with assert_existing_tags(tag_name):
         tags.delete(tag_name)
-    with suppress(KeyError):
-        tags.delete(new_tag_name)
-
-    assert tag_name not in tags
-
-    with pytest.raises(KeyError, match=tag_name):
-        tags.delete(tag_name)
-
-    tags.create(tag_name)
-    assert tag_name in tags
-    tag_info = tags[tag_name]
-    assert tag_info["name"] == tag_name
-    assert tag_info["count"] == 0
-
-    assert tag_name in tags.search(tag_name)
-
-    tags.cache.clear()
-    tags.rename(tag_name, new_tag_name)
-    assert new_tag_name in tags
-    assert tag_name not in tags
-
-    tags.cache.clear()
-    assert tag_info["id"] == tags[new_tag_name]["id"]
-
-    tags.delete(new_tag_name)
+        assert tag_name not in tags

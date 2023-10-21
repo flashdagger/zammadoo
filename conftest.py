@@ -69,7 +69,9 @@ def zammad_api(request, client_url, api_token):
         session.headers["Authorization"] = f"Token token={api_token}"
 
     def _request(method: str, endpoint: str, *args, **kwargs):
-        response = session.request(method, f"{client_url}/{endpoint}", *args, **kwargs)
+        response = session.request(
+            method, f"{client_url}/{endpoint}#fixture", *args, **kwargs
+        )
         response.raise_for_status()
         return response
 

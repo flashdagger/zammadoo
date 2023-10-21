@@ -1,0 +1,16 @@
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest_new__#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+[]
+{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=__pytest__#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{}
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 116}
+[{"id":127,"name":"__pytest__","count":0},{"id":2,"name":"barracuda","count":0},{"id":7,"name":"special","count":0}]
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 116}
+[{"id":127,"name":"__pytest__","count":0},{"id":2,"name":"barracuda","count":0},{"id":7,"name":"special","count":0}]
+{"method": "PUT", "url": "https://localhost/api/v1/tag_list/127", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{}
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest_new__#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 37}
+[{"id":127,"value":"__pytest_new__"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/127#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{}
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+[]
