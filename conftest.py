@@ -44,18 +44,42 @@ def resource(items=()):
     return patch.object(Resource, "_initialize", new=initialize)
 
 
-@pytest.fixture(scope="function")
-def client(request) -> Client:
-    client_url = request.config.getoption("--client-url")
+@pytest.fixture(scope="session")
+def client_url(request):
+    os.environ["CURL_CA_BUNDLE"] = "mylocalhost.crt"
+    return request.config.getoption("--client-url")
+
+
+@pytest.fixture(scope="session")
+def api_token(request):
     http_token = request.config.getoption("--http-token")
 
     if os.path.exists(http_token):
         with open(http_token, encoding="utf-8") as fd:
             http_token = fd.read()
 
-    _client = Client(client_url, http_token=http_token)
-    _client.session.verify = "mylocalhost.crt"
-    return _client
+    return http_token
+
+
+@pytest.fixture(scope="session")
+def zammad_api(request, client_url, api_token):
+    session = Session()
+    session.headers["User-Agent"] = "zammadoo pytest"
+    if api_token:
+        session.headers["Authorization"] = f"Token token={api_token}"
+
+    def _request(method: str, endpoint: str, *args, **kwargs):
+        response = session.request(method, f"{client_url}/{endpoint}", *args, **kwargs)
+        response.raise_for_status()
+        return response
+
+    yield _request
+    session.close()
+
+
+@pytest.fixture(scope="function")
+def client(client_url, api_token) -> Client:
+    return Client(client_url, http_token=api_token)
 
 
 @pytest.fixture(scope="function")

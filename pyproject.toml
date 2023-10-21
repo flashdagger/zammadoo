@@ -74,9 +74,9 @@ profile = "black"
 src_paths = ["zammadoo", "tests"]
 
 
+# see: https://pytest-cov.readthedocs.io/en/latest/config.html
 [tool.pytest.ini_options]
 minversion = "7.4"
-# see: https://pytest-cov.readthedocs.io/en/latest/config.html
 addopts = "tests -v --cov=zammadoo --cov-report html"
 cache_dir = ".cache/pytest"
 

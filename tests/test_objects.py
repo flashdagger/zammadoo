@@ -75,18 +75,15 @@ def test_items_are_readonly(client):
         tickets(1)["id"] = tickets(2)["id"]
 
 
-def test_representation_of_client(request, client):
-    client_url = request.config.getoption("--client-url")
+def test_representation_of_client(client_url, client):
     assert repr(client) == f"<Client '{client_url}'>"
 
 
-def test_representation_of_client_resources(request, client):
-    client_url = request.config.getoption("--client-url")
+def test_representation_of_client_resources(client_url, client):
     assert repr(client.users) == f"<Users '{client_url}/users'>"
 
 
-def test_representation_of_client_resource(request, client):
-    client_url = request.config.getoption("--client-url")
+def test_representation_of_client_resource(client_url, client):
     assert repr(client.tickets(34)) == f"<Ticket '{client_url}/tickets/34'>"
 
 

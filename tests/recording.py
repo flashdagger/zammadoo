@@ -9,7 +9,6 @@ from typing import Any, Deque, Dict, Tuple
 
 from requests import PreparedRequest, Response
 
-
 # pylint: disable=consider-using-with
 
 
