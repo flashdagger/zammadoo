@@ -1,17 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import json
 import os.path
-from collections import deque
-from mmap import ACCESS_READ, mmap
-from pathlib import Path
-from typing import Any, Deque, Dict, Generator, Tuple
+from typing import Generator
 from unittest.mock import patch
 
 import pytest
-from requests import PreparedRequest, Response, Session
+from requests import PreparedRequest, Session
 
+from tests.recording import ResponseRecorder, ResponsePlayback
 from zammadoo import Client
 from zammadoo.resource import Resource
 
@@ -47,70 +44,6 @@ def resource(items=()):
     return patch.object(Resource, "_initialize", new=initialize)
 
 
-class FileWriter:
-    def __init__(self, path: Path) -> None:
-        self.fd = open(path, "ab")
-
-    def append(self, method: str, response: Response) -> None:
-        fd = self.fd
-        content = response.content
-        meta = {"method": method}
-        for item in ("url", "status_code", "encoding", "reason"):
-            meta[item] = getattr(response, item)
-        meta["content_size"] = len(content)
-        fd.writelines((json.dumps(meta).encode("utf-8"), b"\n", content, b"\n"))
-
-    def clear(self) -> None:
-        self.fd.truncate(0)
-
-    def close(self) -> None:
-        self.fd.close()
-
-
-class FileReader:
-    MAPPING_TYPE = Dict[Tuple[str, str], Deque[Dict[str, Any]]]
-
-    def __init__(self, path: Path) -> None:
-        self.fd = fd = open(path, "rb")
-        mm = mmap(fd.fileno(), 0, access=ACCESS_READ)
-        self.index = self.build_index(mm)
-        mm.close()
-
-    @staticmethod
-    def build_index(mm) -> MAPPING_TYPE:
-        index: FileReader.MAPPING_TYPE = {}
-
-        for line in iter(mm.readline, b""):
-            content_start = mm.tell()
-            meta = json.loads(line)
-            key = (meta["method"], meta["url"])
-            meta["content_start"] = content_start
-            index.setdefault(key, deque()).append(meta)
-            mm.seek(meta["content_size"] + 1, 1)
-
-        return index
-
-    def response(self, request):
-        key = (request.method, request.url)
-        meta = self.index[key].popleft()
-
-        resp = Response()
-        for item in ("url", "status_code", "encoding", "reason"):
-            setattr(resp, item, meta[item])
-
-        content_start = meta["content_start"]
-        mm = mmap(
-            self.fd.fileno(), content_start + meta["content_size"], access=ACCESS_READ
-        )
-        mm.seek(content_start)
-        resp.raw = mm
-
-        return resp
-
-    def close(self) -> None:
-        self.fd.close()
-
-
 @pytest.fixture(scope="function")
 def client(request) -> Client:
     client_url = request.config.getoption("--client-url")
@@ -120,9 +53,9 @@ def client(request) -> Client:
         with open(http_token, encoding="utf-8") as fd:
             http_token = fd.read()
 
-    client = Client(client_url, http_token=http_token)
-    client.session.verify = "mylocalhost.crt"
-    return client
+    _client = Client(client_url, http_token=http_token)
+    _client.session.verify = "mylocalhost.crt"
+    return _client
 
 
 @pytest.fixture(scope="function")
@@ -138,7 +71,7 @@ def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, N
 
     if recording:
         record_file.parent.mkdir(exist_ok=True)
-        recorder = FileWriter(record_file)
+        recorder = ResponseRecorder(record_file)
         recorder.clear()
 
         def cleanup() -> None:
@@ -146,19 +79,19 @@ def rclient(request: pytest.FixtureRequest, client) -> Generator[Client, None, N
 
         def _request(self: Session, method, url, *args, **kwargs):
             response = session_request(self, method, url, *args, **kwargs)
-            recorder.append(method, response)
+            recorder.dump(method, response)
             return response
 
     else:
-        replay = FileReader(record_file)
+        replay = ResponsePlayback(record_file)
 
         def cleanup() -> None:
             replay.close()
 
         def _request(self: Session, method, url, *args, **kwargs):
             req = PreparedRequest()
-            req.prepare(method=method, url=url, *args, **kwargs)
-            return replay.response(req)
+            req.prepare(method, url, *args, **kwargs)
+            return replay.response_from_request(req)
 
     with patch.object(Session, "request", new=_request):
         yield client
