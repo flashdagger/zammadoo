@@ -16,7 +16,7 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "pypy-3.10"]
     env:
-      total: "-"
+      total_coverage: "-"
 
     steps:
     - uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
       run: |
         poetry run coverage json
         export TOTAL=$(python -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
-        echo "total=$TOTAL" >> $GITHUB_ENV
+        echo "total_coverage=$TOTAL" >> $GITHUB_ENV
         echo "### Total coverage: ${TOTAL}%" >> $GITHUB_STEP_SUMMARY
     - name: create coverage badge
       if : ${{ matrix.python-version == '3.11' }}
@@ -55,10 +55,11 @@ jobs:
         gistID: 1a66c9e88a9e4267f7e0b1d185be98f4
         filename: covbadge.json
         label: Coverage
-        message: ${{ env.total }}%
+        message: ${{ env.total_coverage }}%
         minColorRange: 50
         maxColorRange: 90
-        valColorRange: ${{ env.total }}
+        valColorRange: ${{ env.total_coverage }}
+        isError: ${{ env.total_coverage == '-' }}
     - name: Static typechecking with mypy
       if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
