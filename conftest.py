@@ -11,7 +11,6 @@ from requests import PreparedRequest, Session
 
 from tests.recording import ResponsePlayback, ResponseRecorder
 from zammadoo import Client
-from zammadoo.resource import Resource
 
 
 def pytest_addoption(parser):
@@ -35,14 +34,6 @@ def pytest_addoption(parser):
         default="<token>",
         help="zammad server HTTP Authentication token",
     )
-
-
-def resource(items=()):
-    def initialize(self):
-        self._info["id"] = self._id
-        self._info.update(items)
-
-    return patch.object(Resource, "_initialize", new=initialize)
 
 
 @pytest.fixture(scope="session")
