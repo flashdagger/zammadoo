@@ -34,7 +34,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'poetry'
     - run: |
-        poetry install --without doc
+        poetry install
     - name: Unit tests with pytest
       run: |
         poetry run pytest
