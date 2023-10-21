@@ -46,6 +46,8 @@ class ResponsePlayback:
         index: ResponsePlayback.MAPPING_TYPE = {}
 
         for line in iter(mm.readline, b""):
+            if not line.strip():
+                continue
             content_start = mm.tell()
             meta = json.loads(line)
             key = (meta["method"], meta["url"])
