@@ -24,7 +24,9 @@ class User(NamedResource):
     def fullname(self) -> str:
         """users firstname and lastname combined"""
         firstname, lastname = self["firstname"], self["lastname"]
-        return f"{firstname}{' ' if firstname and lastname else ''}{lastname}"
+        return (
+            f"{firstname or ''}{' ' if firstname and lastname else ''}{lastname or ''}"
+        )
 
     @property
     def name(self) -> str:

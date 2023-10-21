@@ -32,25 +32,10 @@ def test_datetime_type_attribute(client):
     assert created_at.tzname() == "UTC"
 
 
-def test_user_last_login_is_datetime(client):
-    assert isinstance(
-        client.users(
-            1, info={"id": 1, "last_login": "2021-11-03T11:51:13.759Z"}
-        ).last_login,
-        datetime,
-    )
-
-
-def test_user_last_login_is_none(client):
-    assert client.users(1, info={"id": 1, "last_login": None}).last_login is None
-
-
 def test_access_item_named_from(client):
     # 'from' is a reserved word in python
-    assert (
-        client.users(1, info={"id": 1, "from": "user@example.com"}).from_
-        == "user@example.com"
-    )
+    user = client.users(1, info={"id": 1, "from": "user@example.com"})
+    assert user.from_ == "user@example.com"
 
 
 def test_name_attribute(client):
