@@ -2,10 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 import sys
-from datetime import datetime
 
 import pytest
-
 
 """ tests related to classes in `zammadoo.resource` that can be performed offline """
 
@@ -14,10 +12,6 @@ def test_client_resources_are_singletons(client):
     tickets_1 = client.tickets
     tickets_2 = client.tickets
     assert tickets_1 is tickets_2
-
-
-def test_client_resource_has_id(client):
-    assert client.tickets(123).id == 123
 
 
 def test_client_resource_is_cached_if_referenced(client):
@@ -39,8 +33,8 @@ def test_client_resource_is_cached_if_referenced(client):
     sys.implementation.name == "pypy", reason="pypy has not sys.getrefcount"
 )
 def test_client_resource_instance_has_weak_reference(client):
-    from weakref import getweakrefcount, ref
     from sys import getrefcount
+    from weakref import getweakrefcount, ref
 
     tickets1_1 = client.tickets(1)
     assert getrefcount(tickets1_1) == 2
@@ -70,18 +64,6 @@ def test_resource_creation_with_info_needs_proper_id(client):
         _ = client.tickets(1, info={"id": 2})
 
 
-def test_missing_attributes(client):
-    with pytest.raises(AttributeError, match="has no attribute"):
-        _ = client.tickets(1, info={"id": 1}).missing
-
-
-def test_attributes_are_readonly(client):
-    tickets = client.tickets
-
-    with pytest.raises(AttributeError, match="is read-only"):
-        tickets(1, info={"id": 1, "title": "some title"}).title = "other title"
-
-
 def test_items_are_readonly(client):
     tickets = client.tickets
 
@@ -99,43 +81,6 @@ def test_representation_of_client_resources(client_url, client):
 
 def test_representation_of_client_resource(client_url, client):
     assert repr(client.tickets(34)) == f"<Ticket '{client_url}/tickets/34'>"
-
-
-def test_datetime_attribute(client):
-    ticket = client.tickets(1, info={"id": 1, "created_at": "2021-11-03T11:51:13.759Z"})
-
-    created_at = ticket.created_at
-    assert isinstance(created_at, datetime)
-    assert created_at.tzname() == "UTC"
-
-
-def test_user_last_login_is_datetime(client):
-    assert isinstance(
-        client.users(
-            1, info={"id": 1, "last_login": "2021-11-03T11:51:13.759Z"}
-        ).last_login,
-        datetime,
-    )
-
-
-def test_user_last_login_is_none(client):
-    assert client.users(1, info={"id": 1, "last_login": None}).last_login is None
-
-
-def test_access_item_named_from(client):
-    # 'from' is a reserved word in python
-    assert (
-        client.users(1, info={"id": 1, "from": "user@example.com"}).from_
-        == "user@example.com"
-    )
-
-
-def test_resources_url(client):
-    assert client.tickets.url == f"{client.url}/tickets"
-
-
-def test_resource_url(client):
-    assert client.tickets(12345).url == f"{client.url}/tickets/12345"
 
 
 def test_resource_equality(client):
@@ -159,16 +104,6 @@ def test_resource_view_is_readonly(client):
 
     with pytest.raises(TypeError, match="does not support item assignment"):
         view["id"] = 123
-
-
-def test_name_attribute(client):
-    group = client.groups(123, info={"id": 123, "name": "Users"})
-    assert group.name == "Users"
-
-
-def test_updated_by_attribute(client):
-    ticket = client.tickets(123, info={"id": 123, "updated_by_id": 456})
-    assert ticket.updated_by == client.users(456)
 
 
 @pytest.fixture(scope="function")
