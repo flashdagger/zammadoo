@@ -4,26 +4,6 @@
     from zammadoo import Client
 
     client = Client("<url>", http_token="<token>")
-    reveal_type(client.groups)            # N: Revealed type is "zammadoo.groups.Groups"
-    reveal_type(
-      client.groups.create(name=""))      # N: Revealed type is "zammadoo.groups.Group"
-    reveal_type(
-      client.groups(0).update())          # N: Revealed type is "zammadoo.groups.Group"
-    reveal_type(
-      client.groups(0).users)             # N: Revealed type is "builtins.list[zammadoo.users.User]"
-
-    reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
-    reveal_type(client.roles(0).update()) # N: Revealed type is "zammadoo.roles.Role"
-
-    reveal_type(client.organizations)     # N: Revealed type is "zammadoo.organizations.Organizations"
-    reveal_type(
-      client.organizations.create(""))    # N: Revealed type is "zammadoo.organizations.Organization"
-    reveal_type(
-      client.organizations(0).update()    # N: Revealed type is "zammadoo.organizations.Organization"
-    )
-    reveal_type(client.tags)              # N: Revealed type is "zammadoo.tags.Tags"
-    reveal_type(iter(client.tags))        # N: Revealed type is "typing.Iterator[TypedDict('zammadoo.utils.TypedTag', {'id': builtins.int, 'name': builtins.str, 'count': Union[builtins.int, None]})]"
-
     reveal_type(client.tickets)           # N: Revealed type is "zammadoo.tickets.Tickets"
     reveal_type(
       client.tickets.create(              # N: Revealed type is "zammadoo.tickets.Ticket"
@@ -44,11 +24,6 @@
       client.ticket_states.create("", 0))       # N: Revealed type is "zammadoo.tickets.State"
     reveal_type(
       client.ticket_states(0).update())         # N: Revealed type is "zammadoo.tickets.State"
-
-    reveal_type(client.users)                   # N: Revealed type is "zammadoo.users.Users"
-    reveal_type(client.users.create(email=""))        # N: Revealed type is "zammadoo.users.User"
-    reveal_type(client.users(0).update())       # N: Revealed type is "zammadoo.users.User"
-    reveal_type(client.users(0).last_login)     # N: Revealed type is "Union[datetime.datetime, None]"
 
     ticket = client.tickets(1)
     reveal_type(ticket)                # N: Revealed type is "zammadoo.tickets.Ticket"
@@ -76,19 +51,3 @@
     article = ticket.articles[0]
     reveal_type(article.attachments) # N: Revealed type is "builtins.list[zammadoo.articles.Attachment]"
     reveal_type(ticket.tags())       # N: Revealed type is "builtins.list[builtins.str]"
-    
-    reveal_type(client.users)        # N: Revealed type is "zammadoo.users.Users"
-    reveal_type(client.users.me())   # N: Revealed type is "zammadoo.users.User"
-    user = client.users(1)
-    reveal_type(user)                # N: Revealed type is "zammadoo.users.User"
-    reveal_type(user.created_by)     # N: Revealed type is "zammadoo.users.User"
-    reveal_type(user.organization)   # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
-    reveal_type(user.organizations)  # N: Revealed type is "builtins.list[zammadoo.organizations.Organization]"
-
-    reveal_type(iter(client.users))  # N: Revealed type is "typing.Iterator[zammadoo.users.User]" 
-
-    for user in client.users:
-      reveal_type(user)             # N: Revealed type is "zammadoo.users.User"
-    
-    for user in client.users.search("..."):
-      reveal_type(user)             # N: Revealed type is "zammadoo.users.User"

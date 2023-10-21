@@ -1,0 +1,22 @@
+- case: client_attributes_are_of_proper_type
+  skip: sys.implementation.name == "pypy"
+  main: |
+    from zammadoo import Client
+
+    client = Client("<url>", http_token="<token>")
+
+    reveal_type(client.users)        # N: Revealed type is "zammadoo.users.Users"
+    reveal_type(client.users.me())   # N: Revealed type is "zammadoo.users.User"
+    user = client.users(1)
+    reveal_type(user)                # N: Revealed type is "zammadoo.users.User"
+    reveal_type(user.created_by)     # N: Revealed type is "zammadoo.users.User"
+    reveal_type(user.organization)   # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
+    reveal_type(user.organizations)  # N: Revealed type is "builtins.list[zammadoo.organizations.Organization]"
+
+    reveal_type(iter(client.users))  # N: Revealed type is "typing.Iterator[zammadoo.users.User]" 
+
+    for user in client.users:
+      reveal_type(user)             # N: Revealed type is "zammadoo.users.User"
+    
+    for user in client.users.search("..."):
+      reveal_type(user)             # N: Revealed type is "zammadoo.users.User"
