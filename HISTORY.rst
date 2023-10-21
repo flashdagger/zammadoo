@@ -4,8 +4,8 @@ History
 
 .. py:module:: zammadoo
 
-future release
---------------
+0.2.0 (tbd)
+-----------
 * **added features**
 
     * extend support for Python 3.8
