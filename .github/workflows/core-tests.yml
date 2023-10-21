@@ -9,12 +9,14 @@ permissions:
 
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "pypy-3.10"]
+    env:
+      total: "-"
 
     steps:
     - uses: actions/checkout@v3
@@ -38,6 +40,25 @@ jobs:
     - name: Unit tests with pytest
       run: |
         poetry run pytest
+    - name: prepare coverage data
+      continue-on-error: true
+      run: |
+        poetry run coverage json
+        export TOTAL=$(python -c "import json;print(json.load(open('coverage.json'))['totals']['percent_covered_display'])")
+        echo "total=$TOTAL" >> $GITHUB_ENV
+        echo "### Total coverage: ${TOTAL}%" >> $GITHUB_STEP_SUMMARY
+    - name: create coverage badge
+      if : ${{ matrix.python-version == '3.11' }}
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_TOKEN }}
+        gistID: 1a66c9e88a9e4267f7e0b1d185be98f4
+        filename: covbadge.json
+        label: Coverage
+        message: ${{ env.total }}%
+        minColorRange: 50
+        maxColorRange: 90
+        valColorRange: ${{ env.total }}
     - name: Static typechecking with mypy
       if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
