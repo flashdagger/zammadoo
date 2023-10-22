@@ -1,4 +1,4 @@
-name: Core Tests
+name: core-tests
 on:
   push:
     branches: [ "main" ]
@@ -54,7 +54,7 @@ jobs:
         auth: ${{ secrets.GIST_TOKEN }}
         gistID: 1a66c9e88a9e4267f7e0b1d185be98f4
         filename: covbadge.json
-        label: Coverage
+        label: coverage
         message: ${{ env.total_coverage }}%
         minColorRange: 50
         maxColorRange: 90
