@@ -1,4 +1,4 @@
-- case: client_attributes_are_of_proper_type
+- case: ticket_attributes_are_of_proper_type
   skip: sys.implementation.name == "pypy"
   main: |
     from zammadoo import Client
