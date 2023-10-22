@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import json
+import re
 from collections import deque
 from mmap import ACCESS_READ, mmap
 from pathlib import Path
@@ -19,7 +20,14 @@ class ResponseRecorder:
     def dump(self, method: str, response: Response) -> None:
         fd = self.fd
         content = response.content
-        meta: Dict[str, Any] = {"method": method}
+        meta: Dict[str, Any] = {
+            "method": method,
+            "headers": dict(
+                (key, value)
+                for key, value in response.headers.items()
+                if re.fullmatch(r"[Cc]ontent-[A-Za-z][a-z]+", key)
+            ),
+        }
         for item in ("url", "status_code", "encoding", "reason"):
             meta[item] = getattr(response, item)
         meta["content_size"] = len(content)
@@ -63,6 +71,7 @@ class ResponsePlayback:
         meta = self.index[key].popleft()
 
         resp = Response()
+        resp.headers.update(meta.get("headers", {}))
         for item in ("url", "status_code", "encoding", "reason"):
             setattr(resp, item, meta[item])
 

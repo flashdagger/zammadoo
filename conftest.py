@@ -58,9 +58,15 @@ def record_log(request) -> Tuple[Path, bool]:
     missing_only = request.config.getoption("--record-missing")
     recording = missing_only or request.config.getoption("--record")
 
-    rpath = request.path
+    rpath: Path = request.path
     record_file = rpath.with_name(rpath.stem) / f"{request.function.__name__}.log"
-    if recording and missing_only and record_file.is_file():
+
+    if (
+        recording
+        and missing_only
+        and record_file.is_file()
+        and record_file.stat().st_size
+    ):
         recording = False
 
     return record_file, recording
@@ -99,15 +105,16 @@ def recorded_session(record_log):
             cookies=None,
             files=None,
             auth=None,
-            _timeout=None,
-            _allow_redirects=True,
-            _proxies=None,
+            timeout=None,
+            allow_redirects=True,
+            proxies=None,
             hooks=None,
-            _stream=None,
-            _verify=None,
-            _cert=None,
+            stream=None,
+            verify=None,
+            cert=None,
             json=None,
         ) -> PreparedRequest:
+            _ = (stream, verify, cert, timeout, allow_redirects, proxies)
             req = PreparedRequest()
             req.prepare(
                 method=method,

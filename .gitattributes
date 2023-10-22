@@ -8,6 +8,7 @@
 *.h     text
 *.hpp   text
 *.cmake text
+*.log   text
 *.txt   text
 *.py    text
 
