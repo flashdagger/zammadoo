@@ -246,8 +246,9 @@ class Client:
                 if isinstance(value, bool):
                     params[key] = str(value).lower()
 
+        loglevel = LOG.getEffectiveLevel()
         response = self.session.request(method, url, params=params, json=json, **kwargs)
-        if kwargs.get("stream") and LOG.level == logging.DEBUG:
+        if kwargs.get("stream") and loglevel == logging.DEBUG:
             headers = response.headers
             mapping = dict.fromkeys(("Content-Length", "Content-Type"))
             for key in mapping:
@@ -256,7 +257,7 @@ class Client:
                 f"{key}: {value}" for key, value in mapping.items() if value
             )
             LOG.debug("HTTP:%s %s [%s]", method, response.url, info)
-        elif json and LOG.level == logging.DEBUG:
+        elif json and loglevel == logging.DEBUG:
             LOG.debug("HTTP:%s %s json=%r", method, response.url, json)
         else:
             LOG.info("HTTP:%s %s", method, response.url)

@@ -76,12 +76,11 @@ class ResourcesT(Generic[_T_co]):
             self.client.get, self.endpoint, rid
         )
 
-        if not refresh:
-            return cache.setdefault_by_callback(item, callback)
+        if refresh:
+            response = cache[item] = callback()
+            return response
 
-        response = callback()
-        cache[item] = response
-        return response
+        return cache.setdefault_by_callback(item, callback)
 
 
 class CreatableT(ResourcesT[_T_co]):

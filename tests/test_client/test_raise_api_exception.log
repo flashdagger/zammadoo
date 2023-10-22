@@ -1,0 +1,2 @@
+{"method": "GET", "headers": {"Content-Type": "application/json; charset=utf-8"}, "url": "https://localhost/api/v1", "status_code": 404, "encoding": "utf-8", "reason": "Not Found", "content_size": 89}
+{"error":"No route matches [GET] /api/v1","error_human":"No route matches [GET] /api/v1"}

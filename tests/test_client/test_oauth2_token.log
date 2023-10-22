@@ -1,0 +1,6 @@
+{"method": "GET", "headers": {"Content-Type": "application/json", "Content-Length": "56"}, "url": "https://httpbin.org/bearer", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 56}
+{
+  "authenticated": true, 
+  "token": "AbCdEf123456"
+}
+
