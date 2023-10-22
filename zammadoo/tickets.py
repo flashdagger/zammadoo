@@ -22,6 +22,9 @@ if TYPE_CHECKING:
 class Priority(NamedResource):
     """Priority(...)"""
 
+    ui_color: Optional[str]  #:
+    ui_icon: Optional[str]  #:
+
 
 class Priorities(IterableT[Priority], CreatableT[Priority]):
     """Priorities(...)"""
