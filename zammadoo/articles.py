@@ -31,7 +31,6 @@ class Attachment:
     id: int  #:
     filename: str  #:
     preferences: Dict[str, Any]  #:
-    size: int  #:
     store_file_id: int  #:
 
     def __init__(self, client: "Client", content_url: str, info: "JsonDict") -> None:
@@ -44,6 +43,22 @@ class Attachment:
 
     def __getattr__(self, item):
         return self._info[item]
+
+    @property
+    def encoding(self) -> Optional[str]:
+        preferences = info_cast(self._info).get("preferences", {})
+        return preferences.get("Charset")
+
+    @property
+    def size(self) -> int:
+        return int(info_cast(self._info)["size"])
+
+    @property
+    def url(self) -> str:
+        return self._url
+
+    def view(self) -> "MappingProxyType[str, Any]":
+        return MappingProxyType(self._info)
 
     @staticmethod
     def info_from_files(*paths: "PathType"):
@@ -69,13 +84,6 @@ class Attachment:
             )
         return info_list
 
-    def view(self) -> "MappingProxyType[str, Any]":
-        return MappingProxyType(self._info)
-
-    @property
-    def url(self) -> str:
-        return self._url
-
     def _response(self, encoding: Optional[str] = None) -> requests.Response:
         response = self._client.response("GET", self._url, stream=True)
         response.raise_for_status()
@@ -100,11 +108,6 @@ class Attachment:
 
     def read_text(self) -> str:
         return self._response(self.encoding).text
-
-    @property
-    def encoding(self) -> Optional[str]:
-        preferences = info_cast(self._info).get("preferences", {})
-        return preferences.get("Charset")
 
     def iter_text(self, chunk_size=8192):
         response = self._response(encoding=self.encoding)

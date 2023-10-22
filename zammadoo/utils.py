@@ -51,6 +51,7 @@ class TypedInfo(TypedDict, total=False):
     per_page: int
     tags: List[str]
     version: str
+    size: str
 
 
 def info_cast(info: "JsonDict") -> TypedInfo:
