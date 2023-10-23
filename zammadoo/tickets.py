@@ -52,12 +52,15 @@ class State(NamedResource):
     default_create: bool  #:
     default_follow_up: bool  #:
     ignore_escalation: bool  #:
-    next_state_id: Optional[int]  #:
-    state_type_id: int  #:
 
     @property
-    def next_state(self) -> "State":
+    def next_state(self) -> Optional["State"]:
         sid = self["next_state_id"]
+        return sid and self.parent.client.ticket_states(sid)
+
+    @property
+    def state_type(self) -> "State":
+        sid = self["state_type_id"]
         return self.parent.client.ticket_states(sid)
 
 

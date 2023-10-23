@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import os.path
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator, Tuple
 from unittest.mock import patch
@@ -156,6 +157,25 @@ def zammad_api(recorded_session, client_url, api_token):
 
     yield _request
     session.close()
+
+
+@pytest.fixture(scope="function")
+def temporary_resources(zammad_api):
+    from zammadoo.utils import StringKeyDict
+
+    @contextmanager
+    def _create_temporary(endpoint: str, *parameter: StringKeyDict):
+        temporary_resources = []
+        for param in parameter:
+            value = zammad_api("POST", f"{endpoint}", json=param).json()
+            temporary_resources.append(value)
+
+        yield temporary_resources
+
+        for resource in temporary_resources:
+            zammad_api("DELETE", f"{endpoint}/{resource['id']}")
+
+    return _create_temporary
 
 
 @pytest.fixture(scope="function")

@@ -2,11 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 
-def test_state_next_state_attribute(client):
-    state = client.ticket_states(1, info={"id": 1, "next_state_id": 2})
-    assert state.next_state == client.ticket_states(2)
-
-
 def test_ticket_create_article_sender_attribute(client):
     ticket = client.tickets(123, info={"id": 123, "create_article_sender_id": 1})
     assert ticket.create_article_sender == "Agent"
