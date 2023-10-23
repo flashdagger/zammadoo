@@ -1,49 +1,45 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
-from contextlib import contextmanager
-
 import pytest
 
 
-@pytest.fixture(scope="function")
-def assert_existing_priorities(zammad_api):
-    def _cleanup(names):
-        priority_map = {}
-        priority_map.update(
-            (info["name"], info["id"])
-            for info in zammad_api("GET", "ticket_priorities").json()
-        )
-        for name in names:
-            priority_id = priority_map.get(name)
-            if not priority_id:
-                continue
-            zammad_api("DELETE", f"ticket_priorities/{priority_id}")
-
-    @contextmanager
-    def _create_temporary(*names, delete=()):
-        temporary_priorities = set(delete)
-        _cleanup(temporary_priorities)
-
-        for priority_name in names:
-            if priority_name not in temporary_priorities:
-                zammad_api(
-                    "POST",
-                    "ticket_priorities",
-                    {"name": priority_name, "note": "pytest"},
-                )
-                temporary_priorities.add(priority_name)
-
-        yield
-
-        _cleanup(temporary_priorities)
-
-    return _create_temporary
-
-
-def test_create_and_update_priority(rclient, assert_existing_priorities):
-    with assert_existing_priorities(delete={"pytest_prio"}):
-        new_priority = rclient.ticket_priorities.create("pytest_prio")
+def test_create_priority(rclient, temporary_resources):
+    with temporary_resources("ticket_priorities") as priorities:
+        new_priority = rclient.ticket_priorities.create("pytest_priority")
+        priorities.append(new_priority.view())
         assert new_priority.active is True
-        updated_priority = new_priority.update(active=False)
+        assert new_priority.note is None
+        assert new_priority.default_create is False
+        assert new_priority.ui_icon is None
+        assert new_priority.ui_color is None
+
+
+def test_update_priority(rclient, temporary_resources):
+    with temporary_resources("ticket_priorities", {"name": "pytest_priority"}) as infos:
+        info = infos[0]
+        priority = rclient.ticket_priorities(info["id"], info=info)
+        assert priority.active is True
+        updated_priority = priority.update(active=False)
         assert updated_priority.active is False
+
+
+def test_update_priority_with_reload(rclient, temporary_resources):
+    with temporary_resources("ticket_priorities", {"name": "pytest_priority"}) as infos:
+        info = infos[0]
+        priority = rclient.ticket_priorities(info["id"], info=info)
+        assert priority.active is True
+        priority.update(active=False)
+        priority.reload()
+        assert priority.active is False
+
+
+def test_delete_priority(rclient, temporary_resources):
+    from zammadoo import APIException
+
+    with temporary_resources("ticket_priorities", {"name": "pytest_priority"}) as infos:
+        info = infos[0]
+        priority = rclient.ticket_priorities(info["id"], info=info)
+        priority.delete()
+        with pytest.raises(APIException, match="Couldn't find Ticket::Priority"):
+            priority.reload()
+        infos.clear()

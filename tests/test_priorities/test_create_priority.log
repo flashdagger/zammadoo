@@ -1,0 +1,4 @@
+{"method": "POST", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "230"}, "url": "https://localhost/api/v1/ticket_priorities", "status_code": 201, "encoding": "utf-8", "reason": "Created", "content_size": 230}
+{"id":14,"name":"pytest_priority","default_create":false,"ui_icon":null,"ui_color":null,"note":null,"active":true,"updated_by_id":3,"created_by_id":3,"created_at":"2023-10-23T19:08:57.516Z","updated_at":"2023-10-23T19:08:57.516Z"}
+{"method": "DELETE", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "url": "https://localhost/api/v1/ticket_priorities/14#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{}
