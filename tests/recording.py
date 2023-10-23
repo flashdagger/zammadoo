@@ -22,15 +22,17 @@ class ResponseRecorder:
         content = response.content
         meta: Dict[str, Any] = {
             "method": method,
+            "url": response.url,
+            "status_code": response.status_code,
+            "reason": response.reason,
             "headers": dict(
                 (key, value)
                 for key, value in response.headers.items()
                 if re.fullmatch(r"[Cc]ontent-[A-Za-z][a-z]+", key)
             ),
+            "encoding": response.encoding,
+            "content_size": len(content),
         }
-        for item in ("url", "status_code", "encoding", "reason"):
-            meta[item] = getattr(response, item)
-        meta["content_size"] = len(content)
         fd.writelines((json.dumps(meta).encode("utf-8"), b"\n", content, b"\n"))
 
     def clear(self) -> None:

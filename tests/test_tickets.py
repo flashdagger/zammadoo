@@ -49,3 +49,24 @@ def test_ticket_priority_attribute(client):
 def test_ticket_state_attribute(client):
     ticket = client.tickets(123, info={"id": 123, "state_id": 456})
     assert ticket.state == client.ticket_states(456)
+
+
+def test_tickets_create(rclient, temporary_resources):
+    with temporary_resources("tickets") as infos:
+        ticket = rclient.tickets.create(
+            "__pytest__",
+            "Users",
+            "guess:pytest@localhost.local",
+            "article body",
+        )
+        infos.append(ticket.view())
+        assert ticket.title == "__pytest__"
+        assert ticket.group.name == "Users"
+        assert ticket.customer.login == "pytest@localhost.local"
+        assert ticket.organization is None
+        assert ticket.owner.id == 1
+        assert ticket.article_count == 1
+
+        article = ticket.articles[0]
+        assert article.body == "article body"
+        assert article.internal is False

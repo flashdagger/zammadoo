@@ -21,6 +21,7 @@ History
     * exchange ``tickets.Ticket.merge_with()`` with :meth:`tickets.Ticket.merge_into`
       mimicking the logic provided by the Web UI
     * :meth:`tags.Tags.delete()` and :meth:`tags.Tags.delete()` now only accept the tag name
+    * changed signature of :meth:`tickets.Ticket.create()` to assure an article body or the article itself is provided
 
 * **fixes**
 
