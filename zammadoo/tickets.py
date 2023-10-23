@@ -185,29 +185,35 @@ class Ticket(MutableResource):
 
         return link_map
 
-    def link_with(self, target_id: int, link_type: LinkType = "normal"):
+    def link_with(self, target: Union[int, "Ticket"], link_type: LinkType = "normal"):
         """
         link the ticket with another one, if the link already
         exists it will be ignored
 
-        :param target_id: the id of the related ticket
+        :param target: the target ticket or its id
+        :type target: :class:`Ticket` | int
         :param link_type: specifies the relationship type
         """
         switch_map = {"parent": "child", "child": "parent"}
         params = {
             "link_type": switch_map.get(link_type, link_type),
             "link_object_target": "Ticket",
-            "link_object_target_value": target_id,
+            "link_object_target_value": target
+            if isinstance(target, int)
+            else target.id,
             "link_object_source": "Ticket",
             "link_object_source_number": self["number"],
         }
         self.parent.client.post("links/add", json=params)
 
-    def unlink_from(self, target_id: int, link_type: Optional[LinkType] = None) -> None:
+    def unlink_from(
+        self, target: Union[int, "Ticket"], link_type: Optional[LinkType] = None
+    ) -> None:
         """
         remove link with another, if the link does not exist it will be ignored
 
-        :param target_id: the id of the related ticket
+        :param target: the target ticket or its id
+        :type target: :class:`Ticket` | int
         :param link_type: specifies the relationship type, if omitted the ticket_id
                           will be looked up for every link_type
         """
@@ -215,6 +221,7 @@ class Ticket(MutableResource):
             if link_type not in {None, _link_type}:
                 continue
 
+            target_id = target if isinstance(target, int) else target.id
             if target_id not in {ticket.id for ticket in tickets}:
                 continue
 
