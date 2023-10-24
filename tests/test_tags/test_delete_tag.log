@@ -1,8 +1,10 @@
-{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=__pytest__#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 116}
-[{"id":128,"name":"__pytest__","count":0},{"id":2,"name":"barracuda","count":0},{"id":7,"name":"special","count":0}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/128", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "42"}, "encoding": "utf-8", "content_size": 42}
+[{"id":158,"name":"__pytest__","count":0}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/158", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+[]
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 []

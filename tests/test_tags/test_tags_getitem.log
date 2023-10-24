@@ -1,14 +1,14 @@
-{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=footag#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=footag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=baztag#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "POST", "url": "https://localhost/api/v1/tag_list?name=baztag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 149}
-[{"id":2,"name":"barracuda","count":0},{"id":123,"name":"baztag","count":0},{"id":122,"name":"footag","count":0},{"id":7,"name":"special","count":0}]
-{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=footag#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 29}
-[{"id":122,"value":"footag"}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/122#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "75"}, "encoding": "utf-8", "content_size": 75}
+[{"id":151,"name":"baztag","count":0},{"id":150,"name":"footag","count":0}]
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=footag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "29"}, "encoding": "utf-8", "content_size": 29}
+[{"id":150,"value":"footag"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/150#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=baztag#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 29}
-[{"id":123,"value":"baztag"}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/123#fixture", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 2}
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=baztag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "29"}, "encoding": "utf-8", "content_size": 29}
+[{"id":151,"value":"baztag"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/151#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
