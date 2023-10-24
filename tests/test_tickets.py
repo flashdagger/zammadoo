@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+import time
 from typing import Generator, Tuple
 
 import pytest
 
+from .test_tags import assert_existing_tags
 from zammadoo.tickets import Ticket
 
 
@@ -54,6 +56,11 @@ def test_ticket_priority_attribute(client):
 def test_ticket_state_attribute(client):
     ticket = client.tickets(123, info={"id": 123, "state_id": 456})
     assert ticket.state == client.ticket_states(456)
+
+
+def test_ticket_weburl_attripute(client):
+    ticket = client.tickets(123, info={"id": 123})
+    assert ticket.weburl == f"{client.weburl}/#ticket/zoom/123"
 
 
 def test_tickets_create_body_only(rclient, temporary_resources):
@@ -180,3 +187,25 @@ def test_ticket_history(ticket_pair):
 
     assert history[0].items() > {"object": "Ticket", "type": "created"}.items()
     assert history[1].items() > {"object": "Ticket::Article", "type": "created"}.items()
+
+
+def test_ticket_search(rclient, ticket_pair, record_log):
+    if record_log[1]:
+        time.sleep(3.0)
+    tickets = list(rclient.tickets.search(f"title:__pytest__"))
+    assert len(tickets) >= 2
+
+
+def test_ticket_iter(rclient, ticket_pair):
+    tickets = list(rclient.tickets.iter(page=1000))
+    assert len(tickets) == 0
+
+
+def test_ticket_tags(ticket_pair, assert_existing_tags):
+    ticket_a, ticket_b = ticket_pair
+    with assert_existing_tags("__pytest__", "__tag__"):
+        assert ticket_a.tags() == []
+        ticket_a.add_tags("__pytest__", "__tag__")
+        assert ticket_a.tags() == ["__pytest__", "__tag__"]
+        ticket_a.remove_tags("__tag__")
+        assert ticket_a.tags() == ["__pytest__"]

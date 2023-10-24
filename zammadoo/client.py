@@ -246,7 +246,7 @@ class Client:
             method,
             url,
             params=(
-                (key, str(value).lower() if isinstance(value, bool) else str(value))
+                (key, str(value).lower() if isinstance(value, bool) else value)
                 for key, value in (params.items() if params else ())
             ),
             json=json,
