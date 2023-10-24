@@ -11,6 +11,7 @@ from typing import (
     Iterable,
     List,
     Literal,
+    Mapping,
     Optional,
     TypedDict,
     TypeVar,
@@ -32,7 +33,7 @@ JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]
 JsonDictList = List[JsonDict]
 JsonContainer = Union[JsonDict, JsonDictList]
-StringKeyDict = Dict[str, Any]
+StringKeyMapping = Mapping[str, Any]
 PathType = Union[str, PathLike]
 
 

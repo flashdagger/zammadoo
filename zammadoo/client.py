@@ -22,7 +22,7 @@ from .users import Users
 from .utils import info_cast
 
 if TYPE_CHECKING:
-    from .utils import JsonType, StringKeyDict
+    from .utils import JsonType, StringKeyMapping
 
 
 LOG = logging.getLogger(__name__)
@@ -199,8 +199,8 @@ class Client:
         self,
         method: str,
         *args,
-        params: Optional["StringKeyDict"] = None,
-        json: Optional["StringKeyDict"] = None,
+        params: Optional["StringKeyMapping"] = None,
+        json: Optional["StringKeyMapping"] = None,
         **kwargs,
     ):
         """
@@ -226,8 +226,8 @@ class Client:
         self,
         method: str,
         url: str,
-        params: Optional["StringKeyDict"] = None,
-        json: Optional["StringKeyDict"] = None,
+        params: Optional["StringKeyMapping"] = None,
+        json: Optional["StringKeyMapping"] = None,
         **kwargs,
     ) -> Response:
         """
@@ -241,13 +241,17 @@ class Client:
         :rtype: :class:`requests.Response`
         """
 
-        if params:
-            for key, value in params.items():
-                if isinstance(value, bool):
-                    params[key] = str(value).lower()
-
         loglevel = LOG.getEffectiveLevel()
-        response = self.session.request(method, url, params=params, json=json, **kwargs)
+        response = self.session.request(
+            method,
+            url,
+            params=(
+                (key, str(value).lower() if isinstance(value, bool) else str(value))
+                for key, value in (params.items() if params else ())
+            ),
+            json=json,
+            **kwargs,
+        )
         if kwargs.get("stream") and loglevel == logging.DEBUG:
             headers = response.headers
             mapping = dict.fromkeys(("Content-Length", "Content-Type"))
@@ -263,19 +267,19 @@ class Client:
             LOG.info("HTTP:%s %s", method, response.url)
         return response
 
-    def get(self, *args, params: Optional["StringKeyDict"] = None):
+    def get(self, *args, params: Optional["StringKeyMapping"] = None):
         """shortcut for :meth:`request` with parameter ``("GET", *args, params)``"""
         return self.request("GET", *args, params=params)
 
-    def post(self, *args, json: Optional["StringKeyDict"] = None):
+    def post(self, *args, json: Optional["StringKeyMapping"] = None):
         """shortcut for :meth:`request` with parameter ``("POST", *args, json)``"""
         return self.request("POST", *args, json=json)
 
-    def put(self, *args, json: Optional["StringKeyDict"] = None):
+    def put(self, *args, json: Optional["StringKeyMapping"] = None):
         """shortcut for :meth:`request` with parameter ``("PUT", *args, json)``"""
         return self.request("PUT", *args, json=json)
 
-    def delete(self, *args, json: Optional["StringKeyDict"] = None):
+    def delete(self, *args, json: Optional["StringKeyMapping"] = None):
         """shortcut for :meth:`request` with parameter ``("DELETE", *args, json)``"""
         return self.request("DELETE", *args, json=json)
 

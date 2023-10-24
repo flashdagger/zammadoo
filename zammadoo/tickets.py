@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .resource import Resource
     from .resources import ResourcesT
     from .users import User
-    from .utils import JsonDict, JsonDictList, StringKeyDict
+    from .utils import JsonDict, JsonDictList, StringKeyMapping
 
 
 class Priority(NamedResource):
@@ -298,7 +298,7 @@ class Ticket(MutableResource):
 
         return super().update(**kwargs)
 
-    def history(self) -> List["StringKeyDict"]:
+    def history(self) -> List["StringKeyMapping"]:
         """
         .. note::
             this method uses an undocumented API endpoint
@@ -306,7 +306,7 @@ class Ticket(MutableResource):
         :return: the ticket's history
         """
         info = self.parent.client.get("ticket_history", self._id)
-        return cast(List["StringKeyDict"], info["history"])
+        return cast(List["StringKeyMapping"], info["history"])
 
     @cached_property
     def weburl(self) -> str:
@@ -323,7 +323,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
     def __init__(self, client: "Client"):
         super().__init__(client, "tickets")
 
-    def _iter_items(self, items: Union["StringKeyDict", "JsonDictList"]):
+    def _iter_items(self, items: Union["StringKeyMapping", "JsonDictList"]):
         if isinstance(items, list):
             yield from super()._iter_items(items)
             return
@@ -338,7 +338,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
         title: str,
         group: Union[str, int],
         customer: Union[str, int],
-        article: Union[str, "StringKeyDict"],
+        article: Union[str, "StringKeyMapping"],
         **kwargs,
     ) -> Ticket:
         """

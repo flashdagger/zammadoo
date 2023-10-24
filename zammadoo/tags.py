@@ -3,11 +3,11 @@
 
 from typing import TYPE_CHECKING, Dict, Iterator, List
 
-from .utils import TypedTag, info_cast
+from .utils import TypedTag
 
 if TYPE_CHECKING:
     from .client import Client
-    from .utils import StringKeyDict
+    from .utils import StringKeyMapping
 
 
 class Tags:
@@ -125,7 +125,7 @@ class Tags:
         :param tid: the ticket id
         :return: ticket tags
         """
-        items: "StringKeyDict" = self.client.get(
+        items: "StringKeyMapping" = self.client.get(
             "tags", params={"object": "Ticket", "o_id": tid}
         )
-        return info_cast(items).get("tags", [])
+        return items.get("tags", [])

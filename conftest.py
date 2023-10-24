@@ -161,10 +161,10 @@ def zammad_api(recorded_session, client_url, api_token):
 
 @pytest.fixture(scope="function")
 def temporary_resources(zammad_api):
-    from zammadoo.utils import StringKeyDict
+    from zammadoo.utils import StringKeyMapping
 
     @contextmanager
-    def _create_temporary(endpoint: str, *parameter: StringKeyDict):
+    def _create_temporary(endpoint: str, *parameter: StringKeyMapping):
         temporary_resources = []
         for param in parameter:
             value = zammad_api("POST", f"{endpoint}", json=param).json()
