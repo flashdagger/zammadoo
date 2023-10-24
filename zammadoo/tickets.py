@@ -338,7 +338,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
         title: str,
         group: Union[str, int],
         customer: Union[str, int],
-        body_or_article: Union[str, "StringKeyDict"],
+        article: Union[str, "StringKeyDict"],
         **kwargs,
     ) -> Ticket:
         """
@@ -347,7 +347,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
         :param title: ticket title
         :param group: group name or id
         :param customer: customer email or id, you can also use `guess:<email>`
-        :param body_or_article: the text body of the first ticket article or the article mapping
+        :param article: the text body of the first ticket article or the article mapping
         :param kwargs: additional ticket properties
         :return: An instance of the created ticket.
         """
@@ -357,14 +357,14 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
             if isinstance(customer, int) or customer.startswith("guess:")
             else "customer"
         )
-        if isinstance(body_or_article, str):
-            body_or_article = {"body": body_or_article}
-        kwargs.setdefault("article", body_or_article)
+        if isinstance(article, str):
+            article = {"body": article}
 
         info = {
             "title": title,
             group_key: group,
             customer_key: customer,
+            "article": article,
             **kwargs,
         }
 
