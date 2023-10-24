@@ -2,27 +2,25 @@
 zammadoo
 ========
 
+.. image:: https://img.shields.io/badge/python-3.8%2B-blue?logo=python&logoColor=white
+   :target: https://python.org/
+   :alt: [Python versions]
+
+.. image:: https://img.shields.io/badge/pypi-v0.1.0%20(beta)-orange
+   :target: https://pypi.python.org/pypi/zammadoo/
+   :alt: PyPI
+
 .. image:: https://img.shields.io/pypi/l/zammadoo.svg
     :target: https://pypi.python.org/pypi/zammadoo/
     :alt: PyPI license
-
-.. image:: https://img.shields.io/pypi/v/zammadoo.svg
-   :target: https://pypi.python.org/pypi/zammadoo/
-   :alt: [Latest Version]
-
-.. image:: https://img.shields.io/pypi/pyversions/zammadoo.svg
-   :target: https://pypi.python.org/pypi/zammadoo/
-   :alt: [Python versions]
 
 .. image:: https://github.com/flashdagger/zammadoo/actions/workflows/core-tests.yml/badge.svg?event=push
     :target: https://github.com/flashdagger/zammadoo/actions/workflows/core-tests.yml
     :alt: Core Tests
 
-
 .. image:: https://readthedocs.org/projects/zammadoo/badge/?version=latest
     :target: https://zammadoo.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-
 
 .. image:: https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fflashdagger%2F1a66c9e88a9e4267f7e0b1d185be98f4%2Fraw
     :target: https://gist.github.com/flashdagger/1a66c9e88a9e4267f7e0b1d185be98f4
@@ -31,6 +29,7 @@ zammadoo
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black/
     :alt: Code Style Black
+
 
 an object-oriented REST API client for the `Zammad helpdesk sytem <https://zammad.org/>`_
 

@@ -8,7 +8,7 @@ History
 -----------
 * **added features**
 
-    * extend support for Python 3.8
+    * extend supported Python version to 3.8
     * added :meth:`tickets.Ticket.history` method
     * added ``weburl`` property for :class:`client.Client`, :class:`tickets.Ticket`,
       :class:`users.User` and :class:`organizations.Organization`
@@ -18,10 +18,10 @@ History
 
     * :class:`client.Client` now uses ``http_auth=(username, password)`` as authentication parameter
     * for all ResourcesT like :class:`tickets.Tickets` ``.url`` is now a property
-    * exchange ``tickets.Ticket.merge_with()`` with :meth:`tickets.Ticket.merge_into`
+    * exchange ``tickets.Ticket.merge_with()`` with :meth:`tickets.Ticket.merge_into()`
       mimicking the logic provided by the Web UI
     * :meth:`tags.Tags.delete()` and :meth:`tags.Tags.delete()` now only accept the tag name
-    * changed signature of :meth:`tickets.Ticket.create()` to assure an article body or the article itself is provided
+    * changed signature of :meth:`tickets.Tickets.create()` to assure an article body or the article itself is provided
 
 * **fixes**
 
