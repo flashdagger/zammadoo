@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
-from .resources import CreatableT, SearchableT
+from .resources import CreatableT, IterableT
 
 if TYPE_CHECKING:
     from .client import Client
@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 class Role(NamedResource):
     """Role(...)"""
+
+    default_at_signup: bool  #:
 
     @property
     def groups(self) -> List["Group"]:
@@ -28,7 +30,7 @@ class Role(NamedResource):
         raise NotImplementedError("roles cannot be deletet via REST API")
 
 
-class Roles(SearchableT[Role], CreatableT[Role]):
+class Roles(IterableT[Role], CreatableT[Role]):
     """Roles(...)"""
 
     _RESOURCE_TYPE = Role

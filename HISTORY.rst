@@ -27,6 +27,7 @@ History
 
     * resource items are now cached when using iteration
     * fromisoformat conversion in Python <3.10 supporting Zulu offset format
+    * :class:`roles.Roles` wrongly supported `search`
 
 0.1.0 (2023-10-08)
 ------------------
