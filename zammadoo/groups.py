@@ -3,7 +3,7 @@
 from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
-from .resources import CreatableT, SearchableT
+from .resources import CreatableT, IterableT
 
 if TYPE_CHECKING:
     from .client import Client
@@ -21,7 +21,7 @@ class Group(NamedResource):
         return list(map(users, self["user_ids"]))
 
 
-class Groups(SearchableT[Group], CreatableT[Group]):
+class Groups(IterableT[Group], CreatableT[Group]):
     """Groups(...)"""
 
     _RESOURCE_TYPE = Group
