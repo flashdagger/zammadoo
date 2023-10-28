@@ -81,7 +81,12 @@ class Client:
 
         from zammadoo import Client
 
-        client = Client("https://myhost.com/api/v1/", username="<username>", password="<mysecret>")
+        # basic authentication scheme
+        client = Client("https://myhost.com/api/v1/", http_auth=("<username>", "<mysecret>")
+        # token based authentication
+        client = Client("https://myhost.com/api/v1/", http_token="<secret_token>"
+        # authenticate with bearer token (OAuth 2.0)
+        client = Client("https://myhost.com/api/v1/", oauth2_token="<secret_token>"
 
     """
 
