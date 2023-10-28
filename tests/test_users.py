@@ -66,3 +66,19 @@ def test_user_role_attribute(client):
 def test_user_weburl_attribute(client):
     user = client.users(123)
     assert user.weburl == f"{client.weburl}/#user/profile/123"
+
+
+def test_create_user(rclient, temporary_resources):
+    from uuid import UUID
+
+    with temporary_resources("users") as users:
+        new_user = rclient.users.create(firstname="John", lastname="Pytest")
+        users.append(new_user.view())
+
+    assert new_user.active is True
+    assert new_user.fullname == "John Pytest"
+    assert new_user.note == ""
+
+    assert new_user.login.startswith("auto-")
+    uuid = UUID(new_user.login[5:])
+    assert uuid.version == 4
