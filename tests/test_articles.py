@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+import pytest
+
+from . import ticket_pair
 
 
 def test_article_created_by_attribute(client):
@@ -71,3 +74,57 @@ def test_attachment_create_info():
         assert attachment_infos[0]["mime-type"] == "text/plain"
 
         assert attachment_infos[1]["mime-type"] == "application/octet-stream"
+
+
+def test_create_article_via_ticket(rclient, ticket_pair):
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+
+    ticket, _ = ticket_pair
+    assert ticket.article_count == 1
+    assert len(ticket.articles) == 1
+
+    filename_text, content_text = "attachment.txt", "Mogę jeść szkło, i mi nie szkodzi."
+    filename_binary, content_binary = "attachment.bin", bytes(range(256))
+
+    with TemporaryDirectory() as tmpdir:
+        textfile = Path(tmpdir, filename_text)
+        textfile.write_text(content_text)
+        binfile = Path(tmpdir, filename_binary)
+        binfile.write_bytes(content_binary)
+
+        ticket.create_article("pytest article #1", files=textfile)
+        created_article = ticket.create_article(
+            "pytest article #0", files=[textfile, binfile]
+        )
+
+    article = ticket.articles[-1]
+    assert article == created_article
+    assert article.body == "pytest article #0"
+
+    text_attachment, binary_attachment = tuple(article.attachments)
+
+    assert binary_attachment.filename == filename_binary
+    assert binary_attachment.size == 256
+    assert binary_attachment.encoding is None
+    assert binary_attachment.read_bytes() == content_binary
+    with pytest.raises(AssertionError, match="content is binary only"):
+        binary_attachment.iter_text()
+
+    assert text_attachment.filename == filename_text
+    assert text_attachment.encoding is None
+    assert text_attachment.read_text() == content_text
+    assert tuple(text_attachment.iter_text(chunk_size=16)) == (
+        "Mogę jeść szk",
+        "ło, i mi nie sz",
+        "kodzi.",
+    )
+
+    with TemporaryDirectory() as tmpdir:
+        downloaded_file = binary_attachment.download(tmpdir)
+        assert downloaded_file.name == filename_binary
+        assert downloaded_file.read_bytes() == content_binary
+
+        downloaded_file = text_attachment.download(tmpdir)
+        assert downloaded_file.name == filename_text
+        assert downloaded_file.read_text() == content_text
