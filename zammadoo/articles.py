@@ -45,11 +45,6 @@ class Attachment:
         return self._info[item]
 
     @property
-    def encoding(self) -> Optional[str]:
-        preferences = info_cast(self._info).get("preferences", {})
-        return preferences.get("Charset")
-
-    @property
     def size(self) -> int:
         return int(info_cast(self._info)["size"])
 
@@ -84,11 +79,12 @@ class Attachment:
             )
         return info_list
 
-    def _response(self, encoding: Optional[str] = None) -> requests.Response:
+    def _response(self) -> requests.Response:
         response = self._client.response("GET", self._url, stream=True)
         response.raise_for_status()
-        if encoding:
-            response.encoding = encoding
+
+        preferences = info_cast(self._info).get("preferences", {})
+        response.encoding = preferences.get("Charset") or response.apparent_encoding
 
         return response
 
@@ -107,10 +103,10 @@ class Attachment:
         return self._response().content
 
     def read_text(self) -> str:
-        return self._response(self.encoding).text
+        return self._response().text
 
     def iter_text(self, chunk_size=8192):
-        response = self._response(encoding=self.encoding)
+        response = self._response()
         assert response.encoding, "content is binary only, use .iter_bytes() instead"
         return response.iter_content(chunk_size=chunk_size, decode_unicode=True)
 

@@ -49,7 +49,6 @@ def test_article_attachments_attribute(client):
         repr(attachment) == f"<Attachment '{client.url}/ticket_attachment/12345/67/89'>"
     )
     assert attachment.filename == "zammad_logo_white.png"
-    assert attachment.encoding is None
     assert attachment.size == 3253
     assert attachment.view()["size"] == "3253"
 
@@ -106,13 +105,11 @@ def test_create_article_via_ticket(rclient, ticket_pair):
 
     assert binary_attachment.filename == filename_binary
     assert binary_attachment.size == 256
-    assert binary_attachment.encoding is None
     assert binary_attachment.read_bytes() == content_binary
     with pytest.raises(AssertionError, match="content is binary only"):
         binary_attachment.iter_text()
 
     assert text_attachment.filename == filename_text
-    assert text_attachment.encoding is None
     assert text_attachment.read_text() == content_text
     assert tuple(text_attachment.iter_text(chunk_size=16)) == (
         "Mogę jeść szk",
