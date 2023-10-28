@@ -23,6 +23,7 @@ repository = "https://github.com/flashdagger/zammadoo.git"
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.31"
+charset-normalizer = "^3.3"
 
 [tool.poetry.group.dev.dependencies]
 pylint = ">=2.17"
@@ -78,7 +79,7 @@ src_paths = ["zammadoo", "tests"]
 # see: https://pytest-cov.readthedocs.io/en/latest/config.html
 [tool.pytest.ini_options]
 minversion = "7.4"
-addopts = "tests -v --tb=short --cov=zammadoo --cov-report html"
+addopts = "tests -v --tb=short --cov=zammadoo --cov-report html --mypy-only-local-stub"
 cache_dir = ".cache/pytest"
 
 [tool.coverage]

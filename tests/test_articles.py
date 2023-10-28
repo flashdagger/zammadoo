@@ -64,7 +64,7 @@ def test_attachment_create_info():
         path_0.write_text("Hello Zammad!")
 
         path_1 = Path(tmpdir, "attachment.uknown")
-        path_1.write_bytes(b"\xff")
+        path_1.write_bytes(bytes(range(256)))
 
         attachment_infos = Attachment.info_from_files(path_0, path_1)
 

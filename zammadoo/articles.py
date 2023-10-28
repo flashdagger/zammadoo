@@ -9,10 +9,11 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional
 
 import requests
+from charset_normalizer import is_binary
 
 from .resource import Resource
 from .resources import CreatableT, ResourcesT
-from .utils import info_cast, is_probably_text
+from .utils import info_cast
 
 if TYPE_CHECKING:
     from typing import Union
@@ -66,7 +67,7 @@ class Attachment:
             if mime_type is None:
                 mime_type = (
                     "text/plain"
-                    if encoding or is_probably_text(raw_bytes[:512])
+                    if encoding or not is_binary(raw_bytes)
                     else "application/octet-stream"
                 )
 
