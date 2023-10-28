@@ -22,3 +22,9 @@ def test_role_update(rclient):
     assert role.name == "Clone: Customer"
     updated_role = role.update(active=False)
     assert updated_role.active is False
+
+
+def test_role_iteration(rclient):
+    roles = tuple(rclient.roles)
+    assert len(roles) > 2
+    assert tuple(rclient.roles.iter(page=None, per_page=1)) == roles
