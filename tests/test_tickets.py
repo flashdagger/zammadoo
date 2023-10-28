@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 import time
-from typing import Generator, Tuple
 
-import pytest
-
-from .test_tags import assert_existing_tags
-from zammadoo.tickets import Ticket
+from . import assert_existing_tags, ticket_pair
 
 
 def test_ticket_create_article_sender_attribute(client):
@@ -98,29 +94,6 @@ def test_tickets_create_with_article_params(rclient, temporary_resources):
         article = ticket.articles[0]
         assert article.body == "article body"
         assert article.internal is True
-
-
-@pytest.fixture(scope="function")
-def ticket_pair(
-    rclient, temporary_resources
-) -> Generator[Tuple[Ticket, Ticket], None, None]:
-    tickets = [
-        {
-            "title": "__pytest__",
-            "customer_id": "guess:pytest@localhost.local",
-            "group": "Users",
-            "article": {"body": "..."},
-        },
-        {
-            "title": "__pytest__",
-            "customer_id": "guess:pytest@localhost.local",
-            "group": "Users",
-            "article": {"body": "..."},
-        },
-    ]
-
-    with temporary_resources("tickets", *tickets) as infos:
-        yield tuple(rclient.tickets(info["id"], info=info) for info in infos)
 
 
 def test_ticket_link_with_and_unlink__normal(ticket_pair):
