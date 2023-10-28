@@ -3,7 +3,7 @@
 from functools import cached_property
 from typing import TYPE_CHECKING, List
 
-from .resource import MutableResource
+from .resource import NamedResource
 from .resources import CreatableT, SearchableT
 
 if TYPE_CHECKING:
@@ -11,13 +11,22 @@ if TYPE_CHECKING:
     from .users import User
 
 
-class Organization(MutableResource):
+class Organization(NamedResource):
     """Organization(...)"""
+
+    shared: bool  #:
+    domain: str  #:
+    domain_assignment: bool  #:
 
     @property
     def members(self) -> List["User"]:
         users = self.parent.client.users
         return list(map(users, self["member_ids"]))
+
+    @property
+    def secondary_members(self) -> List["User"]:
+        users = self.parent.client.users
+        return list(map(users, self["secondary_member_ids"]))
 
     @cached_property
     def weburl(self) -> str:
