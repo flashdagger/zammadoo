@@ -81,6 +81,7 @@ src_paths = ["zammadoo", "tests"]
 minversion = "7.4"
 addopts = "tests -v --tb=short --cov=zammadoo --cov-report html --mypy-only-local-stub"
 cache_dir = ".cache/pytest"
+markers = ["no_record"]
 
 [tool.coverage]
 run = {source = ["zammadoo/*"]}

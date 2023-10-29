@@ -5,6 +5,7 @@
 import pytest
 
 
+@pytest.mark.no_record
 def test_roles_create_but_cannot_delete(rclient):
     role = rclient.roles(3)
     assert role.name == "Customer"
@@ -17,6 +18,7 @@ def test_roles_create_but_cannot_delete(rclient):
         new_role.delete()
 
 
+@pytest.mark.no_record
 def test_role_update(rclient):
     role = rclient.roles(7)
     assert role.name == "Clone: Customer"

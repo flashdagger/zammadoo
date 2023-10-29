@@ -37,6 +37,11 @@ def pytest_addoption(parser):
     )
 
 
+def pytest_runtest_setup(item):
+    if "no_record" in item.keywords and item.config.getoption("--record"):
+        pytest.skip("disabled recording")
+
+
 @pytest.fixture(scope="session")
 def client_url(request):
     os.environ["CURL_CA_BUNDLE"] = "mylocalhost.crt"
