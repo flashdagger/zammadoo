@@ -1,23 +1,18 @@
 repos:
--   repo: local
+  - repo: local
     hooks:
-    - id: black
-      name: black
-      language: python
-      entry: black
-      types: [python]
-    - id: pyflakes
-      name: pyflakes
-      language: python
-      entry: pyflakes
-      types: [python]
-      exclude: |
-        (?x)(
-          ^tests/|
-          /__init__.py$
-        )
-    - id: pyflakes
-      name: pyflakes (pyi)
-      language: python
-      entry: pyflakes
-      types: [pyi]
+      - id: black
+        name: black
+        language: python
+        entry: black
+        types: [ python ]
+      - id: pyflakes
+        name: pyflakes
+        language: python
+        entry: pyflakes
+        types: [ python ]
+        exclude: |
+          (?x)(
+            ^tests/|
+            /__init__.py$
+          )
