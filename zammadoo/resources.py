@@ -69,11 +69,12 @@ class ResourcesT(Generic[_T_co]):
         """the resource's API URL"""
         return f"{self.client.url}/{self.endpoint}"
 
-    def cached_info(self, rid: int, refresh=True) -> "JsonDict":
+    def cached_info(self, rid: int, refresh=True, expand=False) -> "JsonDict":
         item = f"{self.url}/{rid}"
+        params = {"expand": True} if expand else None
         cache = self.cache
         callback: Callable[[], "JsonDict"] = partial(
-            self.client.get, self.endpoint, rid
+            self.client.get, self.endpoint, rid, params=params
         )
 
         if refresh:

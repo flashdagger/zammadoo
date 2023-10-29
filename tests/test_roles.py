@@ -30,3 +30,14 @@ def test_role_iteration(rclient):
     roles = tuple(rclient.roles)
     assert len(roles) > 2
     assert tuple(rclient.roles.iter(page=None, per_page=1)) == roles
+
+
+def test_role_permission_attribute(rclient):
+    role = rclient.roles(1)
+    assert role.name == "Admin"
+    assert role.permissions == [
+        "admin",
+        "user_preferences",
+        "report",
+        "knowledge_base.editor",
+    ]

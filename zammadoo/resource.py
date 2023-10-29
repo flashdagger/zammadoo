@@ -87,11 +87,11 @@ class Resource:
             info = self.parent.cached_info(self._id, refresh=False)
             self._info.update(info)
 
-    def reload(self) -> None:
+    def reload(self, expand=False) -> None:
         """Update the object properties by requesting the current data from the server."""
         info = self._info
         info.clear()
-        new_info = self.parent.cached_info(self._id, refresh=True)
+        new_info = self.parent.cached_info(self._id, refresh=True, expand=expand)
         info.update(new_info)
 
 

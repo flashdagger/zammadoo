@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
 from .resources import CreatableT, IterableT
+from .utils import info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -20,6 +21,13 @@ class Role(NamedResource):
     def groups(self) -> List["Group"]:
         groups = self.parent.client.groups
         return list(map(groups, self["group_ids"]))
+
+    @property
+    def permissions(self) -> List[str]:
+        info = self._info
+        if "permissions" not in info:
+            self.reload(expand=True)
+        return info_cast(info)["permissions"]
 
     def delete(self):
         """

@@ -49,6 +49,7 @@ class TypedInfo(TypedDict, total=False):
     preferences: Dict[str, str]
     page: int
     per_page: int
+    permissions: List[str]
     tags: List[str]
     version: str
     size: str
