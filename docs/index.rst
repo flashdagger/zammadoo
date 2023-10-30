@@ -12,6 +12,7 @@ an object-oriented Zammad REST API Client for Python
    :maxdepth: 2
 
    intro.rst
+   contributing
    api/index
    history
 
