@@ -42,6 +42,10 @@ class ResponseRecorder:
         self.fd.close()
 
 
+class ResponsePlaybackError(KeyError):
+    pass
+
+
 class ResponsePlayback:
     MAPPING_TYPE = Dict[Tuple[str, str], Deque[Dict[str, Any]]]
 
@@ -70,7 +74,10 @@ class ResponsePlayback:
     def response_from_request(self, request: PreparedRequest):
         assert request.method and request.url
         key = (request.method, request.url)
-        meta = self.index[key].popleft()
+        try:
+            meta = self.index[key].popleft()
+        except KeyError as exc:
+            raise ResponsePlaybackError(*exc.args) from exc
 
         resp = Response()
         resp.headers.update(meta.get("headers", {}))
