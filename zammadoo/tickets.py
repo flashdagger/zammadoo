@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 from .articles import Article
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
-from .utils import LINK_TYPES, LinkType
+from .utils import LINK_TYPES, LinkType, info_cast
 
 if TYPE_CHECKING:
     from .articles import OptionalFiles
@@ -95,8 +95,15 @@ class Ticket(MutableResource):
 
     @property
     def create_article_sender(self) -> str:
-        casid = self["create_article_sender_id"]
-        return Article.SENDER_MAP.get(casid, "Unknown")
+        if "create_article_sender" not in self._info:
+            self.reload(expand=True)
+        return info_cast(self._info)["create_article_sender"]
+
+    @property
+    def create_article_type(self) -> str:
+        if "create_article_type" not in self._info:
+            self.reload(expand=True)
+        return info_cast(self._info)["create_article_type"]
 
     @property
     def customer(self) -> "User":

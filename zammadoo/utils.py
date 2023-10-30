@@ -43,6 +43,8 @@ class TypedTag(TypedDict):
 
 
 class TypedInfo(TypedDict, total=False):
+    create_article_sender: str
+    create_article_type: str
     id: int
     name: str
     login: str

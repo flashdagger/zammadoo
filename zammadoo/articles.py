@@ -118,12 +118,6 @@ class Attachment:
 class Article(Resource):
     """Article(...)"""
 
-    SENDER_MAP = {
-        1: "Agent",
-        2: "Customer",
-        3: "System",
-    }
-
     body: str  #:
     cc: Optional[str]  #:
     content_type: str  #:

@@ -5,20 +5,6 @@ import time
 from . import assert_existing_tags, ticket_pair
 
 
-def test_ticket_create_article_sender_attribute(client):
-    ticket = client.tickets(123, info={"id": 123, "create_article_sender_id": 1})
-    assert ticket.create_article_sender == "Agent"
-
-    ticket = client.tickets(123, info={"id": 123, "create_article_sender_id": 2})
-    assert ticket.create_article_sender == "Customer"
-
-    ticket = client.tickets(123, info={"id": 123, "create_article_sender_id": 3})
-    assert ticket.create_article_sender == "System"
-
-    ticket = client.tickets(123, info={"id": 123, "create_article_sender_id": 4})
-    assert ticket.create_article_sender == "Unknown"
-
-
 def test_ticket_customer_attribute(client):
     ticket = client.tickets(123, info={"id": 123, "customer_id": 456})
     assert ticket.customer == client.users(456)
@@ -182,3 +168,9 @@ def test_ticket_tags(ticket_pair, assert_existing_tags):
         assert ticket_a.tags() == ["__pytest__", "__tag__"]
         ticket_a.remove_tags("__tag__")
         assert ticket_a.tags() == ["__pytest__"]
+
+
+def test_ticket_create_article_sender_and_type_attribute(ticket_pair):
+    ticket_a, ticket_b = ticket_pair
+    assert ticket_a.create_article_sender == "Agent"
+    assert ticket_b.create_article_type == "note"
