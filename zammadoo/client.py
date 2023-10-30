@@ -41,8 +41,10 @@ class APIException(HTTPError):
 
 @dataclass
 class Pagination:
-    page: int = 1
-    per_page: int = 10
+    """pagination settings for recources ``.search()`` and ``.iter()`` methods"""
+
+    per_page: int = 10  #: number of returned objects per page request
+    #: if ``True`` the server wille send additional properties for each resource
     expand: bool = False
 
 
@@ -157,9 +159,11 @@ class Client:
 
 
         """
-        self.url = url.rstrip("/")
-        self.pagination = Pagination()
-        self.session = requests.Session()
+        self.url: str = url.rstrip("/")  #: the clients API URL
+        self.pagination: Pagination = Pagination()  #: initial Pagination settings
+        self.session: requests.Session = (
+            requests.Session()
+        )  #: the requests Session instance
         atexit.register(self.session.close)
         self.session.headers["User-Agent"] = "zammadoo Python client"
         if http_token:

@@ -99,20 +99,30 @@ class IterableT(ResourcesT[_T_co]):
 
     def iter(self, *args, **params) -> Iterator[_T_co]:
         """
-        Iterate through all objects. The returned iterable can be used in for loops
+        .. py:module:: zammadoo.client
+            :noindex:
+
+        Iterate through all objects.
+
+        With ``params`` you can also override the pagination defaults set in
+        :attr:`Client.pagination`
+
+        The returned iterable can be used in for loops
         or fill a Python container like :class:`list` or :class:`tuple`.
 
         ::
 
             items = tuple(resource.iter(...))
 
-            for item in resource.iter(...):
+            for item in resource.iter(page=5, page_size=20, expand=True):
                 print(item)
 
         :param args: additional endpoint arguments
         :param params: additional pagination options like ``page``, ``page_size``, ``extend``
         """
         # preserve the kwargs order
+        if not params.get("page"):
+            params["page"] = 1
         params.update(
             (
                 (key, value)
@@ -122,8 +132,6 @@ class IterableT(ResourcesT[_T_co]):
         )
         typed_params = info_cast(params)
         per_page = typed_params["per_page"]
-        if typed_params["page"] is None:
-            typed_params["page"] = 1
 
         while True:
             items = self.client.get(self.endpoint, *args, params=params)
@@ -148,7 +156,7 @@ class SearchableT(IterableT[_T_co]):
         *,
         sort_by: Optional[str] = None,
         order_by: Literal["asc", "desc", None] = None,
-        **kwargs,
+        **params,
     ) -> Iterator[_T_co]:
         """
         Search for objects with
@@ -169,8 +177,8 @@ class SearchableT(IterableT[_T_co]):
         :param query: query string
         :param sort_by: sort by a specific property (e.g. ``name``)
         :param order_by: sort direction
-        :param kwargs: additional pagination options like ``page``, ``page_size``, ``extend``
+        :param params: additional pagination options like ``page``, ``page_size``, ``extend``
         """
         yield from self.iter(
-            "search", query=query, sort_by=sort_by, order_by=order_by, **kwargs
+            "search", query=query, sort_by=sort_by, order_by=order_by, **params
         )
