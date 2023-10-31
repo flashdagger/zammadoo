@@ -75,7 +75,7 @@ def test_attachment_create_info():
         assert attachment_infos[1]["mime-type"] == "application/octet-stream"
 
 
-def test_create_article_via_ticket(rclient, ticket_pair):
+def test_create_article_via_ticket(ticket_pair):
     from pathlib import Path
     from tempfile import TemporaryDirectory
 
@@ -119,9 +119,9 @@ def test_create_article_via_ticket(rclient, ticket_pair):
 
     with TemporaryDirectory() as tmpdir:
         downloaded_file = binary_attachment.download(tmpdir)
-        assert downloaded_file.name == filename_binary
+        assert downloaded_file == Path(tmpdir, filename_binary)
         assert downloaded_file.read_bytes() == content_binary
 
         downloaded_file = text_attachment.download(tmpdir)
-        assert downloaded_file.name == filename_text
+        assert downloaded_file == Path(tmpdir, filename_text)
         assert downloaded_file.read_text() == content_text
