@@ -144,8 +144,12 @@ class Ticket(MutableResource):
         """
         all articles related to the ticket as sent by ``/ticket_articles/by_ticket/{ticket id}``
         """
+        info = info_cast(self._info)
         articles = self.parent.client.ticket_articles
-        return articles.by_ticket(self._id)
+        if "article_ids" not in info:
+            self.reload(expand=True)
+
+        return [Article(articles, aid) for aid in sorted(info["article_ids"])]
 
     def tags(self) -> List[str]:
         """

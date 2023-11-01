@@ -135,6 +135,7 @@ def test_ticket_create_article(ticket_pair):
     ticket, _ = ticket_pair
     assert ticket.article_count == 1
     new_article = ticket.create_article(body="new article")
+    ticket.reload(expand=True)
     assert len(ticket.articles) == 2
     assert new_article.body == "new article"
 

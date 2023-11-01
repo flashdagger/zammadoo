@@ -43,6 +43,7 @@ class TypedTag(TypedDict):
 
 
 class TypedInfo(TypedDict, total=False):
+    article_ids: List[int]
     create_article_sender: str
     create_article_type: str
     id: int

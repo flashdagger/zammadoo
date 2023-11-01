@@ -97,6 +97,7 @@ def test_create_article_via_ticket(ticket_pair):
             "pytest article #0", files=[textfile, binfile]
         )
 
+    ticket.reload(expand=True)
     article = ticket.articles[-1]
     assert article == created_article
     assert article.body == "pytest article #0"
