@@ -75,7 +75,7 @@ def test_attachment_create_info():
         assert attachment_infos[1]["mime-type"] == "application/octet-stream"
 
 
-def test_create_article_via_ticket(ticket_pair):
+def test_create_article_via_ticket(ticket_pair, rclient):
     from pathlib import Path
     from tempfile import TemporaryDirectory
 
@@ -98,7 +98,10 @@ def test_create_article_via_ticket(ticket_pair):
         )
 
     ticket.reload(expand=True)
-    article = ticket.articles[-1]
+    articles = ticket.articles
+    assert articles == rclient.ticket_articles.by_ticket(ticket.id)
+
+    article = articles[-1]
     assert article == created_article
     assert article.body == "pytest article #0"
 
