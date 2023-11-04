@@ -2,8 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 from collections import OrderedDict
+from collections.abc import Hashable
 from itertools import islice
-from typing import Callable, Generic, Hashable, TypeVar
+from typing import Callable, Generic, TypeVar
 
 _T = TypeVar("_T")
 
