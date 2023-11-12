@@ -84,3 +84,23 @@ def test_lazy_object_on_getitem(ticket_with_set_cache):
 
 def test_lazy_object_on_view(ticket_with_set_cache):
     assert dict(ticket_with_set_cache.view()) == {"id": 123, "title": "some title"}
+
+
+def test_resources_caching_enabled(client):
+    tickets = client.tickets
+    tickets.cache.max_size = -1
+
+    info = {"id": 123, "title": "some title"}
+    ticket = tickets(123, info=info)
+    assert tickets.cache[ticket.url] == info
+    assert dict(tickets(123).view()) == info
+
+
+def test_resources_caching_disabled(client):
+    tickets = client.tickets
+    tickets.cache.max_size = 0
+
+    info = {"id": 123, "title": "some title"}
+    ticket = tickets(123, info=info)
+    assert ticket.url not in tickets.cache
+    assert not tickets.cache
