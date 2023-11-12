@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import sys
-
 import pytest
 
 """ tests related to classes in `zammadoo.resource` that can be performed offline """
@@ -12,48 +10,6 @@ def test_client_resources_are_singletons(client):
     tickets_1 = client.tickets
     tickets_2 = client.tickets
     assert tickets_1 is tickets_2
-
-
-def test_client_resource_is_cached_if_referenced(client):
-    tickets1_1 = client.tickets(1, info={"id": 1, "created_by_id": 12345})
-    tickets1_2 = client.tickets(1)
-
-    assert tickets1_1 is tickets1_2
-
-    user_12345 = client.users(12345)
-    assert user_12345 is tickets1_1.created_by
-
-    del tickets1_1
-    tickets1_3 = client.tickets(1)
-
-    assert tickets1_2 is tickets1_3
-
-
-@pytest.mark.skipif(
-    sys.implementation.name == "pypy", reason="pypy has not sys.getrefcount"
-)
-def test_client_resource_instance_has_weak_reference(client):
-    from sys import getrefcount
-    from weakref import getweakrefcount, ref
-
-    tickets1_1 = client.tickets(1)
-    assert getrefcount(tickets1_1) == 2
-    assert getweakrefcount(tickets1_1) == 1
-
-    tickets1_2 = client.tickets(1)
-    assert getrefcount(tickets1_2) == 3
-    assert getweakrefcount(tickets1_2) == 1
-
-    del tickets1_2
-    assert getrefcount(tickets1_1) == 2
-    assert getweakrefcount(tickets1_1) == 1
-
-    tickets1_1_wref = ref(tickets1_1)
-    assert getrefcount(tickets1_1) == 2
-    assert getweakrefcount(tickets1_1) == 2
-
-    del tickets1_1
-    assert tickets1_1_wref() is None
 
 
 def test_resource_creation_with_info_needs_proper_id(client):

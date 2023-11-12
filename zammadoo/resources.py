@@ -9,12 +9,10 @@ from typing import (
     Generic,
     Iterator,
     Literal,
-    MutableMapping,
     Optional,
     Type,
     TypeVar,
 )
-from weakref import WeakValueDictionary
 
 from .cache import LruCache
 from .utils import YieldCounter, info_cast
@@ -46,7 +44,6 @@ class ResourcesT(Generic[_T_co]):
         self.cache = LruCache["JsonDict"](
             max_size=self.DEFAULT_CACHE_SIZE
         )  #: resource LRU cache
-        self._instance_cache: MutableMapping[int, _T_co] = WeakValueDictionary()
 
     def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
         if info:
@@ -55,11 +52,7 @@ class ResourcesT(Generic[_T_co]):
             ), "parameter info must contain 'id' and be equal with rid"
             self.cache[f"{self.url}/{rid}"] = info
 
-        instance_map = self._instance_cache
-        instance = instance_map.get(rid)
-        if not instance or info:
-            instance = instance_map[rid] = self._RESOURCE_TYPE(self, rid, info=info)
-        return instance
+        return self._RESOURCE_TYPE(self, rid, info=info)
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
