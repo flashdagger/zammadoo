@@ -61,6 +61,11 @@ def test_groups_attribute(client):
     assert role.groups == [groups(1), groups(2), groups(3)]
 
 
+def test_created_by_attribute(client):
+    ticket = client.tickets(123, info={"id": 123, "created_by_id": 456})
+    assert ticket.created_by == client.users(456)
+
+
 def test_updated_by_attribute(client):
     ticket = client.tickets(123, info={"id": 123, "updated_by_id": 456})
     assert ticket.updated_by == client.users(456)
