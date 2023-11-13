@@ -17,6 +17,7 @@
     reveal_type(user.groups)         # N: Revealed type is "builtins.list[zammadoo.groups.Group]"
     reveal_type(user.organization)   # N: Revealed type is "Union[zammadoo.organizations.Organization, None]"
     reveal_type(user.organizations)  # N: Revealed type is "builtins.list[zammadoo.organizations.Organization]"
+    reveal_type(user.out_of_office_replacement)  # N: Revealed type is "Union[zammadoo.users.User, None]"
     reveal_type(user.roles )         # N: Revealed type is "builtins.list[zammadoo.roles.Role]"
 
     reveal_type(iter(client.users))  # N: Revealed type is "typing.Iterator[zammadoo.users.User]" 

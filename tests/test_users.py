@@ -57,6 +57,12 @@ def test_user_organizations_attribute(client):
     assert user.organizations == [organizations(1), organizations(2), organizations(3)]
 
 
+def test_user_out_of_office_replacement_attribute(client):
+    user = client.users(123, info={"id": 123, "out_of_office_replacement_id": 456})
+    replacement_user = client.users(456, info={"id": 456})
+    assert user.out_of_office_replacement == replacement_user
+
+
 def test_user_role_attribute(client):
     user = client.users(123, info={"id": 123, "role_ids": [1, 2, 3]})
     roles = client.roles

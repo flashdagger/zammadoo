@@ -18,9 +18,22 @@ if TYPE_CHECKING:
 class User(NamedResource):
     """User(...)"""
 
+    department: Optional[str]  #:
+    email: str  #:
+    fax: str  #:
     firstname: str  #:
+    image: Optional[str]  #:
     lastname: str  #:
     login: str  #: users login name
+    login_failed: int  #:
+    mobile: str  #:
+    out_of_office: bool  #:
+    out_of_office_end_at: Optional[str]  #:
+    out_of_office_start_at: Optional[str]  #:
+    phone: str  #:
+    verified: bool  #:
+    vip: bool  #:
+    web: str  #:
 
     @property
     def fullname(self) -> str:
@@ -55,6 +68,11 @@ class User(NamedResource):
     def organizations(self) -> List["Organization"]:
         organizations = self.parent.client.organizations
         return list(map(organizations, self["organization_ids"]))
+
+    @property
+    def out_of_office_replacement(self) -> Optional["User"]:
+        uid = self["out_of_office_replacement_id"]
+        return uid and self.parent.client.users(uid)
 
     @property
     def roles(self) -> List["Role"]:
