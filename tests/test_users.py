@@ -27,6 +27,27 @@ def test_user_fullname_attribute_given_firstname_and_lastname(client):
     assert user.fullname == "Max Headroom"
 
 
+def test_user_fullname_attribute_given_email_only(client):
+    user = client.users(
+        123, info={"id": 123, "firstname": "", "lastname": "", "email": "max@head.room"}
+    )
+    assert user.fullname == "max@head.room"
+
+
+def test_user_longname_attribute(client):
+    user = client.users(
+        123,
+        info={
+            "id": 123,
+            "firstname": "Max",
+            "lastname": "Headroom",
+            "organization_id": 123,
+        },
+    )
+    client.organizations(123, info={"id": 123, "name": "Network 23"})
+    assert user.longname == "Max Headroom (Network 23)"
+
+
 def test_user_groups_attribute(client):
     user = client.users(
         123,

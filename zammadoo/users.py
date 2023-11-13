@@ -37,11 +37,16 @@ class User(NamedResource):
 
     @property
     def fullname(self) -> str:
-        """users firstname and lastname combined"""
-        firstname, lastname = self["firstname"], self["lastname"]
-        return (
-            f"{firstname or ''}{' ' if firstname and lastname else ''}{lastname or ''}"
-        )
+        """users firstname and lastname combined, or email"""
+        fullname = " ".join(filter(bool, (self["firstname"], self["lastname"])))
+        return fullname or self["email"]
+
+    @property
+    def longname(self) -> str:
+        """users fullname with organization"""
+        fullname = self.fullname
+        organization = self.organization
+        return f"{fullname} ({organization.name})" if organization else fullname
 
     @property
     def name(self) -> str:
