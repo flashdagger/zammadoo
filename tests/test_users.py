@@ -10,14 +10,14 @@ def test_user_name_attribute(client):
 
 def test_user_fullname_attribute_given_firstname_only(client):
     user = client.users(123, info={"id": 123, "firstname": "Max", "lastname": None})
-    assert user.fullname == "Max"
+    assert user.fullname == user.firstname == "Max"
 
 
 def test_user_fullname_attribute_given_lastname_only(client):
     user = client.users(
         123, info={"id": 123, "firstname": None, "lastname": "Headroom"}
     )
-    assert user.fullname == "Headroom"
+    assert user.fullname == user.lastname == "Headroom"
 
 
 def test_user_fullname_attribute_given_firstname_and_lastname(client):

@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 class User(NamedResource):
     """User(...)"""
 
+    firstname: str  #:
+    lastname: str  #:
     login: str  #: users login name
 
     @property
