@@ -2,15 +2,15 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
 from functools import cached_property
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
+from .groups import Group
 from .resource import NamedResource
 from .resources import CreatableT, SearchableT
 from .utils import fromisoformat, info_cast
 
 if TYPE_CHECKING:
     from .client import Client
-    from .groups import Group
     from .organizations import Organization
     from .roles import Role
 
@@ -50,9 +50,9 @@ class User(NamedResource):
         return info_cast(self._info)["login"]
 
     @property
-    def groups(self) -> List["Group"]:
+    def groups(self) -> List[Group]:
         groups = self.parent.client.groups
-        return list(map(groups, self["group_ids"]))
+        return [groups(int(gid)) for gid in self["group_ids"]]
 
     @property
     def last_login(self) -> Optional[datetime]:
@@ -83,6 +83,16 @@ class User(NamedResource):
     def weburl(self) -> str:
         """URL of the user profile in the webclient"""
         return f"{self.parent.client.weburl}/#user/profile/{self._id}"
+
+    def group_access(self, group: Union[int, Group]) -> List[str]:
+        """
+        :param group: group object or group id
+        :return: a list of all access rights for a given group
+        """
+        if isinstance(group, Group):
+            group = group.id
+        groups: Dict[str, List[str]] = self["group_ids"]
+        return groups.get(str(group), [])
 
 
 class Users(SearchableT[User], CreatableT[User]):

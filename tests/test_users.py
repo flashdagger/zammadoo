@@ -28,9 +28,25 @@ def test_user_fullname_attribute_given_firstname_and_lastname(client):
 
 
 def test_user_groups_attribute(client):
-    user = client.users(123, info={"id": 123, "group_ids": [1, 2, 3]})
+    user = client.users(
+        123,
+        info={
+            "id": 123,
+            "group_ids": {
+                "1": ["full"],
+                "2": ["full"],
+                "3": ["overview", "change", "create", "read"],
+            },
+        },
+    )
     groups = client.groups
+
     assert user.groups == [groups(1), groups(2), groups(3)]
+    assert user.groups[0].id == 1
+    assert user.group_access(1) == ["full"]
+    assert user.group_access(groups(2)) == ["full"]
+    assert user.group_access(3) == ["overview", "change", "create", "read"]
+    assert user.group_access(4) == []
 
 
 def test_user_last_login_is_datetime(client):
