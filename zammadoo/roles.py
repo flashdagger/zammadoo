@@ -24,10 +24,8 @@ class Role(NamedResource):
 
     @property
     def permissions(self) -> List[str]:
-        info = self._info
-        if "permissions" not in info:
-            self.reload(expand=True)
-        return info_cast(info)["permissions"]
+        self._initialize(expanded_attribute="permissions")
+        return info_cast(self._info)["permissions"]
 
     def delete(self):
         """

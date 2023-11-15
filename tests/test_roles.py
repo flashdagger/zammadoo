@@ -41,3 +41,19 @@ def test_role_permission_attribute(rclient):
         "report",
         "knowledge_base.editor",
     ]
+
+
+def test_role_permission_caching(caplog, rclient):
+    import logging
+
+    api_url = rclient.url
+
+    with caplog.at_level(logging.INFO, logger="zammadoo"):
+        permissions_a = rclient.roles(1).permissions
+        permissions_b = rclient.roles(1).permissions
+        assert permissions_a == permissions_b
+
+    # expect only one request with expand=true
+    assert caplog.record_tuples == [
+        ("zammadoo", logging.INFO, f"HTTP:GET {api_url}/roles/1?expand=true"),
+    ]

@@ -82,10 +82,19 @@ class Resource:
         self._initialize()
         return MappingProxyType(self._info)
 
-    def _initialize(self) -> None:
-        if not self._info:
-            info = self.parent.cached_info(self._id, refresh=False)
-            self._info.update(info)
+    def _initialize(self, expanded_attribute: Optional[str] = None) -> None:
+        info = self._info
+        expand = expanded_attribute and expanded_attribute not in info
+        refresh = info and expand
+
+        if refresh:
+            info.clear()
+
+        if expand or not info:
+            cached_info = self.parent.cached_info(
+                self._id, refresh=refresh, expand=expand
+            )
+            info.update(cached_info)
 
     def reload(self, expand=False) -> None:
         """Update the object properties by requesting the current data from the server."""

@@ -95,14 +95,12 @@ class Ticket(MutableResource):
 
     @property
     def create_article_sender(self) -> str:
-        if "create_article_sender" not in self._info:
-            self.reload(expand=True)
+        self._initialize(expanded_attribute="create_article_sender")
         return info_cast(self._info)["create_article_sender"]
 
     @property
     def create_article_type(self) -> str:
-        if "create_article_type" not in self._info:
-            self.reload(expand=True)
+        self._initialize(expanded_attribute="create_article_type")
         return info_cast(self._info)["create_article_type"]
 
     @property
@@ -144,10 +142,9 @@ class Ticket(MutableResource):
         """
         all articles related to the ticket as sent by ``/ticket_articles/by_ticket/{ticket id}``
         """
-        info = info_cast(self._info)
+        self._initialize(expanded_attribute="article_ids")
         articles = self.parent.client.ticket_articles
-        if "article_ids" not in info:
-            self.reload(expand=True)
+        info = info_cast(self._info)
 
         return [Article(articles, aid) for aid in sorted(info["article_ids"])]
 
