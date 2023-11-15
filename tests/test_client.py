@@ -32,22 +32,24 @@ def test_params_bool_is_lowercase(rclient):
 def test_logging(caplog, rclient):
     import logging
 
+    api_url = rclient.url
+
     with caplog.at_level(logging.DEBUG, logger="zammadoo"):
         rclient.response("GET", rclient.url, params={"foo": "bar"})
         rclient.response("GET", rclient.url, json={"foo": "bar"})
         rclient.response("GET", rclient.url, stream=True)
 
     assert caplog.record_tuples == [
-        ("zammadoo", logging.INFO, "HTTP:GET https://localhost/api/v1?foo=bar"),
+        ("zammadoo", logging.INFO, f"HTTP:GET {api_url}?foo=bar"),
         (
             "zammadoo",
             logging.DEBUG,
-            "HTTP:GET https://localhost/api/v1 json={'foo': 'bar'}",
+            f"HTTP:GET {api_url} json={{'foo': 'bar'}}",
         ),
         (
             "zammadoo",
             logging.DEBUG,
-            "HTTP:GET https://localhost/api/v1 [Content-Type: application/json; charset=utf-8]",
+            f"HTTP:GET {api_url} [Content-Type: application/json; charset=utf-8]",
         ),
     ]
 
