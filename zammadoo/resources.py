@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+import weakref
 from dataclasses import asdict
 from functools import cached_property, partial
 from typing import (
@@ -39,7 +40,7 @@ class ResourcesT(Generic[_T_co]):
     """
 
     def __init__(self, client: "Client", endpoint: str):
-        self.client = client
+        self._client = weakref.ref(client)
         self.endpoint: str = endpoint
         self.cache = LruCache["JsonDict"](
             max_size=self.DEFAULT_CACHE_SIZE
@@ -56,6 +57,12 @@ class ResourcesT(Generic[_T_co]):
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
+
+    @property
+    def client(self) -> "Client":
+        client = self._client()
+        assert client is not None, "missing client reference"
+        return client
 
     @cached_property
     def url(self) -> str:
