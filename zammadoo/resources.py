@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     _ = Resource  # make PyCharm happy
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
+Cache = LruCache["JsonDict"]
 
 
 class ResourcesT(Generic[_T_co]):
@@ -42,9 +43,7 @@ class ResourcesT(Generic[_T_co]):
     def __init__(self, client: "Client", endpoint: str):
         self._client = weakref.ref(client)
         self.endpoint: str = endpoint
-        self.cache = LruCache["JsonDict"](
-            max_size=self.DEFAULT_CACHE_SIZE
-        )  #: resource LRU cache
+        self.cache = Cache(max_size=self.DEFAULT_CACHE_SIZE)  #: resource LRU cache
 
     def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
         if info:
