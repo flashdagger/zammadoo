@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import atexit
 import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -164,7 +163,6 @@ class Client:
         self.session: requests.Session = (
             requests.Session()
         )  #: the requests Session instance
-        atexit.register(self.session.close)
         self.session.headers["User-Agent"] = "zammadoo Python client"
         if http_token:
             self.session.headers["Authorization"] = f"Token token={http_token}"
@@ -176,6 +174,9 @@ class Client:
             raise TypeError(f"{self.__class__} needs an authentication parameter.")
 
         self.session.headers.update(additional_headers)
+
+    def __del__(self):
+        self.session.close()
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"
