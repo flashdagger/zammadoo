@@ -52,6 +52,7 @@ class State(NamedResource):
     default_create: bool  #:
     default_follow_up: bool  #:
     ignore_escalation: bool  #:
+    state_type_id: int  #:
 
     @property
     def next_state(self) -> Optional["State"]:
