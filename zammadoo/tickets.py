@@ -3,13 +3,12 @@
 from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
-from .articles import Article
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
 from .utils import LINK_TYPES, LinkType, info_cast
 
 if TYPE_CHECKING:
-    from .articles import OptionalFiles
+    from .articles import Article, OptionalFiles
     from .client import Client
     from .groups import Group
     from .organizations import Organization
@@ -147,7 +146,7 @@ class Ticket(MutableResource):
         articles = self.parent.client.ticket_articles
         info = info_cast(self._info)
 
-        return [Article(articles, aid) for aid in sorted(info["article_ids"])]
+        return [articles(aid) for aid in sorted(info["article_ids"])]
 
     def tags(self) -> List[str]:
         """
