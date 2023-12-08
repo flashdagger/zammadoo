@@ -36,6 +36,9 @@ zammadoo
 
 An object-oriented REST API client for the `Zammad helpdesk sytem <https://zammad.org/>`_.
 
+.. note::
+    Not to be confused with "Zammadoo" - a registered trademark and social networking app
+    for leisure activities.
 
 Real life examples
 ------------------
@@ -64,5 +67,9 @@ Real life examples
 Design principles
 -----------------
 
-Zammadoo provides a fluent workflow. Since the resources are wrapped in its own type,
-your IDE can show you many of the available properties and methods.
+This library provides a fluent workflow. Since the resources are wrapped in its own type,
+your IDE can show you many of the available properties and methods. Furthermore you can ensure
+type safety with Python's static type checkers like `mypy <https://www.mypy-lang.org/>`_.
+
+.. image:: https://github.com/flashdagger/zammadoo/assets/17416271/aa81ab7c-1d57-4dac-82d8-7b5fdc5e8699
+  :alt: zammadoo typing
