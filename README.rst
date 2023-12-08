@@ -1,3 +1,6 @@
+.. image:: https://github.com/flashdagger/zammadoo/assets/17416271/a442afd7-c682-41dd-9de9-4ec7fcc62c06
+  :alt: zammadoo logo
+
 ========
 zammadoo
 ========
@@ -31,7 +34,7 @@ zammadoo
     :alt: Code Style Black
 
 
-an object-oriented REST API client for the `Zammad helpdesk sytem <https://zammad.org/>`_
+An object-oriented REST API client for the `Zammad helpdesk sytem <https://zammad.org/>`_.
 
 
 Real life examples
