@@ -3,7 +3,6 @@
 
 from collections import OrderedDict
 from collections.abc import Hashable
-from itertools import islice
 from typing import Callable, Generic, TypeVar
 
 _T = TypeVar("_T")
@@ -21,16 +20,19 @@ class LruCache(Generic[_T]):
     @max_size.setter
     def max_size(self, value: int):
         self._max_size = value
-        self.evict()
+        if value == 0:
+            self._cache.clear()
+        elif value > 0:
+            self.evict()
 
     def evict(self) -> None:
         max_size = self._max_size
         if max_size <= 0:
             return
+
         cache = self._cache
-        evict_keys = tuple(islice(cache.keys(), max(0, len(cache) - max_size)))
-        for key in evict_keys:
-            del cache[key]
+        for _ in range(len(cache) - max_size):
+            cache.popitem(last=False)
 
     def setdefault_by_callback(self, item, callback: Callable[[], _T]) -> _T:
         max_size = self._max_size
