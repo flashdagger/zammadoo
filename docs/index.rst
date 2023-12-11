@@ -11,7 +11,8 @@ an object-oriented Zammad REST API Client for Python
 .. toctree::
    :maxdepth: 2
 
-   intro.rst
+   intro
+   tutorial/index
    contributing
    api/index
    history
