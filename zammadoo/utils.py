@@ -49,10 +49,11 @@ class TypedInfo(TypedDict, total=False):
     id: int
     name: str
     login: str
-    preferences: Dict[str, str]
     page: int
+    parent_id: Optional[int]
     per_page: int
     permissions: List[str]
+    preferences: Dict[str, str]
     tags: List[str]
     version: str
     size: str

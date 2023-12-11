@@ -8,6 +8,7 @@ def test_create_group(rclient, temporary_resources):
         groups.append(new_group.view())
         assert new_group.active is True
         assert new_group.note is None
+        assert new_group.parent_group is None
 
 
 def test_group_users_attribute(client):
