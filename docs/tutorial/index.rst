@@ -6,3 +6,4 @@ Tutorial
     :maxdepth: 1
 
     resources
+    caching
