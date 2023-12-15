@@ -40,6 +40,10 @@ An object-oriented REST API client for the `Zammad helpdesk sytem <https://zamma
     Not to be confused with "Zammadoo" - a registered trademark and social networking app
     for leisure activities.
 
+
+Find the full documentation under https://zammadoo.readthedocs.io.
+
+
 Real life examples
 ------------------
 
