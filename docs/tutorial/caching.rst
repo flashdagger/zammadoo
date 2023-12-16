@@ -1,3 +1,6 @@
+.. py:module:: zammadoo
+   :noindex:
+
 Resource caching
 ================
 
@@ -47,3 +50,20 @@ By default, max_size is set to ``-1`` which means the cache size is not limited.
 ``0`` disables caching completely and numbers greater than zero will limit the cache to
 contain only the least recently used objects (LRU cache strategy).
 To clear the cache completely, just call the ``clear()`` method.
+
+If an object is changed outside of your code you can query the current data using the
+:meth:`tickets.Ticket.reload()` method.
+
+.. code-block:: python
+
+    ticket = client.tickets(1)
+    print(f"Ticket #{ticket.number} currently contains {ticket.article_count} article(s)")
+    # INFO:zammadoo:HTTP:GET https://localhost/api/v1/tickets/1
+    # Ticket #67001 currently contains 1 article(s)
+
+    # Let's suppose someone added a new article via the Web-App
+
+    ticket.reload()
+    # INFO:zammadoo:HTTP:GET https://localhost/api/v1/tickets/1
+    print(f"Ticket #{ticket.number} currently contains {ticket.article_count} article(s)")
+    # Ticket #67001 currently contains 2 article(s)

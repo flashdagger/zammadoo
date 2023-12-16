@@ -1,4 +1,5 @@
 .. py:module:: zammadoo
+   :noindex:
 
 Objects can be lazy
 ===================
