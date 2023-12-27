@@ -47,17 +47,30 @@ class Attachment:
 
     @property
     def size(self) -> int:
+        """attachment size in bytes"""
         return int(info_cast(self._info)["size"])
 
     @property
     def url(self) -> str:
+        """attachment content url"""
         return self._url
 
     def view(self) -> "MappingProxyType[str, Any]":
+        """
+        A mapping view of the objects internal properties as returned by the REST API.
+
+        :rtype: :class:`MappingProxyType[str, Any]`
+        """
         return MappingProxyType(self._info)
 
     @staticmethod
     def info_from_files(*paths: "PathType"):
+        """
+        returns a list of dicts that can be used for the ``attachments`` property
+        when `creating articles <https://docs.zammad.org/en/latest/api/ticket/articles.html#create>`_
+
+        :param paths: one or multiple paths of the attachment files
+        """
         info_list = []
         for path in paths:
             filepath = Path(path)
@@ -90,6 +103,12 @@ class Attachment:
         return response
 
     def download(self, path: "PathType" = ".") -> "Path":
+        """
+        Downloads the attachment file to the filesystem.
+
+        :param path: optional download location (directory or full file path)
+        :return: the path of the downloaded attachment file
+        """
         filepath = Path(path)
         if filepath.is_dir():
             filepath = filepath / self.filename
@@ -101,17 +120,29 @@ class Attachment:
         return filepath
 
     def read_bytes(self) -> bytes:
+        """Return the attachment content as bytes."""
         return self._response().content
 
     def read_text(self) -> str:
+        """Return the attachment content as string."""
         return self._response().text
 
-    def iter_text(self, chunk_size=8192):
+    def iter_text(self, chunk_size=8192) -> Iterator[str]:
+        """
+        Iterates over the decoded attachment text content.
+
+        :param chunk_size: maximum chunk size in bytes
+        """
         response = self._response()
         assert response.encoding, "content is binary only, use .iter_bytes() instead"
         return response.iter_content(chunk_size=chunk_size, decode_unicode=True)
 
     def iter_bytes(self, chunk_size=8192) -> Iterator[bytes]:
+        """
+        Iterates over the attachment binary content.
+
+        :param chunk_size: maximum chunk size in bytes
+        """
         return self._response().iter_content(chunk_size=chunk_size)
 
 
@@ -152,12 +183,12 @@ class Article(Resource):
 
     @property
     def attachments(self) -> List[Attachment]:
+        """A list of the articles attachments."""
         attachment_list = []
         client = self.parent.client
         for info in self["attachments"]:
             url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self._id}/{info['id']}"
-            attachment = Attachment(client, url, info)
-            attachment_list.append(attachment)
+            attachment_list.append(Attachment(client, url, info))
         return attachment_list
 
 
