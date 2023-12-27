@@ -43,7 +43,7 @@ class Pagination:
     """pagination settings for recources ``.search()`` and ``.iter()`` methods"""
 
     per_page: int = 10  #: number of returned objects per page request
-    #: if ``True`` the server wille send additional properties for each resource
+    #: if ``True`` the server will send additional properties for each resource
     expand: bool = False
 
 

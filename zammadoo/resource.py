@@ -97,7 +97,11 @@ class Resource:
             info.update(cached_info)
 
     def reload(self, expand=False) -> None:
-        """Update the object properties by requesting the current data from the server."""
+        """
+        Update the object properties by requesting the current data from the server.
+
+        :param expand: if ``True`` the properties will contain `additional information <https://docs.zammad.org/en/latest/api/intro.html#response-payloads-expand>`_.
+        """
         info = self._info
         info.clear()
         new_info = self.parent.cached_info(self._id, refresh=True, expand=expand)
