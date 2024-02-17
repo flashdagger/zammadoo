@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from os import PathLike
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -20,9 +19,11 @@ from typing import (
 )
 
 if TYPE_CHECKING:
+    from os import PathLike
     from typing_extensions import TypeAlias
 
     LinkType: TypeAlias = Literal["normal", "parent", "child"]
+    _ = PathLike
 else:
     LinkType = Literal["normal", "parent", "child"]
 
@@ -33,7 +34,7 @@ JsonDict = Dict[str, JsonType]
 JsonDictList = List[JsonDict]
 JsonContainer = Union[JsonDict, JsonDictList]
 StringKeyMapping = Mapping[str, Any]
-PathType = Union[str, PathLike]
+PathType = Union[str, "PathLike[Any]"]
 
 
 class TypedTag(TypedDict):
