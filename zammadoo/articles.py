@@ -66,8 +66,8 @@ class Attachment:
     @staticmethod
     def info_from_files(*paths: "PathType"):
         """
-        returns a list of dicts that can be used for the ``attachments`` property
-        when `creating articles <https://docs.zammad.org/en/latest/api/ticket/articles.html#create>`_
+        returns a list of dicts that can be used for the ``attachments`` property when
+        `creating articles <https://docs.zammad.org/en/latest/api/ticket/articles.html#create>`_
 
         :param paths: one or multiple paths of the attachment files
         """

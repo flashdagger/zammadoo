@@ -100,7 +100,8 @@ class Resource:
         """
         Update the object properties by requesting the current data from the server.
 
-        :param expand: if ``True`` the properties will contain `additional information <https://docs.zammad.org/en/latest/api/intro.html#response-payloads-expand>`_.
+        :param expand: if ``True`` the properties will contain `additional information
+               <https://docs.zammad.org/en/latest/api/intro.html#response-payloads-expand>`_.
         """
         info = self._info
         info.clear()
