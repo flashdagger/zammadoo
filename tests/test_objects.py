@@ -21,10 +21,16 @@ def test_resource_creation_with_info_needs_proper_id(client):
 
 
 def test_items_are_readonly(client):
-    tickets = client.tickets
+    ticket = client.tickets(1, info={"id": 1})
 
     with pytest.raises(TypeError):
-        tickets(1, info={"id": 1})["id"] = tickets(2, info={"id": 2})["id"]
+        ticket["id"] = 2
+
+    with pytest.raises(AttributeError, match="read-only"):
+        ticket.title = ""
+
+    with pytest.raises(AttributeError, match="read-only"):
+        del ticket.title
 
 
 def test_representation_of_client(client_url, client):

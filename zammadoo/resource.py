@@ -53,9 +53,10 @@ class Resource:
         except AttributeError:
             return super().__setattr__(name, value)
 
-        raise AttributeError(
-            f"{self.__class__.__name__!r} object attribute {name!r} is read-only"
-        )
+        raise AttributeError(f"object {self.__class__.__name__!r} is read-only")
+
+    def __delattr__(self, name: str) -> None:
+        raise AttributeError(f"object {self.__class__.__name__!r} is read-only")
 
     def __getitem__(self, name: str) -> Any:
         self._initialize()
