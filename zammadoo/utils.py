@@ -20,6 +20,7 @@ from typing import (
 
 if TYPE_CHECKING:
     from os import PathLike
+
     from typing_extensions import TypeAlias
 
     LinkType: TypeAlias = Literal["normal", "parent", "child"]
