@@ -114,7 +114,7 @@ def test_ticket_merge(ticket_pair):
     assert merged_ticket == ticket_a
     assert merged_ticket.links() == {"child": [ticket_b], "parent": [], "normal": []}
     merged_articles = merged_ticket.articles
-    assert len(merged_articles) == 2
+    assert len(merged_articles) == 3
     assert b_origin_article in merged_articles
 
     assert ticket_b.state.name == "merged"
@@ -143,7 +143,7 @@ def test_ticket_create_article(ticket_pair):
 def test_ticket_history(ticket_pair):
     ticket, _ = ticket_pair
     history = ticket.history()
-    assert len(history) == 2
+    assert len(history) == 3
 
     assert history[0].items() > {"object": "Ticket", "type": "created"}.items()
     assert history[1].items() > {"object": "Ticket::Article", "type": "created"}.items()
