@@ -175,3 +175,11 @@ def test_ticket_create_article_sender_and_type_attribute(ticket_pair):
     ticket_a, ticket_b = ticket_pair
     assert ticket_a.create_article_sender == "Agent"
     assert ticket_b.create_article_type == "note"
+
+
+def test_ticket_last_request_at(ticket_pair):
+    from datetime import datetime
+
+    ticket, _ = ticket_pair
+    timestamp = ticket.last_request_at()
+    assert isinstance(timestamp, datetime)

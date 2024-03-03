@@ -109,6 +109,10 @@ class Resource:
         new_info = self.parent.cached_info(self._id, refresh=True, expand=expand)
         info.update(new_info)
 
+    def last_request_at(self) -> Optional[datetime]:
+        """return the last request timestamp as :class:`datetime` or ``None``"""
+        return self.parent.cached_timestamp(self._id)
+
 
 class MutableResource(Resource):
     created_at: datetime  #:
@@ -138,11 +142,7 @@ class MutableResource(Resource):
 
     def delete(self) -> None:
         """Delete the resource. Requires the respective permission."""
-        parent = self.parent
-        parent.client.delete(parent.endpoint, self._id)
-        url = self.url
-        if url in parent.cache:
-            del parent.cache[url]
+        self.parent.delete(self._id)
 
 
 class NamedResource(MutableResource):

@@ -24,6 +24,7 @@ History
       :class:`users.User` and :class:`organizations.Organization`
     * added property :attr:`tickets.Ticket.create_article_sender`
     * added property :attr:`groups.Group.parent_group`
+    * save timestamp when cache is updated, added method :meth:`tickets.Ticket.last_request_at`
 
 * **fixes**
 
