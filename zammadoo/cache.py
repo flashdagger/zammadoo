@@ -3,14 +3,15 @@
 
 from collections import OrderedDict
 from collections.abc import Hashable
-from typing import Callable, Generic, TypeVar
+from datetime import datetime, timezone
+from typing import Callable, Generic, Optional, Tuple, TypeVar
 
 _T = TypeVar("_T")
 
 
 class LruCache(Generic[_T]):
     def __init__(self, max_size=-1) -> None:
-        self._cache: "OrderedDict[Hashable, _T]" = OrderedDict()
+        self._cache: "OrderedDict[Hashable, Tuple[datetime, _T]]" = OrderedDict()
         self._max_size = max_size
 
     @property
@@ -43,9 +44,10 @@ class LruCache(Generic[_T]):
         if item in cache:
             if max_size > 1:
                 cache.move_to_end(item)
-            return cache[item]
+            return cache[item][1]
 
-        value = cache[item] = callback()
+        value = callback()
+        cache[item] = datetime.now(timezone.utc), value
         if 0 < max_size < len(cache):
             cache.popitem(last=False)
 
@@ -58,10 +60,10 @@ class LruCache(Generic[_T]):
         return self._cache.keys()
 
     def values(self):
-        return self._cache.values()
+        return (value for _, value in self._cache.values())
 
     def items(self):
-        return self._cache.items()
+        return ((key, value) for key, (_, value) in self._cache.items())
 
     def __len__(self):
         return len(self._cache)
@@ -73,7 +75,7 @@ class LruCache(Generic[_T]):
         cache = self._cache
         if self._max_size > 1:
             cache.move_to_end(item)
-        return cache[item]
+        return cache[item][1]
 
     def __setitem__(self, item: Hashable, value: _T) -> None:
         max_size = self._max_size
@@ -81,14 +83,19 @@ class LruCache(Generic[_T]):
             return
 
         cache = self._cache
+        timestamp = datetime.now(timezone.utc)
         if item in cache:
             if max_size > 1:
                 cache.move_to_end(item)
-            cache[item] = value
+            cache[item] = timestamp, value
         else:
-            cache[item] = value
+            cache[item] = timestamp, value
             if 0 < max_size < len(cache):
                 cache.popitem(last=False)
 
     def __delitem__(self, item: Hashable) -> None:
         del self._cache[item]
+
+    def timestamp(self, item: Hashable) -> Optional[datetime]:
+        data = self._cache.get(item)
+        return data and data[0]

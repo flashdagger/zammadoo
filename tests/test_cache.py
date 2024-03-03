@@ -166,3 +166,19 @@ def test_clear():
     assert 0 not in cache
     assert len(cache) == 0
     assert not cache
+
+
+def test_timestamp():
+    from datetime import datetime, timezone
+    import time
+
+    cache = LruCache()
+    assert cache.timestamp("foo") is None
+    cache["foo"] = "bar"
+    timestamp = cache.timestamp("foo")
+    assert isinstance(timestamp, datetime)
+    assert timestamp.tzinfo == timezone.utc
+
+    time.sleep(0.001)
+    cache["foo"] = "baz"
+    assert cache.timestamp("foo") > timestamp
