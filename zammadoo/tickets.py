@@ -206,9 +206,9 @@ class Ticket(MutableResource):
         params = {
             "link_type": switch_map.get(link_type, link_type),
             "link_object_target": "Ticket",
-            "link_object_target_value": target
-            if isinstance(target, int)
-            else target.id,
+            "link_object_target_value": (
+                target if isinstance(target, int) else target.id
+            ),
             "link_object_source": "Ticket",
             "link_object_source_number": self["number"],
         }
