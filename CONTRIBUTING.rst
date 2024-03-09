@@ -59,7 +59,7 @@ Build the documentation locally
 .. code-block:: sh
 
     # install the optional dependencies for building the documentation
-    poetry install --with docs
+    pip install -r docs/requirements.txt
     # build the HTML documents
     docs\make.bat html  # Windows
     make -C docs html   # Linux, MacOS
