@@ -9,7 +9,7 @@ zammadoo
    :target: https://python.org/
    :alt: [Python versions]
 
-.. image:: https://img.shields.io/badge/pypi-v0.1.0%20(beta)-orange
+.. image:: https://img.shields.io/badge/pypi-v0.2.0%20(beta)-orange
    :target: https://pypi.python.org/pypi/zammadoo/
    :alt: PyPI
 
