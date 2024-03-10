@@ -3,6 +3,7 @@
 
 from contextlib import suppress
 from datetime import datetime
+from itertools import chain
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -64,6 +65,11 @@ class Resource:
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Resource) and other.url == self.url
+
+    def __dir__(self):
+        names = super().__dir__()
+        extra_attributes = set(self._info.keys()) - set(names)
+        return chain(names, extra_attributes)
 
     @property
     def id(self) -> int:

@@ -110,3 +110,12 @@ def test_resources_caching_disabled(client):
     ticket = tickets(123, info=info)
     assert ticket.url not in tickets.cache
     assert not tickets.cache
+
+
+def test_dir(client):
+    tickets = client.tickets
+
+    info = {"id": 123, "title": "some title"}
+    ticket = tickets(123, info=info)
+
+    assert "title" in dir(ticket)
