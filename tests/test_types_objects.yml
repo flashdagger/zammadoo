@@ -17,6 +17,7 @@
 
     reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
     role = client.roles(0)
+    reveal_type(role.name)                # N: Revealed type is "builtins.str"    
     reveal_type(role.permissions)         # N: Revealed type is "builtins.list[builtins.str]"    
     reveal_type(role.update())            # N: Revealed type is "zammadoo.roles.Role"
 
@@ -24,8 +25,8 @@
     reveal_type(
       client.organizations.create(""))    # N: Revealed type is "zammadoo.organizations.Organization"
     reveal_type(
-      client.organizations(0).update()    # N: Revealed type is "zammadoo.organizations.Organization"
-    )
+      client.organizations(0).update())   # N: Revealed type is "zammadoo.organizations.Organization"
+
     reveal_type(client.tags)              # N: Revealed type is "zammadoo.tags.Tags"
     reveal_type(iter(client.tags))        # N: Revealed type is "typing.Iterator[TypedDict('zammadoo.utils.TypedTag', {'id': builtins.int, 'name': builtins.str, 'count': Union[builtins.int, None]})]"
 

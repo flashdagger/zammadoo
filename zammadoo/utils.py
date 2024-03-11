@@ -49,8 +49,6 @@ class TypedInfo(TypedDict, total=False):
     create_article_sender: str
     create_article_type: str
     id: int
-    name: str
-    login: str
     page: int
     parent_id: Optional[int]
     per_page: int

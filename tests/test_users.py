@@ -2,10 +2,18 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
 
+import pytest
+
 
 def test_user_name_attribute(client):
     user = client.users(123, info={"id": 123, "login": "someone@pytest"})
     assert user.name == "someone@pytest"
+
+
+def test_user_name_attribute_is_readonly(client):
+    user = client.users(123, info={"id": 123, "login": "someone@pytest"})
+    with pytest.raises(AttributeError, match="read-only"):
+        user.name = ""
 
 
 def test_user_fullname_attribute_given_firstname_only(client):

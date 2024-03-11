@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from datetime import datetime
 from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
@@ -7,7 +8,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 from .groups import Group
 from .resource import NamedResource
 from .resources import CreatableT, SearchableT
-from .utils import fromisoformat, info_cast
+from .utils import fromisoformat
 
 if TYPE_CHECKING:
     from .client import Client
@@ -51,8 +52,12 @@ class User(NamedResource):
     @property
     def name(self) -> str:
         """alias for :attr:`login`"""
-        self._initialize()
-        return info_cast(self._info)["login"]
+        return self.login
+
+    @name.setter
+    # dummy setter to keep mypy happy
+    # value setting is prevented by Resource.__setattr__()
+    def name(self, _value) -> None: ...
 
     @property
     def groups(self) -> List[Group]:

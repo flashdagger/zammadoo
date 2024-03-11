@@ -8,7 +8,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Optional
 
 from .resources import ResourcesT, _T_co
-from .utils import fromisoformat, info_cast
+from .utils import fromisoformat
 
 if TYPE_CHECKING:
     from .users import User
@@ -153,9 +153,5 @@ class MutableResource(Resource):
 
 class NamedResource(MutableResource):
     active: bool  #:
+    name: str  #:
     note: Optional[str]  #:
-
-    @property
-    def name(self) -> str:
-        self._initialize()
-        return info_cast(self._info)["name"]
