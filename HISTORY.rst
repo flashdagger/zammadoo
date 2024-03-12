@@ -6,10 +6,20 @@ History
 
 0.3.0 (tbd)
 -----------
+* **breaking changes**
 
+    * none yet
+
+* **added features**
+
+    * added ``raise_if_exists`` parameter to :meth:`articles.Attachment.download` method
+
+* **fixes**
+
+    * none yet
 
 0.2.0 (2024-03-10)
------------
+------------------
 * **breaking changes**
 
     * :class:`client.Client` now uses ``http_auth=(username, password)`` as authentication parameter

@@ -102,16 +102,22 @@ class Attachment:
 
         return response
 
-    def download(self, path: "PathType" = ".") -> "Path":
+    def download(self, path: "PathType" = ".", raise_if_exists=False) -> "Path":
         """
         Downloads the attachment file to the filesystem.
 
+        :raises: :exc:`FileExistsError`
+
         :param path: optional download location (directory or full file path)
+        :param raise_if_exists: raises :exc:`FileExistsError` if destination file exists
         :return: the path of the downloaded attachment file
         """
         filepath = Path(path)
         if filepath.is_dir():
             filepath = filepath / self.filename
+
+        if raise_if_exists and filepath.exists():
+            raise FileExistsError(f"File already exists: {str(filepath)!r}")
 
         with filepath.open("wb") as fd:
             for chunk in self.iter_bytes():

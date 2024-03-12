@@ -126,6 +126,10 @@ def test_create_article_via_ticket(ticket_pair, rclient):
         assert downloaded_file == Path(tmpdir, filename_binary)
         assert downloaded_file.read_bytes() == content_binary
 
-        downloaded_file = text_attachment.download(tmpdir)
-        assert downloaded_file == Path(tmpdir, filename_text)
+        destination_file = Path(tmpdir, f"{filename_text}.bkp")
+        downloaded_file = text_attachment.download(destination_file)
+        assert downloaded_file == destination_file
         assert downloaded_file.read_text() == content_text
+
+        with pytest.raises(FileExistsError):
+            text_attachment.download(downloaded_file, raise_if_exists=True)
