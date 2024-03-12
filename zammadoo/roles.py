@@ -29,7 +29,7 @@ class Role(NamedResource):
 
     def delete(self):
         """
-        Since roles cannot be deletet via REST API, this method is not Implemented
+        Since roles cannot be deletet via REST API, this method is not implemented
 
         :raises: :exc:`NotImplementedError`
         """

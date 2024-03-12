@@ -56,7 +56,7 @@ endpoints (e.g. *tickets*, *organizations*, *groups*, *roles*, ...).
     # INFO:zammadoo:HTTP:GET https://localhost/api/v1/users?page=3&per_page=10&expand=false
     # [user 21 to 30]
 
-The Zammad API uses pagination and by default returns 10 items per requests. If you want to use
+The Zammad API uses pagination and by default returns 10 items per request. If you want to use
 different parameters for ``page`` or ``per_page`` you can use the :meth:`users.Users.iter` method.
 Use `itertools.islice <https://docs.python.org/3/library/itertools.html#itertools.islice>`_
 to limit the number of returned items, it's a Python iterable after all.
