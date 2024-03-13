@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+from contextlib import suppress
 from datetime import datetime
+from itertools import chain
+from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -86,3 +89,61 @@ class YieldCounter:
 
 def fromisoformat(timestamp: str) -> datetime:
     return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+
+
+class FrozenInfo:
+    def __init__(
+        self,
+        info: Optional["JsonDict"] = None,
+    ) -> None:
+        self._info: "JsonDict" = info or {}
+        self._frozen = True
+
+    def __getattr__(self, name: str) -> object:
+        self._initialize()
+        info = self._info
+
+        key = name[:-1] if name in {"from_"} else name
+        if key not in info:
+            raise AttributeError(
+                f"{self.__class__.__name__!r} object has no attribute {name!r}"
+            )
+
+        value = info[key]
+        if isinstance(value, str) and key.endswith("_at"):
+            with suppress(ValueError):
+                return fromisoformat(value)
+
+        return value
+
+    def _initialize(self) -> None:
+        pass
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        try:
+            self.__getattribute__("_frozen")
+        except AttributeError:
+            return super().__setattr__(name, value)
+
+        raise AttributeError(f"object {self.__class__.__name__!r} is read-only")
+
+    def __delattr__(self, name: str) -> None:
+        raise AttributeError(f"object {self.__class__.__name__!r} is read-only")
+
+    def __getitem__(self, name: str) -> Any:
+        self._initialize()
+        return self._info[name]
+
+    def __dir__(self):
+        names = super().__dir__()
+        extra_attributes = set(self._info.keys()) - set(names)
+        return chain(names, extra_attributes)
+
+    def view(self) -> "MappingProxyType[str, JsonType]":
+        """
+        A mapping view of the objects internal properties as returned by the REST API.
+
+        :rtype: :class:`MappingProxyType[str, Any]`
+        """
+        self._initialize()
+        return MappingProxyType(self._info)

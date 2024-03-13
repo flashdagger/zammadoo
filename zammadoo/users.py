@@ -146,4 +146,4 @@ class Users(SearchableT[User], CreatableT[User]):
         :return: Return the authenticated user.
         """
         info = self.client.get(self.endpoint, "me")
-        return self._RESOURCE_TYPE(self, info["id"], info)
+        return self._RESOURCE_TYPE(self, info["id"], info=info)
