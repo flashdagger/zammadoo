@@ -5,7 +5,6 @@ from base64 import b64encode
 from datetime import datetime
 from mimetypes import guess_type
 from pathlib import Path
-from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional
 
 import requests
@@ -13,7 +12,7 @@ from charset_normalizer import is_binary
 
 from .resource import Resource
 from .resources import CreatableT, ResourcesT
-from .utils import info_cast
+from .utils import FrozenInfo, info_cast
 
 if TYPE_CHECKING:
     from typing import Union
@@ -26,42 +25,27 @@ if TYPE_CHECKING:
     OptionalFiles = Union[None, "PathType", Iterable["PathType"]]
 
 
-class Attachment:
+class Attachment(FrozenInfo):
     """Attachment(...)"""
 
     id: int  #:
     filename: str  #:
     preferences: Dict[str, Any]  #:
     store_file_id: int  #:
+    url: str  #: attachment content url
 
     def __init__(self, client: "Client", content_url: str, info: "JsonDict") -> None:
         self._client = client
-        self._url = content_url
-        self._info = info
+        self.url = content_url
+        super().__init__(info)
 
     def __repr__(self):
-        return f"<{self.__class__.__qualname__} {self._url!r}>"
-
-    def __getattr__(self, item):
-        return self._info[item]
+        return f"<{self.__class__.__qualname__} {self.url!r}>"
 
     @property
     def size(self) -> int:
         """attachment size in bytes"""
         return int(info_cast(self._info)["size"])
-
-    @property
-    def url(self) -> str:
-        """attachment content url"""
-        return self._url
-
-    def view(self) -> "MappingProxyType[str, Any]":
-        """
-        A mapping view of the objects internal properties as returned by the REST API.
-
-        :rtype: :class:`MappingProxyType[str, Any]`
-        """
-        return MappingProxyType(self._info)
 
     @staticmethod
     def info_from_files(*paths: "PathType"):
@@ -94,7 +78,7 @@ class Attachment:
         return info_list
 
     def _response(self) -> requests.Response:
-        response = self._client.response("GET", self._url, stream=True)
+        response = self._client.response("GET", self.url, stream=True)
         response.raise_for_status()
 
         preferences = info_cast(self._info).get("preferences", {})

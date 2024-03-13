@@ -44,6 +44,9 @@ def test_article_attachments_attribute(client):
     )
     attachment = article.attachments[0]
 
+    with pytest.raises(AttributeError, match="read-only"):
+        attachment.filename = ""
+
     assert attachment.url == f"{client.url}/ticket_attachment/12345/67/89"
     assert (
         repr(attachment) == f"<Attachment '{client.url}/ticket_attachment/12345/67/89'>"
