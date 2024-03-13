@@ -31,7 +31,7 @@ class Organization(NamedResource):
     @cached_property
     def weburl(self) -> str:
         """URL of the organization profile in the webclient"""
-        return f"{self.parent.client.weburl}/#organization/profile/{self._id}"
+        return f"{self.parent.client.weburl}/#organization/profile/{self.id}"
 
 
 class Organizations(SearchableT[Organization], CreatableT[Organization]):

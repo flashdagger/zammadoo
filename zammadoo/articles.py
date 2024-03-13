@@ -193,7 +193,7 @@ class Article(Resource):
         attachment_list = []
         client = self.parent.client
         for info in self["attachments"]:
-            url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self._id}/{info['id']}"
+            url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self.id}/{info['id']}"
             attachment_list.append(Attachment(client, url, info))
         return attachment_list
 

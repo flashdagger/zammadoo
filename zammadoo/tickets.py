@@ -236,7 +236,7 @@ class Ticket(MutableResource):
             params = {
                 "link_type": _link_type,
                 "link_object_target": "Ticket",
-                "link_object_target_value": self._id,
+                "link_object_target_value": self.id,
                 "link_object_source": "Ticket",
                 "link_object_source_value": target_id,
             }
@@ -257,7 +257,7 @@ class Ticket(MutableResource):
         parent = self.parent
         if isinstance(target, int):
             target = parent(target)
-        info = parent.client.put("ticket_merge", self._id, target["number"])
+        info = parent.client.put("ticket_merge", self.id, target["number"])
         assert info["result"] == "success", f"merge failed with {info['result']}"
         merged_info = info["target_ticket"]
         return parent(merged_info["id"], info=merged_info)
@@ -282,7 +282,7 @@ class Ticket(MutableResource):
         :return: the newly created article
         """
         return self.parent.client.ticket_articles.create(
-            self._id,
+            self.id,
             body=body,
             files=files,
             type=typ,
@@ -313,13 +313,13 @@ class Ticket(MutableResource):
 
         :return: the ticket's history
         """
-        info = self.parent.client.get("ticket_history", self._id)
+        info = self.parent.client.get("ticket_history", self.id)
         return cast(List["StringKeyMapping"], info["history"])
 
     @cached_property
     def weburl(self) -> str:
         """URL of the ticket in the webclient"""
-        return f"{self.parent.client.weburl}/#ticket/zoom/{self._id}"
+        return f"{self.parent.client.weburl}/#ticket/zoom/{self.id}"
 
 
 class Tickets(SearchableT[Ticket], CreatableT[Ticket]):

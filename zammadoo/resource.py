@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 
 
 class Resource(FrozenInfo):
+    id: int  #:
+    url: str  #: the API endpoint URL
+
     def __init__(
         self: _T_co,
         parent: ResourcesT[_T_co],
@@ -20,9 +23,9 @@ class Resource(FrozenInfo):
         *,
         info: Optional["JsonDict"] = None,
     ) -> None:
-        self._id = rid
+        self.id = rid
         self.parent = parent
-        self._url = f"{parent.url}/{rid}"
+        self.url = f"{parent.url}/{rid}"
         super().__init__(info)
 
     def __repr__(self):
@@ -30,15 +33,6 @@ class Resource(FrozenInfo):
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Resource) and other.url == self.url
-
-    @property
-    def id(self) -> int:
-        return self._id
-
-    @property
-    def url(self) -> str:
-        """the API endpoint URL"""
-        return self._url
 
     def _initialize(self, expanded_attribute: Optional[str] = None) -> None:
         info = self._info
@@ -50,7 +44,7 @@ class Resource(FrozenInfo):
 
         if expand or not info:
             cached_info = self.parent.cached_info(
-                self._id, refresh=refresh, expand=expand
+                self.id, refresh=refresh, expand=expand
             )
             info.update(cached_info)
 
@@ -63,12 +57,12 @@ class Resource(FrozenInfo):
         """
         info = self._info
         info.clear()
-        new_info = self.parent.cached_info(self._id, refresh=True, expand=expand)
+        new_info = self.parent.cached_info(self.id, refresh=True, expand=expand)
         info.update(new_info)
 
     def last_request_at(self) -> Optional[datetime]:
         """return the last request timestamp as :class:`datetime` or ``None``"""
-        return self.parent.cached_timestamp(self._id)
+        return self.parent.cached_timestamp(self.id)
 
 
 class MutableResource(Resource):
@@ -94,12 +88,12 @@ class MutableResource(Resource):
         :rtype: same as object
         """
         parent = self.parent
-        updated_info = parent.client.put(parent.endpoint, self._id, json=kwargs)
+        updated_info = parent.client.put(parent.endpoint, self.id, json=kwargs)
         return parent(updated_info["id"], info=updated_info)
 
     def delete(self) -> None:
         """Delete the resource. Requires the respective permission."""
-        self.parent.delete(self._id)
+        self.parent.delete(self.id)
 
 
 class NamedResource(MutableResource):

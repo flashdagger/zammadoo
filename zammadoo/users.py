@@ -92,7 +92,7 @@ class User(NamedResource):
     @cached_property
     def weburl(self) -> str:
         """URL of the user profile in the webclient"""
-        return f"{self.parent.client.weburl}/#user/profile/{self._id}"
+        return f"{self.parent.client.weburl}/#user/profile/{self.id}"
 
     def group_access(self, group: Union[int, Group]) -> List[str]:
         """
