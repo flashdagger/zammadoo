@@ -5,14 +5,23 @@ from base64 import b64encode
 from datetime import datetime
 from mimetypes import guess_type
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    TypedDict,
+)
 
 import requests
 from charset_normalizer import is_binary
 
 from .resource import Resource
 from .resources import CreatableT, ResourcesT
-from .utils import FrozenInfo, info_cast
+from .utils import FrozenInfo
 
 if TYPE_CHECKING:
     from typing import Union
@@ -27,6 +36,12 @@ if TYPE_CHECKING:
 
 class Attachment(FrozenInfo):
     """Attachment(...)"""
+
+    class TypedInfo(TypedDict, total=False):
+        preferences: Dict[str, str]
+        size: str
+
+    _info: TypedInfo
 
     id: int  #:
     filename: str  #:
@@ -45,7 +60,7 @@ class Attachment(FrozenInfo):
     @property
     def size(self) -> int:
         """attachment size in bytes"""
-        return int(info_cast(self._info)["size"])
+        return int(self._info["size"])
 
     @staticmethod
     def info_from_files(*paths: "PathType"):
@@ -81,7 +96,7 @@ class Attachment(FrozenInfo):
         response = self._client.response("GET", self.url, stream=True)
         response.raise_for_status()
 
-        preferences = info_cast(self._info).get("preferences", {})
+        preferences = self._info.get("preferences", {})
         response.encoding = preferences.get("Charset") or response.apparent_encoding
 
         return response
