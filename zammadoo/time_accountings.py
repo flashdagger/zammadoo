@@ -2,11 +2,10 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, TypedDict, Union
 
 from .resource import MutableResource
 from .resources import CreatableT, IterableT, _T_co
-from .utils import info_cast
 
 if TYPE_CHECKING:
     from .articles import Article
@@ -18,6 +17,11 @@ if TYPE_CHECKING:
 
 class TimeAccounting(MutableResource):
     """TimeAccounting(...)"""
+
+    class TypedInfo(TypedDict, total=False):
+        type: Optional[str]
+
+    _info: TypedInfo
 
     id: int  #:
     type_id: Optional[int]  #:
@@ -47,7 +51,7 @@ class TimeAccounting(MutableResource):
         if self.type_id is None:
             return None
         self._initialize(expanded_attribute="type")
-        return info_cast(self._info).get("type")
+        return self._info["type"]
 
     def update(self: _T_co, **kwargs) -> _T_co:
         """

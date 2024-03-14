@@ -54,7 +54,6 @@ class TypedInfo(TypedDict, total=False):
     tags: List[str]
     ticket_time_accounting_ids: List[int]
     version: str
-    type: str
 
 
 def info_cast(info: "JsonDict") -> TypedInfo:
