@@ -50,7 +50,6 @@ class TypedTag(TypedDict):
 class TypedInfo(TypedDict, total=False):
     id: int
     page: int
-    parent_id: Optional[int]
     per_page: int
     permissions: List[str]
     tags: List[str]

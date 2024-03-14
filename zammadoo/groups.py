@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-from typing import TYPE_CHECKING, List, Optional
+
+from typing import TYPE_CHECKING, List, Optional, TypedDict
 
 from .resource import NamedResource
 from .resources import CreatableT, IterableT, _T_co
-from .utils import info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -14,19 +14,25 @@ if TYPE_CHECKING:
 class Group(NamedResource):
     """Group(...)"""
 
+    class TypedInfo(TypedDict, total=False):
+        parent_id: Optional[int]
+        user_ids: List[int]
+
+    _info: TypedInfo
     shared_drafts: bool  #:
 
     @property
     def parent_group(self: _T_co) -> Optional[_T_co]:
         """available since Zammad version 6.2"""
         self._initialize()
-        pid = info_cast(self._info).get("parent_id")
+        pid = self._info.get("parent_id")
         return self.parent(pid) if pid is not None else None
 
     @property
     def users(self) -> List["User"]:
-        users = self.parent.client.users
-        return list(map(users, self["user_ids"]))
+        self._initialize()
+        uids = self._info["user_ids"]
+        return list(map(self.parent.client.users, uids))
 
 
 class Groups(IterableT[Group], CreatableT[Group]):
