@@ -51,7 +51,6 @@ class TypedInfo(TypedDict, total=False):
     id: int
     page: int
     per_page: int
-    permissions: List[str]
     tags: List[str]
     ticket_time_accounting_ids: List[int]
     version: str

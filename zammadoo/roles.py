@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, TypedDict
 
 from .resource import NamedResource
 from .resources import CreatableT, IterableT
-from .utils import info_cast
 
 if TYPE_CHECKING:
     from .client import Client
@@ -15,6 +14,10 @@ if TYPE_CHECKING:
 class Role(NamedResource):
     """Role(...)"""
 
+    class TypedInfo(TypedDict, total=False):
+        permissions: List[str]
+
+    _info: TypedInfo
     default_at_signup: bool  #:
 
     @property
@@ -25,7 +28,7 @@ class Role(NamedResource):
     @property
     def permissions(self) -> List[str]:
         self._initialize(expanded_attribute="permissions")
-        return info_cast(self._info)["permissions"]
+        return self._info["permissions"]
 
     def delete(self):
         """
