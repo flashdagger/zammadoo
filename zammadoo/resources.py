@@ -13,11 +13,13 @@ from typing import (
     Literal,
     Optional,
     Type,
+    TypedDict,
     TypeVar,
+    cast,
 )
 
 from .cache import LruCache
-from .utils import YieldCounter, info_cast
+from .utils import YieldCounter
 
 if TYPE_CHECKING:
     from .client import Client
@@ -27,6 +29,11 @@ if TYPE_CHECKING:
     _ = Resource  # make PyCharm happy
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
+
+
+class ParamDict(TypedDict):
+    page: int
+    per_page: int
 
 
 class ResourcesT(Generic[_T_co]):
@@ -103,7 +110,8 @@ class CreatableT(ResourcesT[_T_co]):
 class IterableT(ResourcesT[_T_co]):
     def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
         for item in items:
-            rid = info_cast(item)["id"]
+            rid = item["id"]
+            assert isinstance(rid, int)
             self.cache[f"{self.url}/{rid}"] = item
             yield self._RESOURCE_TYPE(self, rid, info=item)
 
@@ -140,7 +148,7 @@ class IterableT(ResourcesT[_T_co]):
                 if key not in params
             )
         )
-        typed_params = info_cast(params)
+        typed_params = cast(ParamDict, params)
         per_page = typed_params["per_page"]
 
         while True:

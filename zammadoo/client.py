@@ -19,7 +19,6 @@ from .tags import Tags
 from .tickets import Priorities, States, Tickets
 from .time_accountings import TimeAccountings
 from .users import Users
-from .utils import info_cast
 
 if TYPE_CHECKING:
     from .utils import JsonType, StringKeyMapping
@@ -302,7 +301,9 @@ class Client:
     @cached_property
     def server_version(self) -> str:
         """the Zammad server version"""
-        return info_cast(self.get("version"))["version"]
+        version = self.get("version")["version"]
+        assert isinstance(version, str)
+        return version
 
     @cached_property
     def weburl(self) -> str:

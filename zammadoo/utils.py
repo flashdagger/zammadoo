@@ -17,7 +17,6 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
-    cast,
     get_args,
 )
 
@@ -45,23 +44,6 @@ class TypedTag(TypedDict):
     id: int
     name: str
     count: Optional[int]
-
-
-class TypedInfo(TypedDict, total=False):
-    id: int
-    page: int
-    per_page: int
-    tags: List[str]
-    ticket_time_accounting_ids: List[int]
-    version: str
-
-
-def info_cast(info: "JsonDict") -> TypedInfo:
-    """
-    convenience function when using items from the info dictionary
-    that nedd to have a certain type
-    """
-    return cast(TypedInfo, info)
 
 
 class YieldCounter:
