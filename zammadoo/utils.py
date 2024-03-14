@@ -48,9 +48,6 @@ class TypedTag(TypedDict):
 
 
 class TypedInfo(TypedDict, total=False):
-    article_ids: List[int]
-    create_article_sender: str
-    create_article_type: str
     id: int
     page: int
     parent_id: Optional[int]
@@ -96,9 +93,9 @@ def fromisoformat(timestamp: str) -> datetime:
 class FrozenInfo:
     def __init__(
         self,
-        info: Optional["JsonDict"] = None,
+        info=None,
     ) -> None:
-        self._info: "JsonDict" = info or {}
+        self._info = info or {}
         self._frozen = True
 
     def __getattr__(self, name: str) -> object:
