@@ -37,11 +37,11 @@ if TYPE_CHECKING:
 class Attachment(FrozenInfo):
     """Attachment(...)"""
 
-    class TypedInfo(TypedDict, total=False):
+    class _TypedInfo(TypedDict, total=False):
         preferences: Dict[str, str]
         size: str
 
-    _info: TypedInfo
+    _info: _TypedInfo
 
     id: int  #:
     filename: str  #:

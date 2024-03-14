@@ -76,10 +76,14 @@ class FrozenInfo:
         self._frozen = True
 
     def __getattr__(self, name: str) -> object:
-        self._initialize()
         info = self._info
+        key = "from" if name == "from_" else name
+        if key in info:
+            if not key.endswith("_at"):
+                return info[key]
+        else:
+            self._assert_attribute(name)
 
-        key = name[:-1] if name in {"from_"} else name
         if key not in info:
             raise AttributeError(
                 f"{self.__class__.__name__!r} object has no attribute {name!r}"
@@ -92,7 +96,7 @@ class FrozenInfo:
 
         return value
 
-    def _initialize(self) -> None:
+    def _assert_attribute(self, name: Optional[str] = None) -> None:
         pass
 
     def __setattr__(self, name: str, value: Any) -> None:
@@ -107,8 +111,11 @@ class FrozenInfo:
         raise AttributeError(f"object {self.__class__.__name__!r} is read-only")
 
     def __getitem__(self, name: str) -> Any:
-        self._initialize()
-        return self._info[name]
+        info = self._info
+        if name in info:
+            return info[name]
+        self._assert_attribute(name)
+        return info[name]
 
     def __dir__(self):
         names = super().__dir__()
@@ -121,5 +128,5 @@ class FrozenInfo:
 
         :rtype: :class:`MappingProxyType[str, Any]`
         """
-        self._initialize()
+        self._assert_attribute()
         return MappingProxyType(self._info)

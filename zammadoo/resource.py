@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Tuple
 
 from .resources import ResourcesT, _T_co
 from .utils import FrozenInfo
@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 
 class Resource(FrozenInfo):
+    EXPANDED_ATTRIBUTES: Tuple[str, ...] = ()
+
     id: int  #:
     url: str  #: the API endpoint URL
 
@@ -34,18 +36,16 @@ class Resource(FrozenInfo):
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Resource) and other.url == self.url
 
-    def _initialize(self, expanded_attribute: Optional[str] = None) -> None:
+    def _assert_attribute(self, name: Optional[str] = None) -> None:
         info = self._info
-        expand = expanded_attribute and expanded_attribute not in info
-        refresh = info and expand
-
-        if refresh:
-            info.clear()
-
+        expand = (
+            name is not None and name in self.EXPANDED_ATTRIBUTES and name not in info
+        )
         if expand or not info:
             cached_info = self.parent.cached_info(
-                self.id, refresh=refresh, expand=expand
+                self.id, refresh=(info and expand), expand=expand
             )
+            info.clear()
             info.update(cached_info)
 
     def reload(self, expand=False) -> None:

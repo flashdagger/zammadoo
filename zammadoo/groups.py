@@ -14,25 +14,24 @@ if TYPE_CHECKING:
 class Group(NamedResource):
     """Group(...)"""
 
-    class TypedInfo(TypedDict, total=False):
+    class _TypedInfo(TypedDict, total=False):
         parent_id: Optional[int]
         user_ids: List[int]
 
-    _info: TypedInfo
+    _info: _TypedInfo
     shared_drafts: bool  #:
+    user_ids: List[int]  #:
 
     @property
     def parent_group(self: _T_co) -> Optional[_T_co]:
         """available since Zammad version 6.2"""
-        self._initialize()
+        self._assert_attribute()
         pid = self._info.get("parent_id")
-        return self.parent(pid) if pid is not None else None
+        return None if pid is None else self.parent(pid)
 
     @property
     def users(self) -> List["User"]:
-        self._initialize()
-        uids = self._info["user_ids"]
-        return list(map(self.parent.client.users, uids))
+        return list(map(self.parent.client.users, self.user_ids))
 
 
 class Groups(IterableT[Group], CreatableT[Group]):

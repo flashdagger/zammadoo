@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from functools import cached_property
-from typing import TYPE_CHECKING, Dict, List, Optional, TypedDict, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
@@ -91,28 +91,16 @@ class States(IterableT[State], CreatableT[State]):
 class Ticket(MutableResource):
     """Ticket(...)"""
 
-    class TypedInfo(TypedDict, total=False):
-        article_ids: List[int]
-        create_article_sender: str
-        create_article_type: str
-
-    _info: TypedInfo
+    EXPANDED_ATTRIBUTES = "article_ids", "create_article_sender", "create_article_type"
 
     article_count: Optional[int]  #:
+    article_ids: List[int]  #:
+    create_article_sender: str  #:
+    create_article_type: str  #:
     note: Optional[str]  #:
     number: str  #:
     time_unit: Optional[str]  #:
     title: str  #:
-
-    @property
-    def create_article_sender(self) -> str:
-        self._initialize(expanded_attribute="create_article_sender")
-        return self._info["create_article_sender"]
-
-    @property
-    def create_article_type(self) -> str:
-        self._initialize(expanded_attribute="create_article_type")
-        return self._info["create_article_type"]
 
     @property
     def customer(self) -> "User":
@@ -153,9 +141,8 @@ class Ticket(MutableResource):
         """
         all articles related to the ticket as sent by ``/ticket_articles/by_ticket/{ticket id}``
         """
-        self._initialize(expanded_attribute="article_ids")
         articles = self.parent.client.ticket_articles
-        return [articles(aid) for aid in sorted(self._info["article_ids"])]
+        return [articles(aid) for aid in sorted(self.article_ids)]
 
     @property
     def time_accountings(self) -> List[TimeAccounting]:

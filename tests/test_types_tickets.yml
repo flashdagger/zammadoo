@@ -32,6 +32,8 @@
     reveal_type(ticket.owner)          # N: Revealed type is "zammadoo.users.User"
     reveal_type(ticket.created_by)     # N: Revealed type is "zammadoo.users.User"
     reveal_type(ticket.updated_by)     # N: Revealed type is "zammadoo.users.User"
+    reveal_type(
+      ticket.create_article_sender)    # N: Revealed type is "builtins.str"
     
     reveal_type(ticket.articles)    # N: Revealed type is "builtins.list[zammadoo.articles.Article]"
     article = ticket.articles[0]

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, List, TypedDict
+from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
 from .resources import CreatableT, IterableT
@@ -14,21 +14,15 @@ if TYPE_CHECKING:
 class Role(NamedResource):
     """Role(...)"""
 
-    class TypedInfo(TypedDict, total=False):
-        permissions: List[str]
+    EXPANDED_ATTRIBUTES = ("permissions",)
 
-    _info: TypedInfo
     default_at_signup: bool  #:
+    permissions: List[str]  #:
 
     @property
     def groups(self) -> List["Group"]:
         groups = self.parent.client.groups
         return list(map(groups, self["group_ids"]))
-
-    @property
-    def permissions(self) -> List[str]:
-        self._initialize(expanded_attribute="permissions")
-        return self._info["permissions"]
 
     def delete(self):
         """
