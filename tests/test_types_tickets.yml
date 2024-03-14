@@ -51,3 +51,11 @@
     article = ticket.articles[0]
     reveal_type(article.attachments) # N: Revealed type is "builtins.list[zammadoo.articles.Attachment]"
     reveal_type(ticket.tags())       # N: Revealed type is "builtins.list[builtins.str]"
+
+    reveal_type(ticket.time_accountings) # N: Revealed type is "builtins.list[zammadoo.time_accountings.TimeAccounting]"
+    t_acc = ticket.time_accountings[0]
+    reveal_type(t_acc.ticket)       # N: Revealed type is "zammadoo.tickets.Ticket"
+    reveal_type(t_acc.time_unit)    # N: Revealed type is "builtins.str"
+    reveal_type(t_acc.created_by)   # N: Revealed type is "zammadoo.users.User"
+    reveal_type(t_acc.created_at)   # N: Revealed type is "datetime.datetime"
+    reveal_type(t_acc.updated_at)   # N: Revealed type is "datetime.datetime"

@@ -58,8 +58,10 @@ class TypedInfo(TypedDict, total=False):
     permissions: List[str]
     preferences: Dict[str, str]
     tags: List[str]
+    ticket_time_accounting_ids: List[int]
     version: str
     size: str
+    type: str
 
 
 def info_cast(info: "JsonDict") -> TypedInfo:

@@ -13,6 +13,7 @@ History
 * **added features**
 
     * added ``raise_if_exists`` parameter to :meth:`articles.Attachment.download` method
+    * support ``time_accountings`` endpoint by :class:`time_accountings.TimeAccountings`
 
 * **fixes**
 

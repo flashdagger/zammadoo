@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
+from .time_accountings import TimeAccounting
 from .utils import LINK_TYPES, LinkType, info_cast
 
 if TYPE_CHECKING:
@@ -85,12 +87,14 @@ class States(IterableT[State], CreatableT[State]):
         return super()._create({"name": name, "state_type_id": state_type_id, **kwargs})
 
 
+# pylint: disable=too-many-public-methods
 class Ticket(MutableResource):
     """Ticket(...)"""
 
     article_count: Optional[int]  #:
     note: Optional[str]  #:
     number: str  #:
+    time_unit: Optional[str]  #:
     title: str  #:
 
     @property
@@ -147,6 +151,13 @@ class Ticket(MutableResource):
         info = info_cast(self._info)
 
         return [articles(aid) for aid in sorted(info["article_ids"])]
+
+    @property
+    def time_accountings(self) -> List[TimeAccounting]:
+        parent = self.parent
+        client = parent.client
+        tacc_list = client.get(parent.endpoint, self.id, "time_accountings")
+        return [client.time_accountings(info["id"], info=info) for info in tacc_list]
 
     def tags(self) -> List[str]:
         """

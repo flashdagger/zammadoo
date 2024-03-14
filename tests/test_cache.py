@@ -169,8 +169,8 @@ def test_clear():
 
 
 def test_timestamp():
-    from datetime import datetime, timezone
     import time
+    from datetime import datetime, timezone
 
     cache = LruCache()
     assert cache.timestamp("foo") is None

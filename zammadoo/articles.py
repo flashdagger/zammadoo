@@ -149,6 +149,7 @@ class Article(Resource):
     message_id_md5: Optional[str]  #:
     sender: str  #:
     subject: Optional[str]  #:
+    time_unit: Optional[str]  #:
     to: Optional[str]  #:
     updated_at: datetime  #:
 

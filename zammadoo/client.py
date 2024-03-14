@@ -17,6 +17,7 @@ from .organizations import Organizations
 from .roles import Roles
 from .tags import Tags
 from .tickets import Priorities, States, Tickets
+from .time_accountings import TimeAccountings
 from .users import Users
 from .utils import info_cast
 
@@ -130,6 +131,11 @@ class Client:
     def tickets(self) -> Tickets:
         """Manages the ``/tickets`` endpoint."""
         return Tickets(self)
+
+    @cached_property
+    def time_accountings(self) -> TimeAccountings:
+        """Manages the ``/time_accountings`` endpoint."""
+        return TimeAccountings(self)
 
     @cached_property
     def users(self) -> Users:
