@@ -75,8 +75,8 @@ class FrozenInfo:
         self._info = info or {}
         self._frozen = True
 
-    def __getattr__(self, name: str) -> object:
-        info = self._info
+    def __getattr__(self, name: str) -> Union["JsonType", datetime]:
+        info: Dict[str, "JsonType"] = self._info
         key = "from" if name == "from_" else name
         if key in info:
             if not key.endswith("_at"):

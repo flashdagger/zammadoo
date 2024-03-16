@@ -57,12 +57,12 @@ class State(NamedResource):
 
     @property
     def next_state(self) -> Optional["State"]:
-        sid = self["next_state_id"]
-        return sid and self.parent.client.ticket_states(sid)
+        sid: Optional[int] = self["next_state_id"]
+        return None if sid is None else self.parent.client.ticket_states(sid)
 
     @property
     def state_type(self) -> "State":
-        sid = self["state_type_id"]
+        sid: int = self["state_type_id"]
         return self.parent.client.ticket_states(sid)
 
 
@@ -94,7 +94,6 @@ class Ticket(MutableResource):
     EXPANDED_ATTRIBUTES = "article_ids", "create_article_sender", "create_article_type"
 
     article_count: Optional[int]  #:
-    article_ids: List[int]  #:
     create_article_sender: str  #:
     create_article_type: str  #:
     note: Optional[str]  #:
@@ -104,18 +103,18 @@ class Ticket(MutableResource):
 
     @property
     def customer(self) -> "User":
-        uid = self["customer_id"]
+        uid: int = self["customer_id"]
         return self.parent.client.users(uid)
 
     @property
     def group(self) -> "Group":
-        gid = self["group_id"]
+        gid: int = self["group_id"]
         return self.parent.client.groups(gid)
 
     @property
     def organization(self) -> Optional["Organization"]:
-        oid = self["organization_id"]
-        return oid and self.parent.client.organizations(oid)
+        oid: Optional[int] = self["organization_id"]
+        return None if oid is None else self.parent.client.organizations(oid)
 
     @property
     def owner(self) -> "User":
@@ -123,17 +122,17 @@ class Ticket(MutableResource):
         .. note::
            unassigned tickets will be represented by User with id=1
         """
-        uid = self["owner_id"]
+        uid: int = self["owner_id"]
         return self.parent.client.users(uid)
 
     @property
     def priority(self) -> Priority:
-        pid = self["priority_id"]
+        pid: int = self["priority_id"]
         return self.parent.client.ticket_priorities(pid)
 
     @property
     def state(self) -> State:
-        sid = self["state_id"]
+        sid: int = self["state_id"]
         return self.parent.client.ticket_states(sid)
 
     @property
@@ -142,7 +141,8 @@ class Ticket(MutableResource):
         all articles related to the ticket as sent by ``/ticket_articles/by_ticket/{ticket id}``
         """
         articles = self.parent.client.ticket_articles
-        return [articles(aid) for aid in sorted(self.article_ids)]
+        article_ids: List[int] = self["article_ids"]
+        return [articles(aid) for aid in sorted(article_ids)]
 
     @property
     def time_accountings(self) -> List[TimeAccounting]:

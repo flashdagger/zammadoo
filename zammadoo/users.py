@@ -66,13 +66,13 @@ class User(NamedResource):
 
     @property
     def last_login(self) -> Optional[datetime]:
-        last_login = self["last_login"]
-        return last_login and fromisoformat(last_login)
+        last_login: Optional[str] = self["last_login"]
+        return None if last_login is None else fromisoformat(last_login)
 
     @property
     def organization(self) -> Optional["Organization"]:
-        oid = self["organization_id"]
-        return oid and self.parent.client.organizations(oid)
+        oid: Optional[int] = self["organization_id"]
+        return None if oid is None else self.parent.client.organizations(oid)
 
     @property
     def organizations(self) -> List["Organization"]:
@@ -81,8 +81,8 @@ class User(NamedResource):
 
     @property
     def out_of_office_replacement(self) -> Optional["User"]:
-        uid = self["out_of_office_replacement_id"]
-        return uid and self.parent.client.users(uid)
+        uid: Optional[int] = self["out_of_office_replacement_id"]
+        return None if uid is None else self.parent.client.users(uid)
 
     @property
     def roles(self) -> List["Role"]:

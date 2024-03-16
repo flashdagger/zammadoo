@@ -1,11 +1,25 @@
+- case: fail_on_missing_method
+  regex: yes
+  main: |
+    from zammadoo import Client
+
+    client = Client("<url>", http_token="<token>")    
+    client.tickets(1).missing_method()
+  out: |
+    main:4: error: "None" not callable  \[misc\]
+    main:4: error: "bool" not callable  \[operator\]
+    main:4: error: "int" not callable  \[operator\]
+    main:4: error: "float" not callable  \[operator\]
+    main:4: error: "str" not callable  \[operator\]
+    main:4: error: "[Ll]ist\[JsonType\]" not callable  \[operator\]
+    main:4: error: "[Dd]ict\[str, JsonType\]" not callable  \[operator\]
+    main:4: error: "datetime" not callable  \[operator\]
 - case: client_attributes_are_of_proper_type
   skip: sys.implementation.name == "pypy"
   main: |
     from zammadoo import Client
 
-    client = Client("<url>", http_token="<token>")
-    
-    client.tickets(1).missing_method()    # E: "object" not callable  [operator]
+    client = Client("<url>", http_token="<token>")    
 
     reveal_type(client.groups)            # N: Revealed type is "zammadoo.groups.Groups"
     reveal_type(

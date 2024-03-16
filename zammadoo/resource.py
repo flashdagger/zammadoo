@@ -71,12 +71,12 @@ class MutableResource(Resource):
 
     @property
     def created_by(self) -> "User":
-        uid = self["created_by_id"]
+        uid: int = self["created_by_id"]
         return self.parent.client.users(uid)
 
     @property
     def updated_by(self) -> "User":
-        uid = self["updated_by_id"]
+        uid: int = self["updated_by_id"]
         return self.parent.client.users(uid)
 
     def update(self: _T_co, **kwargs) -> _T_co:

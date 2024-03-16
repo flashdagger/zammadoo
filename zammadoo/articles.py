@@ -170,32 +170,33 @@ class Article(Resource):
 
     @property
     def created_by(self) -> "User":
-        uid = self["created_by_id"]
+        uid: int = self["created_by_id"]
         return self.parent.client.users(uid)
 
     @property
     def origin_by(self) -> Optional["User"]:
-        oid = self["origin_by_id"]
+        oid: int = self["origin_by_id"]
         return self.parent.client.users(oid)
 
     @property
     def updated_by(self) -> "User":
-        uid = self["updated_by_id"]
+        uid: int = self["updated_by_id"]
         return self.parent.client.users(uid)
 
     @property
     def ticket(self) -> "Ticket":
-        return self.parent.client.tickets(self["ticket_id"])
+        tid: int = self["ticket_id"]
+        return self.parent.client.tickets(tid)
 
     @property
     def attachments(self) -> List[Attachment]:
         """A list of the articles attachments."""
-        attachment_list = []
         client = self.parent.client
-        for info in self["attachments"]:
-            url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self.id}/{info['id']}"
-            attachment_list.append(Attachment(client, url, info))
-        return attachment_list
+        attachment_url = f"{client.url}/ticket_attachment/{self['ticket_id']}/{self.id}"
+        return [
+            Attachment(client, f"{attachment_url}/{info['id']}", info)
+            for info in self["attachments"]
+        ]
 
 
 class Articles(CreatableT[Article], ResourcesT[Article]):
