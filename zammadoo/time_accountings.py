@@ -92,10 +92,9 @@ class TimeAccountings(IterableT[TimeAccounting], CreatableT[TimeAccounting]):
             "ticket_id": ticket if isinstance(ticket, int) else ticket.id,
         }
         if type_:
-            if isinstance(type_, str):
-                json["type"] = type_
-            else:
-                json["type_id"] = type_
+            key = "type" if isinstance(type_, str) else "type_id"
+            json[key] = type_
+
         return self._create(json=json)
 
     def types(self):
