@@ -31,7 +31,8 @@ class Group(NamedResource):
 
     @property
     def users(self) -> List["User"]:
-        return list(map(self.parent.client.users, self.user_ids))
+        users = self.parent.client.users
+        return [users(uid) for uid in self.user_ids]
 
 
 class Groups(IterableT[Group], CreatableT[Group]):

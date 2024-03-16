@@ -148,8 +148,11 @@ class Ticket(MutableResource):
     def time_accountings(self) -> List[TimeAccounting]:
         parent = self.parent
         client = parent.client
-        tacc_list = client.get(parent.endpoint, self.id, "time_accountings")
-        return [client.time_accountings(info["id"], info=info) for info in tacc_list]
+        time_accountings = client.time_accountings
+        time_accountings_list = client.get(parent.endpoint, self.id, "time_accountings")
+        return [
+            time_accountings(info["id"], info=info) for info in time_accountings_list
+        ]
 
     def tags(self) -> List[str]:
         """

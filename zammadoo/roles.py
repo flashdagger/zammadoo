@@ -22,7 +22,7 @@ class Role(NamedResource):
     @property
     def groups(self) -> List["Group"]:
         groups = self.parent.client.groups
-        return list(map(groups, self["group_ids"]))
+        return [groups(gid) for gid in self["group_ids"]]
 
     def delete(self):
         """

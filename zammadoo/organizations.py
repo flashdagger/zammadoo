@@ -21,12 +21,12 @@ class Organization(NamedResource):
     @property
     def members(self) -> List["User"]:
         users = self.parent.client.users
-        return list(map(users, self["member_ids"]))
+        return [users(mid) for mid in self["member_ids"]]
 
     @property
     def secondary_members(self) -> List["User"]:
         users = self.parent.client.users
-        return list(map(users, self["secondary_member_ids"]))
+        return [users(sec_mid) for sec_mid in self["secondary_member_ids"]]
 
     @cached_property
     def weburl(self) -> str:

@@ -77,7 +77,7 @@ class User(NamedResource):
     @property
     def organizations(self) -> List["Organization"]:
         organizations = self.parent.client.organizations
-        return list(map(organizations, self["organization_ids"]))
+        return [organizations(oid) for oid in self["organization_ids"]]
 
     @property
     def out_of_office_replacement(self) -> Optional["User"]:
@@ -87,7 +87,7 @@ class User(NamedResource):
     @property
     def roles(self) -> List["Role"]:
         roles = self.parent.client.roles
-        return list(map(roles, self["role_ids"]))
+        return [roles(rid) for rid in self["role_ids"]]
 
     @cached_property
     def weburl(self) -> str:
