@@ -2,10 +2,11 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Dict, Optional, Union
 
 from .resource import MutableResource
 from .resources import CreatableT, IterableT, _T_co
+from .utils import FrozenInfo
 
 if TYPE_CHECKING:
     from .articles import Article
@@ -21,7 +22,6 @@ class TimeAccounting(MutableResource):
     EXPANDED_ATTRIBUTES = ("type",)
 
     id: int  #:
-    type_id: Optional[int]  #:
     ticket_id: int  #:
     ticket_article_id: Optional[int]  #:
     created_at: datetime  #:
@@ -45,9 +45,10 @@ class TimeAccounting(MutableResource):
 
     @property
     def type(self) -> Optional[str]:
-        if self["type_id"] is None:
+        type_id: int = self["type_id"]
+        if type_id is None:
             return None
-        return str(self["type"])
+        return self.parent.client.time_accountings.types[type_id].name
 
     def update(self: _T_co, **kwargs) -> _T_co:
         """
@@ -73,12 +74,22 @@ class TimeAccounting(MutableResource):
         return super().update(**kwargs)
 
 
+class TimeAccountingsType(FrozenInfo):
+    id: int
+    name: str
+    note: str
+    active: bool
+    created_at: datetime
+    updated_at: datetime
+
+
 class TimeAccountings(IterableT[TimeAccounting], CreatableT[TimeAccounting]):
     """TimeAccountings(...)"""
 
     _RESOURCE_TYPE = TimeAccounting
 
     def __init__(self, client: "Client"):
+        self._types: Optional[Dict[int, TimeAccountingsType]] = None
         super().__init__(client, "time_accountings")
 
     def create(
@@ -97,6 +108,12 @@ class TimeAccountings(IterableT[TimeAccounting], CreatableT[TimeAccounting]):
 
         return self._create(json=json)
 
-    def types(self):
-        """returns a list of properties for each defined accounting type"""
-        return self.client.get("time_accounting/types")
+    @property
+    def types(self) -> Dict[int, TimeAccountingsType]:
+        """returns a mapping of properties for each defined accounting type"""
+        if self._types is None:
+            self._types = {
+                info["id"]: TimeAccountingsType(info)
+                for info in self.client.get("time_accounting/types")
+            }
+        return self._types

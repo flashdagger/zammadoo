@@ -8,7 +8,7 @@ from . import ticket_pair
 
 def test_ticket_time_accounting(ticket_pair):
     ticket_a, ticket_b = ticket_pair
-    accountings = ticket_a.time_accountings
+    accountings = ticket_a.time_accountings()
     assert not accountings
 
     client = ticket_a.parent.client
@@ -25,18 +25,18 @@ def test_ticket_time_accounting(ticket_pair):
     new_article = ticket_a.create_article(
         "article with added accounting", time_unit="4.5"
     )
-    accountings = ticket_a.time_accountings
+    accountings = ticket_a.time_accountings()
     assert len(accountings) == 2
     assert accountings[1].ticket_article == new_article
 
     accountings[1].delete()
-    accountings = ticket_a.time_accountings
+    accountings = ticket_a.time_accountings()
     assert len(accountings) == 1
 
-    accounting_types = client.time_accountings.types()
+    accounting_types = list(client.time_accountings.types.values())
     assert accounting_types
-    type_name = accounting_types[0]["name"]
-    type_id = accounting_types[0]["id"]
+    type_name = accounting_types[0].name
+    type_id = accounting_types[0].id
 
     new_accounting = accountings[0].update(type=type_name)
     assert new_accounting.type == type_name

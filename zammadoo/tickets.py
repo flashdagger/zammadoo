@@ -144,7 +144,6 @@ class Ticket(MutableResource):
         article_ids: List[int] = self["article_ids"]
         return [articles(aid) for aid in sorted(article_ids)]
 
-    @property
     def time_accountings(self) -> List[TimeAccounting]:
         parent = self.parent
         client = parent.client
