@@ -301,9 +301,7 @@ class Client:
     @cached_property
     def server_version(self) -> str:
         """the Zammad server version"""
-        version = self.get("version")["version"]
-        assert isinstance(version, str)
-        return version
+        return str(self.get("version")["version"])
 
     @cached_property
     def weburl(self) -> str:
