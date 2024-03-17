@@ -34,7 +34,7 @@ def test_datetime_type_attribute(client):
 
 def test_access_item_named_from(client):
     # 'from' is a reserved word in python
-    user = client.users(1, info={"id": 1, "from": "user@example.com"})
+    user = client.ticket_articles(1, info={"id": 1, "from": "user@example.com"})
     assert user.from_ == "user@example.com"
 
 

@@ -77,20 +77,19 @@ class FrozenInfo:
 
     def __getattr__(self, name: str) -> Union["JsonType", datetime]:
         info: Dict[str, "JsonType"] = self._info
-        key = "from" if name == "from_" else name
-        if key in info:
-            if not key.endswith("_at"):
-                return info[key]
+        if name in info:
+            if not name.endswith("_at"):
+                return info[name]
         else:
             self._assert_attribute(name)
 
-        if key not in info:
+        if name not in info:
             raise AttributeError(
                 f"{self.__class__.__name__!r} object has no attribute {name!r}"
             )
 
-        value = info[key]
-        if isinstance(value, str) and key.endswith("_at"):
+        value = info[name]
+        if isinstance(value, str) and name.endswith("_at"):
             with suppress(ValueError):
                 return fromisoformat(value)
 

@@ -158,7 +158,6 @@ class Article(Resource):
     cc: Optional[str]  #:
     content_type: str  #:
     created_at: datetime  #:
-    from_: str  #:
     internal: bool  #:
     message_id: Optional[str]  #:
     message_id_md5: Optional[str]  #:
@@ -167,6 +166,11 @@ class Article(Resource):
     time_unit: Optional[str]  #:
     to: Optional[str]  #:
     updated_at: datetime  #:
+
+    @property
+    def from_(self) -> str:
+        value: str = self["from"]
+        return value
 
     @property
     def created_by(self) -> "User":
