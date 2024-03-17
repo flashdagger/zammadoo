@@ -9,6 +9,22 @@ from zammadoo.tickets import Ticket
 
 
 @pytest.fixture(scope="function")
+def single_ticket(rclient, temporary_resources) -> Generator[Ticket, None, None]:
+    tickets = [
+        {
+            "title": "__pytest__",
+            "customer_id": "guess:pytest@localhost.local",
+            "group": "Users",
+            "article": {"body": "..."},
+        },
+    ]
+
+    with temporary_resources("tickets", *tickets) as infos:
+        info = infos[0]
+        yield rclient.tickets(info["id"], info=info)
+
+
+@pytest.fixture(scope="function")
 def ticket_pair(
     rclient, temporary_resources
 ) -> Generator[Tuple[Ticket, Ticket], None, None]:

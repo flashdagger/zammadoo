@@ -2,11 +2,11 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from functools import cached_property
+from typing import TYPE_CHECKING, Optional
 
-from .resource import MutableResource
-from .resources import CreatableT, IterableT, _T_co
-from .utils import FrozenInfo
+from .resource import MutableResource, NamedResource
+from .resources import CreatableT, IterableT
 
 if TYPE_CHECKING:
     from .articles import Article
@@ -14,6 +14,55 @@ if TYPE_CHECKING:
     from .tickets import Ticket
     from .users import User
     from .utils import JsonDict
+
+
+class TimeAccountingType(NamedResource):
+    EXPANDED_ATTRIBUTES = ()  #: :meta private:
+
+
+class TimeAccountingTypes(
+    IterableT[TimeAccountingType], CreatableT[TimeAccountingType]
+):
+    """TimeAccountingTypess(...)"""
+
+    _RESOURCE_TYPE = TimeAccountingType
+
+    def __init__(self, client: "Client"):
+        super().__init__(client, "time_accounting/types")
+
+    def cached_info(self, rid: int, refresh=True, expand=False) -> "JsonDict":
+        item = f"{self.url}/{rid}"
+        cache = self.cache
+        if item not in cache or refresh:
+            for _ in self:
+                pass
+
+        return cache[item]
+
+    def create(
+        self, name: str, *, note: Optional[str] = None, active: bool = True
+    ) -> TimeAccountingType:
+        """
+        Create a new time accounting type.
+
+        :param name: the type name
+        :param note: optional note
+        :param active: active flag
+        :return: the newly created time accountings type
+        :rtype: :class:`TimeAccountingType`
+        """
+        return self._create({"name": name, "note": note, "active": active})
+
+    def delete(self, rid: int) -> None:
+        """
+        Since time_accounting types cannot be deletet via REST API, this method is not implemented
+
+        :raises: :exc:`NotImplementedError`
+        :meta private:
+        """
+        raise NotImplementedError(
+            "time_accounting types cannot be deletet via REST API"
+        )
 
 
 class TimeAccounting(MutableResource):
@@ -28,7 +77,6 @@ class TimeAccounting(MutableResource):
     created_by_id: int  #:
     updated_at: datetime  #:
     time_unit: str  #:
-    url: str  #: the API endpoint URL
 
     @property
     def updated_by(self) -> "User":
@@ -44,42 +92,10 @@ class TimeAccounting(MutableResource):
         return None if aid is None else self.parent.client.ticket_articles(aid)
 
     @property
-    def type(self) -> Optional[str]:
+    def type(self) -> Optional[TimeAccountingType]:
         type_id: int = self["type_id"]
         parent: "TimeAccountings" = self.parent  # type: ignore[assignment]
-        return None if type_id is None else parent.types[type_id].name
-
-    def update(self: _T_co, **kwargs) -> _T_co:
-        """
-        Update the resource. Required permission: ``admin.time_accounting``.
-
-        examples::
-
-            time_accounting = client.time_accountings(1)
-
-            # time_unit can be ``float`` or ``str``
-            new_instance = time_accounting.update(time_unit=60.0)
-
-            # change accounting type: ``str`` or type_id: ``int``
-            new_instance = time_accounting.update(type="research")
-
-            # change accounting type to default
-            new_instance = time_accounting.update(type_id=None)
-
-
-        :return: a new instance of the updated time accounting
-        """
-        assert (kwargs.keys() - {"time_unit", "type", "type_id", "article_id"}) == set()
-        return super().update(**kwargs)
-
-
-class TimeAccountingsType(FrozenInfo):
-    id: int
-    name: str
-    note: str
-    active: bool
-    created_at: datetime
-    updated_at: datetime
+        return None if type_id is None else parent.types(type_id)
 
 
 class TimeAccountings(IterableT[TimeAccounting], CreatableT[TimeAccounting]):
@@ -88,31 +104,16 @@ class TimeAccountings(IterableT[TimeAccounting], CreatableT[TimeAccounting]):
     _RESOURCE_TYPE = TimeAccounting
 
     def __init__(self, client: "Client"):
-        self._types: Optional[Dict[int, TimeAccountingsType]] = None
         super().__init__(client, "time_accountings")
 
     def create(
         self,
-        time_unit: Union[str, float],
-        ticket: Union["Ticket", int],
-        type_: Union[None, int, str] = None,
+        ticket_id: int,
+        **kwargs,
     ) -> TimeAccounting:
-        json: "JsonDict" = {
-            "time_unit": time_unit,
-            "ticket_id": ticket if isinstance(ticket, int) else ticket.id,
-        }
-        if type_:
-            key = "type" if isinstance(type_, str) else "type_id"
-            json[key] = type_
+        return self._create(json={"ticket_id": ticket_id, **kwargs})
 
-        return self._create(json=json)
-
-    @property
-    def types(self) -> Dict[int, TimeAccountingsType]:
-        """returns a mapping of properties for each defined accounting type"""
-        if self._types is None:
-            self._types = {
-                info["id"]: TimeAccountingsType(info)
-                for info in self.client.get("time_accounting/types")
-            }
-        return self._types
+    @cached_property
+    def types(self) -> TimeAccountingTypes:
+        """Manages the ``/time_accounting/types`` endpoint."""
+        return TimeAccountingTypes(self.client)

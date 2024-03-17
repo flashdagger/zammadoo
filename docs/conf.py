@@ -33,7 +33,7 @@ extensions = [
 autodoc_default_options = {
     "undoc-members": True,
     "member-order": "groupwise",
-    "exclude-members": "cached_info, create_with_name",
+    "exclude-members": "cached_info",
     "inherited-members": True,
 }
 autoclass_content = "both"

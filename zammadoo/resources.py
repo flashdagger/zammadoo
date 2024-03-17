@@ -91,6 +91,7 @@ class ResourcesT(Generic[_T_co]):
         return self.cache.timestamp(f"{self.url}/{rid}")
 
     def delete(self, rid: int) -> None:
+        """:meta private:"""
         item = f"{self.url}/{rid}"
         cache = self.cache
         self.client.delete(self.endpoint, rid)

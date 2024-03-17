@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
-from .time_accountings import TimeAccounting
+from .time_accountings import TimeAccounting, TimeAccountingType
 from .utils import LINK_TYPES, LinkType
 
 if TYPE_CHECKING:
@@ -295,6 +295,24 @@ class Ticket(MutableResource):
             internal=internal,
             **kwargs,
         )
+
+    def create_time_accounting(
+        self, time_unit: Union[str, float], **kwargs
+    ) -> "TimeAccounting":
+        """
+        Add accounted time to ticket.
+
+        :param time_unit: accounted time units
+        :param kwargs: type(`str` | :class:`TimeAccountingType`)
+        :rtype: :class:`TimeAccounting`
+        """
+        kwargs["time_unit"] = str(time_unit)
+        ta_type = kwargs.get("type")
+        if isinstance(ta_type, TimeAccountingType):
+            kwargs.pop("type")
+            kwargs["type_id"] = ta_type.id
+
+        return self.parent.client.time_accountings.create(self.id, **kwargs)
 
     def update(self: _T_co, **kwargs) -> _T_co:
         """

@@ -1,48 +1,71 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
 from datetime import datetime
 
-from . import ticket_pair
+import pytest
+
+from . import single_ticket
 
 
-def test_ticket_time_accounting(ticket_pair):
-    ticket_a, ticket_b = ticket_pair
-    accountings = ticket_a.time_accountings()
-    assert not accountings
-
-    client = ticket_a.parent.client
-    accounting = client.time_accountings.create(12.3, ticket_a)
+def test_create_ticket_time_accounting_default_type(single_ticket):
+    accounting = single_ticket.create_time_accounting(12.3)
 
     assert accounting.time_unit == "12.3"
     assert accounting.type is None
-    assert accounting.ticket == ticket_a
-    assert accounting.created_by == accounting.updated_by == client.users.me()
-    assert isinstance(accounting.created_at, datetime)
-    assert accounting.created_at == accounting.updated_at
+    assert (
+        accounting.created_by
+        == accounting.updated_by
+        == single_ticket.parent.client.users.me()
+    )
+    assert accounting.ticket == single_ticket
     assert accounting.ticket_article is None
 
-    new_article = ticket_a.create_article(
-        "article with added accounting", time_unit="4.5"
-    )
-    accountings = ticket_a.time_accountings()
-    assert len(accountings) == 2
-    assert accountings[1].ticket_article == new_article
+    single_ticket.reload()
+    assert single_ticket.time_accountings() == [accounting]
+    assert single_ticket.time_unit == "12.3"
 
-    accountings[1].delete()
-    accountings = ticket_a.time_accountings()
-    assert len(accountings) == 1
+    accounting.delete()
+    single_ticket.reload()
+    assert single_ticket.time_accountings() == []
+    assert single_ticket.time_unit == "0.0"
 
-    accounting_types = list(client.time_accountings.types.values())
-    assert accounting_types
-    type_name = accounting_types[0].name
-    type_id = accounting_types[0].id
 
-    new_accounting = accountings[0].update(type=type_name)
-    assert new_accounting.type == type_name
+def test_create_ticket_time_accounting_with_type(single_ticket):
+    client = single_ticket.parent.client
+    accounting_type = next(iter(client.time_accountings.types))
 
-    new_accounting = client.time_accountings.create(0, ticket_b, type_=type_name)
-    assert new_accounting.type == type_name
+    accounting = single_ticket.create_time_accounting("1.0", type_id=accounting_type.id)
+    assert accounting.time_unit == "1.0"
+    assert accounting.type == accounting_type
 
-    new_accounting = client.time_accountings.create(0, ticket_b, type_=type_id)
-    assert new_accounting.type_id == type_id
+    accounting = single_ticket.create_time_accounting("1.1", type=accounting_type.name)
+    assert accounting.time_unit == "1.1"
+    assert accounting.type == accounting_type
+
+    accounting = single_ticket.create_time_accounting("1.2", type=accounting_type)
+    assert accounting.time_unit == "1.2"
+    assert accounting.type == accounting_type
+
+
+def test_create_time_accounting_types(rclient):
+    from zammadoo.users import User
+
+    type_name = "__pytest"
+    atypes = rclient.time_accountings.types
+    atype = atypes.create(type_name)
+    assert atype.active  # default
+    assert atype.note is None  # default
+    assert isinstance(atype.url, str)
+    assert isinstance(atype.created_by, User)
+    assert isinstance(atype.created_at, datetime)
+    assert atype in list(atypes)
+
+    # test cached info for newly created instances
+    assert atype.view() == atypes(atype.id).view()
+    atypes.cache.clear()
+    # test cached info for newly created instances if cache is empty
+    assert atype.view() == atypes(atype.id).view()
+
+    assert atype.name == type_name
+    with pytest.raises(NotImplementedError):
+        atype.delete()
