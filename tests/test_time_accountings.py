@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 from datetime import datetime
 
 import pytest
@@ -28,6 +29,20 @@ def test_create_ticket_time_accounting_default_type(single_ticket):
     single_ticket.reload()
     assert single_ticket.time_accountings() == []
     assert single_ticket.time_unit == "0.0"
+
+
+def test_create_article_time_accounting(single_ticket):
+    article = single_ticket.create_article("...")
+    assert article.time_unit is None
+
+    single_ticket.reload()
+    assert single_ticket.time_unit is None
+
+    accounting = article.create_time_accounting("1.23")
+    assert accounting.ticket_article == article
+
+    single_ticket.reload()
+    assert single_ticket.time_unit == "1.23"
 
 
 def test_create_ticket_time_accounting_with_type(single_ticket):

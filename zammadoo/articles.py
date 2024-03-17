@@ -14,6 +14,7 @@ from typing import (
     List,
     Optional,
     TypedDict,
+    Union,
 )
 
 import requests
@@ -21,11 +22,10 @@ from charset_normalizer import is_binary
 
 from .resource import Resource
 from .resources import CreatableT, ResourcesT
+from .time_accountings import TimeAccounting
 from .utils import FrozenInfo
 
 if TYPE_CHECKING:
-    from typing import Union
-
     from .client import Client
     from .tickets import Ticket
     from .users import User
@@ -197,6 +197,19 @@ class Article(Resource):
             Attachment(client, f"{attachment_url}/{info['id']}", info)
             for info in self["attachments"]
         ]
+
+    def create_time_accounting(
+        self, time_unit: Union[str, float], **kwargs
+    ) -> "TimeAccounting":
+        """
+        Add accounted time to ticket article.
+
+        :param time_unit: accounted time units
+        :param kwargs: type(`str` | :class:`TimeAccountingType`)
+        :rtype: :class:`TimeAccounting`
+        """
+        kwargs["ticket_article_id"] = self.id
+        return self.ticket.create_time_accounting(time_unit, **kwargs)
 
 
 class Articles(CreatableT[Article], ResourcesT[Article]):
