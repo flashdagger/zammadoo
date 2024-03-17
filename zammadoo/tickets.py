@@ -146,6 +146,9 @@ class Ticket(MutableResource):
         return [articles(aid) for aid in sorted(article_ids)]
 
     def time_accountings(self) -> List[TimeAccounting]:
+        """
+        :return: all time accounting objects for the ticket.
+        """
         parent = self.parent
         client = parent.client
         time_accountings = client.time_accountings
@@ -183,7 +186,7 @@ class Ticket(MutableResource):
         """
         returns all linked tickets grouped by link type
 
-        :returns: ``{"normal": [Ticket, ...], "parent": [...], "child": [...]}``
+        :return: ``{"normal": [Ticket, ...], "parent": [...], "child": [...]}``
         """
         parent = self.parent
         client = parent.client

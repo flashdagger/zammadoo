@@ -202,17 +202,25 @@ class Article(Resource):
             for info in self["attachments"]
         ]
 
-    def create_time_accounting(
+    def create_or_update_time_accounting(
         self, time_unit: Union[str, float], **kwargs
     ) -> "TimeAccounting":
         """
-        Add accounted time to ticket article.
+        Create accounted time for ticket article.
+        If time accounting already exists, it will be updated.
 
         :param time_unit: accounted time units
-        :param kwargs: type(`str` | :class:`TimeAccountingType`)
+        :param kwargs: type(`str`) or type_id(`int`)
         :rtype: :class:`TimeAccounting`
         """
-        kwargs["ticket_article_id"] = self.id
+        aid = self.id
+        kwargs["ticket_article_id"] = aid
+
+        ticket = self.ticket
+        for accounting in ticket.time_accountings():
+            if accounting["ticket_article_id"] == aid:
+                return accounting.update(time_unit=str(time_unit), **kwargs)
+
         return self.ticket.create_time_accounting(time_unit, **kwargs)
 
 

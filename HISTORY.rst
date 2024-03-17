@@ -13,7 +13,9 @@ History
 * **added features**
 
     * added ``raise_if_exists`` parameter to :meth:`articles.Attachment.download` method
-    * support ``time_accountings`` endpoint by :class:`time_accountings.TimeAccountings`
+    * added support for the ``/time_accountings`` endpoint (for details see :doc:`api/time_accountings`)
+    * added :meth:`tickets.Ticket.time_accountings` and :meth:`tickets.Ticket.create_time_accounting`
+    * added :meth:`articles.Article.create_or_update_time_accounting`
 
 * **fixes**
 

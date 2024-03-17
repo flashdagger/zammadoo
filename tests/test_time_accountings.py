@@ -38,11 +38,18 @@ def test_create_article_time_accounting(single_ticket):
     single_ticket.reload()
     assert single_ticket.time_unit is None
 
-    accounting = article.create_time_accounting("1.23")
+    accounting = article.create_or_update_time_accounting("1.23")
     assert accounting.ticket_article == article
+    article.reload()
+    assert article.time_unit == "1.23"
+
+    new_accounting = article.create_or_update_time_accounting("2.34")
+    assert new_accounting == accounting
+    article.reload()
+    assert article.time_unit == "2.34"
 
     single_ticket.reload()
-    assert single_ticket.time_unit == "1.23"
+    assert single_ticket.time_unit == "2.34"
 
 
 def test_create_ticket_time_accounting_with_type(single_ticket):
