@@ -46,9 +46,8 @@ class TimeAccounting(MutableResource):
     @property
     def type(self) -> Optional[str]:
         type_id: int = self["type_id"]
-        if type_id is None:
-            return None
-        return self.parent.client.time_accountings.types[type_id].name
+        parent: "TimeAccountings" = self.parent  # type: ignore[assignment]
+        return None if type_id is None else parent.types[type_id].name
 
     def update(self: _T_co, **kwargs) -> _T_co:
         """

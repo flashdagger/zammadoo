@@ -4,7 +4,7 @@
 import weakref
 from dataclasses import asdict
 from datetime import datetime
-from functools import cached_property, partial
+from functools import partial
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -50,6 +50,8 @@ class ResourcesT(Generic[_T_co]):
     def __init__(self, client: "Client", endpoint: str):
         self._client = weakref.ref(client)
         self.endpoint: str = endpoint
+        self.url = f"{client.url}/{endpoint}"  #: the resource's API URL
+
         self.cache = LruCache["JsonDict"](
             max_size=self.DEFAULT_CACHE_SIZE
         )  #: resource LRU cache
@@ -71,11 +73,6 @@ class ResourcesT(Generic[_T_co]):
         client = self._client()
         assert client is not None, "missing client reference"
         return client
-
-    @cached_property
-    def url(self) -> str:
-        """the resource's API URL"""
-        return f"{self.client.url}/{self.endpoint}"
 
     def cached_info(self, rid: int, refresh=True, expand=False) -> "JsonDict":
         item = f"{self.url}/{rid}"

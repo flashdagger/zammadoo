@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-from functools import cached_property
+
 from typing import TYPE_CHECKING, List
 
 from .resource import NamedResource
@@ -28,7 +28,7 @@ class Organization(NamedResource):
         users = self.parent.client.users
         return [users(sec_mid) for sec_mid in self["secondary_member_ids"]]
 
-    @cached_property
+    @property
     def weburl(self) -> str:
         """URL of the organization profile in the webclient"""
         return f"{self.parent.client.weburl}/#organization/profile/{self.id}"

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .resource import MutableResource, NamedResource
@@ -58,12 +57,14 @@ class State(NamedResource):
     @property
     def next_state(self) -> Optional["State"]:
         sid: Optional[int] = self["next_state_id"]
-        return None if sid is None else self.parent.client.ticket_states(sid)
+        states: "States" = self.parent  # type: ignore[assignment]
+        return None if sid is None else states(sid)
 
     @property
     def state_type(self) -> "State":
         sid: int = self["state_type_id"]
-        return self.parent.client.ticket_states(sid)
+        states: "States" = self.parent  # type: ignore[assignment]
+        return states(sid)
 
 
 class States(IterableT[State], CreatableT[State]):
@@ -321,7 +322,7 @@ class Ticket(MutableResource):
         info = self.parent.client.get("ticket_history", self.id)
         return cast(List["StringKeyMapping"], info["history"])
 
-    @cached_property
+    @property
     def weburl(self) -> str:
         """URL of the ticket in the webclient"""
         return f"{self.parent.client.weburl}/#ticket/zoom/{self.id}"

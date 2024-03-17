@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from .groups import Group
@@ -82,14 +81,15 @@ class User(NamedResource):
     @property
     def out_of_office_replacement(self) -> Optional["User"]:
         uid: Optional[int] = self["out_of_office_replacement_id"]
-        return None if uid is None else self.parent.client.users(uid)
+        users: "Users" = self.parent  # type: ignore[assignment]
+        return None if uid is None else users(uid)
 
     @property
     def roles(self) -> List["Role"]:
         roles = self.parent.client.roles
         return [roles(rid) for rid in self["role_ids"]]
 
-    @cached_property
+    @property
     def weburl(self) -> str:
         """URL of the user profile in the webclient"""
         return f"{self.parent.client.weburl}/#user/profile/{self.id}"
