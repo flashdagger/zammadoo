@@ -1,2 +1,2 @@
-{"method": "GET", "headers": {"Content-Type": "text/html; charset=utf-8", "Content-Length": "0"}, "url": "https://httpbin.org/status/200", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 0}
+{"method": "GET", "url": "https://httpbin.org/status/200", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "text/html; charset=utf-8", "Content-Length": "0"}, "encoding": "utf-8", "content_size": 0}
 

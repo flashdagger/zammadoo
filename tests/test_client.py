@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+import re
+
 import pytest
 
 from zammadoo import APIException
 
 
 def test_server_version(rclient):
-    version = rclient.server_version.split(".")
-    assert version[:2] == ["6", "1"]
+    assert re.match(r"[5-7]\.\d+(?:\.[\w-]+)+", rclient.server_version)
 
 
 def test_raise_api_exception(rclient):

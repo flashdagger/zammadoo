@@ -150,8 +150,12 @@ def test_ticket_history(ticket_pair):
 
 
 def test_ticket_search(rclient, ticket_pair, record_log):
+    """
+    to ensure the search functionality zammad has to use the elasticsearch functionality
+    the service must be running for this test to pass
+    """
     if record_log[1]:
-        time.sleep(3.0)
+        time.sleep(5.0)
     tickets = list(rclient.tickets.search(f"title:__pytest__"))
     assert len(tickets) >= 2
 

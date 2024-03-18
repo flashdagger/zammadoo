@@ -1,10 +1,10 @@
 {"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 []
-{"method": "POST", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+{"method": "POST", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "request_json": {"name": "__pytest__"}, "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "42"}, "encoding": "utf-8", "content_size": 42}
-[{"id":156,"name":"__pytest__","count":0}]
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "157"}, "encoding": "utf-8", "content_size": 157}
+[{"id":173,"name":"Test","count":1},{"id":185,"name":"__pytest__","count":0},{"id":172,"name":"accounting","count":2},{"id":174,"name":"plombery","count":2}]
 {"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "33"}, "encoding": "utf-8", "content_size": 33}
-[{"id":156,"value":"__pytest__"}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/156#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+[{"id":185,"value":"__pytest__"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/185#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}

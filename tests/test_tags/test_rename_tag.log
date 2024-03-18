@@ -2,15 +2,15 @@
 []
 {"method": "POST", "url": "https://localhost/api/v1/tag_list?name=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "42"}, "encoding": "utf-8", "content_size": 42}
-[{"id":157,"name":"__pytest__","count":0}]
-{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "42"}, "encoding": "utf-8", "content_size": 42}
-[{"id":157,"name":"__pytest__","count":0}]
-{"method": "PUT", "url": "https://localhost/api/v1/tag_list/157", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "157"}, "encoding": "utf-8", "content_size": 157}
+[{"id":173,"name":"Test","count":1},{"id":186,"name":"__pytest__","count":0},{"id":172,"name":"accounting","count":2},{"id":174,"name":"plombery","count":2}]
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "157"}, "encoding": "utf-8", "content_size": 157}
+[{"id":173,"name":"Test","count":1},{"id":186,"name":"__pytest__","count":0},{"id":172,"name":"accounting","count":2},{"id":174,"name":"plombery","count":2}]
+{"method": "PUT", "url": "https://localhost/api/v1/tag_list/186", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "request_json": {"name": "__pytest_new__"}, "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "37"}, "encoding": "utf-8", "content_size": 37}
-[{"id":157,"value":"__pytest_new__"}]
 {"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest_new__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "37"}, "encoding": "utf-8", "content_size": 37}
-[{"id":157,"value":"__pytest_new__"}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/157#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+[{"id":186,"value":"__pytest_new__"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/186#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
+{"method": "GET", "url": "https://localhost/api/v1/tag_search?term=__pytest__#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+[]

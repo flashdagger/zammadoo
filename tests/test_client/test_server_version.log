@@ -1,2 +1,2 @@
-{"method": "GET", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "45"}, "url": "https://localhost/api/v1/version", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 45}
-{"version":"6.1.0-1696849338.59fe2e15.focal"}
+{"method": "GET", "url": "https://localhost/api/v1/version", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "45"}, "encoding": "utf-8", "content_size": 45}
+{"version":"6.2.0-1709189301.4a2dd7d0.focal"}

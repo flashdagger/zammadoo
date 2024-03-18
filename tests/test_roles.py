@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-
 import pytest
 
 
 @pytest.mark.no_record
 def test_roles_create_but_cannot_delete(rclient):
+    """
+    to delete the created role via the rails console use:
+
+        sudo zammad run rails r "Role.find_by(name: 'Clone: Customer').destroy"
+
+    """
     role = rclient.roles(3)
     assert role.name == "Customer"
 
@@ -20,7 +25,8 @@ def test_roles_create_but_cannot_delete(rclient):
 
 @pytest.mark.no_record
 def test_role_update(rclient):
-    role = rclient.roles(7)
+    """update the id to the newly created role"""
+    role = rclient.roles(9)
     assert role.name == "Clone: Customer"
     updated_role = role.update(active=False)
     assert updated_role.active is False

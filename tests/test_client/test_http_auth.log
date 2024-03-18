@@ -1,10 +1,10 @@
-{"method": "GET", "headers": {"Content-Type": "application/json", "Content-Length": "49"}, "url": "https://httpbin.org/basic-auth/myuser/mysecret", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 49}
+{"method": "GET", "url": "https://httpbin.org/basic-auth/myuser/mysecret", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json", "Content-Length": "49"}, "encoding": "utf-8", "content_size": 49}
 {
   "authenticated": true, 
   "user": "myuser"
 }
 
-{"method": "GET", "headers": {"Content-Type": "application/json", "Content-Length": "49"}, "url": "https://httpbin.org/hidden-basic-auth/myuser/mysecret", "status_code": 200, "encoding": "utf-8", "reason": "OK", "content_size": 49}
+{"method": "GET", "url": "https://httpbin.org/hidden-basic-auth/myuser/mysecret", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json", "Content-Length": "49"}, "encoding": "utf-8", "content_size": 49}
 {
   "authenticated": true, 
   "user": "myuser"

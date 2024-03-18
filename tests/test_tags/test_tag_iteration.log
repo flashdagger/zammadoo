@@ -2,13 +2,13 @@
 {}
 {"method": "POST", "url": "https://localhost/api/v1/tag_list?name=baztag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
-{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "75"}, "encoding": "utf-8", "content_size": 75}
-[{"id":155,"name":"baztag","count":0},{"id":154,"name":"footag","count":0}]
+{"method": "GET", "url": "https://localhost/api/v1/tag_list", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "190"}, "encoding": "utf-8", "content_size": 190}
+[{"id":173,"name":"Test","count":1},{"id":172,"name":"accounting","count":2},{"id":184,"name":"baztag","count":0},{"id":183,"name":"footag","count":0},{"id":174,"name":"plombery","count":2}]
 {"method": "GET", "url": "https://localhost/api/v1/tag_search?term=footag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "29"}, "encoding": "utf-8", "content_size": 29}
-[{"id":154,"value":"footag"}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/154#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+[{"id":183,"value":"footag"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/183#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
 {"method": "GET", "url": "https://localhost/api/v1/tag_search?term=baztag#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "29"}, "encoding": "utf-8", "content_size": 29}
-[{"id":155,"value":"baztag"}]
-{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/155#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+[{"id":184,"value":"baztag"}]
+{"method": "DELETE", "url": "https://localhost/api/v1/tag_list/184#fixture", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
 {}
