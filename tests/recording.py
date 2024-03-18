@@ -4,13 +4,13 @@
 import json
 import re
 from collections import deque
+from contextlib import suppress
 from mmap import ACCESS_READ, mmap
 from pathlib import Path
 from typing import Any, Deque, Dict, Tuple
+from unittest import TestCase
 
 from requests import PreparedRequest, Response
-
-# pylint: disable=consider-using-with
 
 
 class ResponseRecorder:
@@ -20,6 +20,11 @@ class ResponseRecorder:
     def dump(self, method: str, response: Response) -> None:
         fd = self.fd
         content = response.content
+        request_body: bytes = response.request.body
+        extra = {}
+        if request_body and request_body.startswith(b"{"):
+            with suppress(json.JSONDecodeError, UnicodeDecodeError):
+                extra["request_json"] = json.loads(request_body.decode("utf-8"))
         meta: Dict[str, Any] = {
             "method": method,
             "url": response.url,
@@ -31,8 +36,10 @@ class ResponseRecorder:
                 if re.fullmatch(r"[Cc]ontent-[A-Za-z][a-z]+", key)
             ),
             "encoding": response.encoding,
+            **extra,
             "content_size": len(content),
         }
+
         fd.writelines((json.dumps(meta).encode("utf-8"), b"\n", content, b"\n"))
 
     def clear(self) -> None:
@@ -90,6 +97,15 @@ class ResponsePlayback:
         )
         mm.seek(content_start)
         resp.raw = mm
+
+        expected_json = meta.get("request_json")
+        if expected_json is not None:
+            request_json = json.loads(request.body.decode("utf-8"))
+            TestCase().assertDictEqual(
+                expected_json,
+                request_json,
+                "Recorded request JSON differ from current test.",
+            )
 
         return resp
 
