@@ -3,8 +3,6 @@
 
 __version__ = "0.3.0.dev0"
 
-from .client import LOG, APIException
-from .client import Client as Client  # pylint: disable=useless-import-alias
+from .client import LOG, APIException, Client
 
 LOG.name = __name__
-_ = APIException, Client  # make pyflakes happy

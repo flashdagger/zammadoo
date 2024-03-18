@@ -21,12 +21,12 @@ from typing import (
 )
 
 if TYPE_CHECKING:
+    # noinspection PyUnresolvedReferences
     from os import PathLike
 
     from typing_extensions import TypeAlias
 
     LinkType: TypeAlias = Literal["normal", "parent", "child"]
-    _ = PathLike
 else:
     LinkType = Literal["normal", "parent", "child"]
 

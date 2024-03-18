@@ -23,10 +23,11 @@ from .utils import YieldCounter
 
 if TYPE_CHECKING:
     from .client import Client
+
+    # noinspection PyUnresolvedReferences
     from .resource import Resource
     from .utils import JsonDict, JsonDictList
 
-    _ = Resource  # make PyCharm happy
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
 
