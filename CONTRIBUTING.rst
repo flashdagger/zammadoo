@@ -5,6 +5,19 @@ Contributing
 How to develop on this project
 ==============================
 
+Get the code from the repository
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The development of *zammadoo* takes place on GitHub_.
+The ``main`` branch should contain the most recent and working code.
+For a checkout of the the files run ::
+
+    git clone -b main https://github.com/flashdagger/zammadoo.git
+
+If you have a GitHub account you can fork the project from https://github.com/flashdagger/zammadoo
+and create your own development branch.
+
+
 Setting up your own virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -48,9 +61,8 @@ Run ``pylint zammadoo`` to run the linter.
 Test your changes
 ^^^^^^^^^^^^^^^^^
 
-Run ``pytest`` to run the tests.
-Ensure code coverage report in ``report/index.html`` shows `100%` coverage,
-add tests to your PR.
+Add unit tests to your PR and run ``pytest`` to run the tests.
+Ensure the code coverage report in ``report/index.html`` includes your changes.
 
 
 Build the documentation locally
@@ -71,7 +83,7 @@ Open the ``docs/_build/html/index.html`` in your browser to ensure your new chan
 Commit your changes and push to your fork
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Run ``git push origin my_contribution``
+Run ``git push -u origin my_contribution``
 
 
 Submit a pull request
@@ -80,5 +92,6 @@ Submit a pull request
 On github interface, click on `Pull Request` button. Wait CI to run and one of the developers will review your PR.
 
 
+.. _GitHub: https://github.com/
 .. _Poetry: https://python-poetry.org/
 .. _pytest: https://www.pytest.org/
