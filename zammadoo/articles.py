@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 from base64 import b64encode
-from datetime import datetime
 from mimetypes import guess_type
 from pathlib import Path
 from typing import (
@@ -157,7 +156,6 @@ class Article(Resource):
     body: str  #:
     cc: Optional[str]  #:
     content_type: str  #:
-    created_at: datetime  #:
     internal: bool  #:
     message_id: Optional[str]  #:
     message_id_md5: Optional[str]  #:
@@ -165,9 +163,10 @@ class Article(Resource):
     subject: Optional[str]  #:
     time_unit: Optional[str]  #:
     to: Optional[str]  #:
-    updated_at: datetime  #:
 
+    created_at = MutableResource.created_at
     created_by = MutableResource.created_by
+    updated_at = MutableResource.updated_at
     updated_by = MutableResource.updated_by
 
     @property

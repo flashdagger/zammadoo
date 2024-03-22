@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, Optional, Tuple
 
 from .resources import ResourcesT, _T_co
-from .utils import FrozenInfo
+from .utils import FrozenInfo, fromisoformat
 
 if TYPE_CHECKING:
     from .users import User
@@ -66,13 +66,18 @@ class Resource(FrozenInfo):
 
 
 class MutableResource(Resource):
-    created_at: datetime  #:
-    updated_at: datetime  #:
+    @property
+    def created_at(self) -> datetime:
+        return fromisoformat(self["created_at"])
 
     @property
     def created_by(self) -> "User":
         uid: int = self["created_by_id"]
         return self.parent.client.users(uid)
+
+    @property
+    def updated_at(self) -> datetime:
+        return fromisoformat(self["updated_at"])
 
     @property
     def updated_by(self) -> "User":

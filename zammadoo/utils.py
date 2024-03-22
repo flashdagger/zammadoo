@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from contextlib import suppress
 from datetime import datetime
 from itertools import chain
 from types import MappingProxyType
@@ -77,23 +76,18 @@ class FrozenInfo:
 
     def __getattr__(self, name: str) -> Union["JsonType", datetime]:
         info: Dict[str, "JsonType"] = self._info
+
         if name in info:
-            if not name.endswith("_at"):
-                return info[name]
-        else:
-            self._assert_attribute(name)
+            return info[name]
+
+        self._assert_attribute(name)
 
         if name not in info:
             raise AttributeError(
                 f"{self.__class__.__name__!r} object has no attribute {name!r}"
             )
 
-        value = info[name]
-        if isinstance(value, str) and name.endswith("_at"):
-            with suppress(ValueError):
-                return fromisoformat(value)
-
-        return value
+        return info[name]
 
     def _assert_attribute(self, name: Optional[str] = None) -> None:
         pass

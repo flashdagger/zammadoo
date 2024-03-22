@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from datetime import datetime
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
@@ -73,9 +72,6 @@ class TimeAccounting(MutableResource):
     id: int  #:
     ticket_id: int  #:
     ticket_article_id: Optional[int]  #:
-    created_at: datetime  #:
-    created_by_id: int  #:
-    updated_at: datetime  #:
     time_unit: str  #:
 
     @property
