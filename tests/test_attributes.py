@@ -25,11 +25,19 @@ def test_id_attribute(client):
 
 
 def test_datetime_type_attribute(client):
-    ticket = client.tickets(1, info={"id": 1, "created_at": "2021-11-03T11:51:13.759Z"})
+    ticket = client.tickets(
+        1,
+        info={
+            "id": 1,
+            "created_at": "2021-11-03T11:51:13.759Z",
+            "updated_at": "2021-11-03T11:51:13.759Z",
+        },
+    )
 
     created_at = ticket.created_at
     assert isinstance(created_at, datetime)
     assert created_at.tzname() == "UTC"
+    assert created_at == ticket.updated_at
 
 
 def test_access_item_named_from(client):

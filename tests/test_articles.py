@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
+from datetime import datetime
+
 import pytest
 
 from . import ticket_pair
@@ -18,6 +21,22 @@ def test_article_origin_by_attribute(client):
 def test_article_updated_by_attribute(client):
     article = client.ticket_articles(1, info={"id": 1, "updated_by_id": 2})
     assert article.updated_by == client.users(2)
+
+
+def test_article_datetime_attributes(client):
+    ticket = client.ticket_articles(
+        1,
+        info={
+            "id": 1,
+            "created_at": "2021-11-03T11:51:13.759Z",
+            "updated_at": "2021-11-03T11:51:13.759Z",
+        },
+    )
+
+    created_at = ticket.created_at
+    assert isinstance(created_at, datetime)
+    assert created_at.tzname() == "UTC"
+    assert created_at == ticket.updated_at
 
 
 def test_article_ticket_attribute(client):

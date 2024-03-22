@@ -20,7 +20,7 @@ from typing import (
 import requests
 from charset_normalizer import is_binary
 
-from .resource import Resource
+from .resource import MutableResource, Resource
 from .resources import CreatableT, ResourcesT
 from .time_accountings import TimeAccounting
 from .utils import FrozenInfo
@@ -167,25 +167,18 @@ class Article(Resource):
     to: Optional[str]  #:
     updated_at: datetime  #:
 
+    created_by = MutableResource.created_by
+    updated_by = MutableResource.updated_by
+
     @property
     def from_(self) -> str:
         value: str = self["from"]
         return value
 
     @property
-    def created_by(self) -> "User":
-        uid: int = self["created_by_id"]
-        return self.parent.client.users(uid)
-
-    @property
     def origin_by(self) -> Optional["User"]:
         oid: int = self["origin_by_id"]
         return self.parent.client.users(oid)
-
-    @property
-    def updated_by(self) -> "User":
-        uid: int = self["updated_by_id"]
-        return self.parent.client.users(uid)
 
     @property
     def ticket(self) -> "Ticket":
