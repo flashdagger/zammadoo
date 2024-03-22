@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, List, Optional, TypedDict
+from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
 from .resources import CreatableT, IterableT, _T_co
@@ -14,11 +14,6 @@ if TYPE_CHECKING:
 class Group(NamedResource):
     """Group(...)"""
 
-    class _TypedInfo(TypedDict, total=False):
-        parent_id: Optional[int]
-        user_ids: List[int]
-
-    _info: _TypedInfo
     shared_drafts: bool  #:
     user_ids: List[int]  #:
 

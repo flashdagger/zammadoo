@@ -61,7 +61,7 @@ class Resource(FrozenInfo):
         info.update(new_info)
 
     def last_request_at(self) -> Optional[datetime]:
-        """return the last request timestamp as :class:`datetime` or ``None``"""
+        """:return: the last request timestamp as :class:`datetime` or ``None``"""
         return self.parent.cached_timestamp(self.id)
 
 

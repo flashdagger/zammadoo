@@ -22,19 +22,18 @@ class User(NamedResource):
     fax: str  #:
     firstname: str  #:
     image: Optional[str]  #:
+    last_login = OptionalDateTime()
     lastname: str  #:
     login: str  #: users login name
     login_failed: int  #:
     mobile: str  #:
     out_of_office: bool  #:
-    out_of_office_end_at: Optional[str]  #:
-    out_of_office_start_at: Optional[str]  #:
+    out_of_office_end_at = OptionalDateTime()
+    out_of_office_start_at = OptionalDateTime()
     phone: str  #:
     verified: bool  #:
     vip: bool  #:
     web: str  #:
-
-    last_login = OptionalDateTime()
 
     @property
     def fullname(self) -> str:

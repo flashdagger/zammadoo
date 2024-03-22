@@ -12,7 +12,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    TypedDict,
     Union,
 )
 
@@ -34,12 +33,6 @@ if TYPE_CHECKING:
 
 class Attachment(FrozenInfo):
     """Attachment(...)"""
-
-    class _TypedInfo(TypedDict, total=False):
-        preferences: Dict[str, str]
-        size: str
-
-    _info: _TypedInfo
 
     id: int  #:
     filename: str  #:

@@ -97,3 +97,40 @@ html_theme_options = {
 
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
+
+dummy_object = object()
+empty_dict = {}
+
+
+def hook(_app, what, _name, obj, _options, _lines):
+    if what != "class":
+        return
+
+    annotations = {}
+    for cls in reversed(obj.mro()):
+        cls_annotations = getattr(cls, "__annotations__", empty_dict)
+
+        for key, value in cls.__dict__.items():
+            if (
+                key.startswith("_")
+                or not isinstance(value, object)
+                or key in cls_annotations
+            ):
+                continue
+            getter = getattr(value, "__get__", dummy_object)
+            return_type = getattr(getter, "__annotations__", empty_dict).get("return")
+            if return_type:
+                annotations[key] = return_type
+
+        if cls is obj and annotations:
+            cls_annotations.update(
+                {
+                    key: value
+                    for key, value in annotations.items()
+                    if key not in cls_annotations
+                }
+            )
+
+
+def setup(app):
+    app.connect("autodoc-process-docstring", hook)
