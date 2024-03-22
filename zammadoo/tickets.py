@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 from .resource import MutableResource, NamedResource
 from .resources import CreatableT, IterableT, SearchableT, _T_co
 from .time_accountings import TimeAccounting, TimeAccountingType
-from .utils import LINK_TYPES, LinkType
+from .utils import LINK_TYPES, LinkType, OptionalDateTime
 
 if TYPE_CHECKING:
     from .articles import Article, OptionalFiles
@@ -101,6 +101,17 @@ class Ticket(MutableResource):
     number: str  #:
     time_unit: Optional[str]  #:
     title: str  #:
+
+    close_at = OptionalDateTime()
+    close_escalation_at = OptionalDateTime()
+    escalation_at = OptionalDateTime()
+    first_response_at = OptionalDateTime()
+    first_response_escalation_at = OptionalDateTime()
+    last_contact_agent_at = OptionalDateTime()
+    last_contact_at = OptionalDateTime()
+    last_contact_customer_at = OptionalDateTime()
+    last_owner_update_at = OptionalDateTime()
+    update_escalation_at = OptionalDateTime()
 
     @property
     def customer(self) -> "User":
