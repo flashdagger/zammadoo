@@ -22,7 +22,7 @@ from charset_normalizer import is_binary
 from .resource import MutableResource, Resource
 from .resources import CreatableT, ResourcesT
 from .time_accountings import TimeAccounting
-from .utils import FrozenInfo
+from .utils import DateTime, FrozenInfo
 
 if TYPE_CHECKING:
     from .client import Client
@@ -164,9 +164,9 @@ class Article(Resource):
     time_unit: Optional[str]  #:
     to: Optional[str]  #:
 
-    created_at = MutableResource.created_at
+    created_at = DateTime()
+    updated_at = DateTime()
     created_by = MutableResource.created_by
-    updated_at = MutableResource.updated_at
     updated_by = MutableResource.updated_by
 
     @property

@@ -62,10 +62,6 @@ class YieldCounter:
             yield item
 
 
-def fromisoformat(timestamp: str) -> datetime:
-    return datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
-
-
 class FrozenInfo:
     def __init__(
         self,
@@ -123,3 +119,30 @@ class FrozenInfo:
         """
         self._assert_attribute()
         return MappingProxyType(self._info)
+
+
+class DateTime:
+    __slots__ = ("name",)
+
+    # pylint: disable=attribute-defined-outside-init
+    def __set_name__(self, owner, name):
+        self.name = name
+
+    def __get__(self, instance, owner=None) -> datetime:
+        return datetime.fromisoformat(instance[self.name].replace("Z", "+00:00"))
+
+
+class OptionalDateTime:
+    __slots__ = ("name",)
+
+    # pylint: disable=attribute-defined-outside-init
+    def __set_name__(self, owner, name):
+        self.name = name
+
+    def __get__(self, instance, owner=None) -> Optional[datetime]:
+        value = instance[self.name]
+        return (
+            None
+            if value is None
+            else datetime.fromisoformat(instance[self.name].replace("Z", "+00:00"))
+        )

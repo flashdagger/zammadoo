@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from datetime import datetime
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from .groups import Group
 from .resource import NamedResource
 from .resources import CreatableT, SearchableT
-from .utils import fromisoformat
+from .utils import OptionalDateTime
 
 if TYPE_CHECKING:
     from .client import Client
@@ -34,6 +33,8 @@ class User(NamedResource):
     verified: bool  #:
     vip: bool  #:
     web: str  #:
+
+    last_login = OptionalDateTime()
 
     @property
     def fullname(self) -> str:
@@ -62,11 +63,6 @@ class User(NamedResource):
     def groups(self) -> List[Group]:
         groups = self.parent.client.groups
         return [groups(int(gid)) for gid in self["group_ids"]]
-
-    @property
-    def last_login(self) -> Optional[datetime]:
-        last_login: Optional[str] = self["last_login"]
-        return None if last_login is None else fromisoformat(last_login)
 
     @property
     def organization(self) -> Optional["Organization"]:
