@@ -25,8 +25,7 @@ class Group(NamedResource):
     @property
     def parent_group(self: _T_co) -> Optional[_T_co]:
         """available since Zammad version 6.2"""
-        self._assert_attribute()
-        pid = self._info.get("parent_id")
+        pid: int = self["parent_id"]
         return None if pid is None else self.parent(pid)
 
     @property

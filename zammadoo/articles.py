@@ -19,7 +19,7 @@ from typing import (
 import requests
 from charset_normalizer import is_binary
 
-from .resource import MutableResource, Resource
+from .resource import Resource, UserProperty
 from .resources import CreatableT, ResourcesT
 from .time_accountings import TimeAccounting
 from .utils import DateTime, FrozenInfo
@@ -27,7 +27,6 @@ from .utils import DateTime, FrozenInfo
 if TYPE_CHECKING:
     from .client import Client
     from .tickets import Ticket
-    from .users import User
     from .utils import JsonDict, PathType
 
     OptionalFiles = Union[None, "PathType", Iterable["PathType"]]
@@ -165,19 +164,15 @@ class Article(Resource):
     to: Optional[str]  #:
 
     created_at = DateTime()
+    created_by = UserProperty()
+    origin_by = UserProperty()
     updated_at = DateTime()
-    created_by = MutableResource.created_by
-    updated_by = MutableResource.updated_by
+    updated_by = UserProperty()
 
     @property
     def from_(self) -> str:
         value: str = self["from"]
         return value
-
-    @property
-    def origin_by(self) -> Optional["User"]:
-        oid: int = self["origin_by_id"]
-        return self.parent.client.users(oid)
 
     @property
     def ticket(self) -> "Ticket":

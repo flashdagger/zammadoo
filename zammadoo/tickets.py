@@ -3,7 +3,7 @@
 
 from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
-from .resource import MutableResource, NamedResource
+from .resource import MutableResource, NamedResource, UserProperty
 from .resources import CreatableT, IterableT, SearchableT, _T_co
 from .time_accountings import TimeAccounting, TimeAccountingType
 from .utils import LINK_TYPES, LinkType, OptionalDateTime
@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from .organizations import Organization
     from .resource import Resource
     from .resources import ResourcesT
-    from .users import User
     from .utils import JsonDict, JsonDictList, StringKeyMapping
 
 
@@ -104,6 +103,7 @@ class Ticket(MutableResource):
 
     close_at = OptionalDateTime()
     close_escalation_at = OptionalDateTime()
+    customer = UserProperty()
     escalation_at = OptionalDateTime()
     first_response_at = OptionalDateTime()
     first_response_escalation_at = OptionalDateTime()
@@ -111,12 +111,12 @@ class Ticket(MutableResource):
     last_contact_at = OptionalDateTime()
     last_contact_customer_at = OptionalDateTime()
     last_owner_update_at = OptionalDateTime()
+    #:
+    #:  .. note::
+    #:     unassigned tickets will be represented by User with id=1
+    #:
+    owner = UserProperty()
     update_escalation_at = OptionalDateTime()
-
-    @property
-    def customer(self) -> "User":
-        uid: int = self["customer_id"]
-        return self.parent.client.users(uid)
 
     @property
     def group(self) -> "Group":
@@ -127,15 +127,6 @@ class Ticket(MutableResource):
     def organization(self) -> Optional["Organization"]:
         oid: Optional[int] = self["organization_id"]
         return None if oid is None else self.parent.client.organizations(oid)
-
-    @property
-    def owner(self) -> "User":
-        """
-        .. note::
-           unassigned tickets will be represented by User with id=1
-        """
-        uid: int = self["owner_id"]
-        return self.parent.client.users(uid)
 
     @property
     def priority(self) -> Priority:

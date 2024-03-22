@@ -65,19 +65,25 @@ class Resource(FrozenInfo):
         return self.parent.cached_timestamp(self.id)
 
 
+class UserProperty:
+    __slots__ = ("attribute",)
+
+    def __init__(self, attribute: str = ""):
+        self.attribute = attribute
+
+    def __set_name__(self, owner, name):
+        if not self.attribute:
+            self.attribute = f"{name}_id"
+
+    def __get__(self, instance: Resource, owner=None) -> "User":
+        return instance.parent.client.users(instance[self.attribute])
+
+
 class MutableResource(Resource):
     created_at = DateTime()
+    created_by = UserProperty()
     updated_at = DateTime()
-
-    @property
-    def created_by(self) -> "User":
-        uid: int = self["created_by_id"]
-        return self.parent.client.users(uid)
-
-    @property
-    def updated_by(self) -> "User":
-        uid: int = self["updated_by_id"]
-        return self.parent.client.users(uid)
+    updated_by = UserProperty()
 
     def update(self: _T_co, **kwargs) -> _T_co:
         """

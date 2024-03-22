@@ -4,14 +4,13 @@
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
-from .resource import MutableResource, NamedResource
+from .resource import MutableResource, NamedResource, UserProperty
 from .resources import CreatableT, IterableT
 
 if TYPE_CHECKING:
     from .articles import Article
     from .client import Client
     from .tickets import Ticket
-    from .users import User
     from .utils import JsonDict
 
 
@@ -74,9 +73,7 @@ class TimeAccounting(MutableResource):
     ticket_article_id: Optional[int]  #:
     time_unit: str  #:
 
-    @property
-    def updated_by(self) -> "User":
-        return self.created_by
+    updated_by = UserProperty("created_by_id")
 
     @property
     def ticket(self) -> "Ticket":
