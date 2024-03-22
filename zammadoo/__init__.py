@@ -6,3 +6,5 @@ __version__ = "0.3.0.dev0"
 from .client import LOG, APIException, Client
 
 LOG.name = __name__
+
+__all__ = ["Client", "APIException", "LOG"]
