@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, Optional, Tuple
 
 from .resources import ResourcesT, _T_co
-from .utils import DateTime, FrozenInfo
+from .utils import DateTime, FrozenInfo, Property
 
 if TYPE_CHECKING:
     from .users import User
@@ -65,18 +65,15 @@ class Resource(FrozenInfo):
         return self.parent.cache.timestamp(self.url)
 
 
-class UserProperty:
-    __slots__ = ("attribute",)
-
-    def __init__(self, attribute: str = ""):
-        self.attribute = attribute
-
-    def __set_name__(self, owner, name):
-        if not self.attribute:
-            self.attribute = f"{name}_id"
-
+class UserProperty(Property):
     def __get__(self, instance: Resource, owner=None) -> "User":
-        return instance.parent.client.users(instance[self.attribute])
+        return instance.parent.client.users(instance[f"{self.name}_id"])
+
+
+class OptionalUserProperty(Property):
+    def __get__(self, instance: Resource, owner=None) -> Optional["User"]:
+        value = instance[f"{self.name}_id"]
+        return None if value is None else instance.parent.client.users(value)
 
 
 class MutableResource(Resource):

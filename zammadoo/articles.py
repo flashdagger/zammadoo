@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional,
 import requests
 from charset_normalizer import is_binary
 
-from .resource import Resource, UserProperty
+from .resource import OptionalUserProperty, Resource, UserProperty
 from .resources import CreatableT, ResourcesT
 from .time_accountings import TimeAccounting
 from .utils import DateTime, FrozenInfo
@@ -149,7 +149,7 @@ class Article(Resource):
 
     created_at = DateTime()
     created_by = UserProperty()
-    origin_by = UserProperty()
+    origin_by = OptionalUserProperty()
     updated_at = DateTime()
     updated_by = UserProperty()
 

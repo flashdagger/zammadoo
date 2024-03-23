@@ -114,24 +114,23 @@ class FrozenInfo:
         return MappingProxyType(self._info)
 
 
-class DateTime:
+class Property:
     __slots__ = ("name",)
 
-    # pylint: disable=attribute-defined-outside-init
-    def __set_name__(self, owner, name):
+    def __init__(self, name: str = ""):
         self.name = name
 
+    def __set_name__(self, owner, name):
+        if not self.name:
+            self.name = name
+
+
+class DateTime(Property):
     def __get__(self, instance, owner=None) -> datetime:
         return datetime.fromisoformat(instance[self.name].replace("Z", "+00:00"))
 
 
-class OptionalDateTime:
-    __slots__ = ("name",)
-
-    # pylint: disable=attribute-defined-outside-init
-    def __set_name__(self, owner, name):
-        self.name = name
-
+class OptionalDateTime(Property):
     def __get__(self, instance, owner=None) -> Optional[datetime]:
         value = instance[self.name]
         return (

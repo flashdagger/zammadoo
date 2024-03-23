@@ -72,7 +72,7 @@ class TimeAccounting(MutableResource):
     ticket_id: int  #:
     ticket_article_id: Optional[int]  #:
     time_unit: str  #:
-    updated_by = UserProperty("created_by_id")
+    updated_by = UserProperty("created_by")
 
     @property
     def ticket(self) -> "Ticket":
