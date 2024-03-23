@@ -3,7 +3,6 @@
 
 import weakref
 from dataclasses import asdict
-from datetime import datetime
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -87,9 +86,6 @@ class ResourcesT(Generic[_T_co]):
             return response
 
         return cache.setdefault_by_callback(item, callback)
-
-    def cached_timestamp(self, rid: int) -> Optional[datetime]:
-        return self.cache.timestamp(f"{self.url}/{rid}")
 
     def delete(self, rid: int) -> None:
         """:meta private:"""
