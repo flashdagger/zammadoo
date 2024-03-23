@@ -4,16 +4,7 @@
 from base64 import b64encode
 from mimetypes import guess_type
 from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, List, Optional, Union
 
 import requests
 from charset_normalizer import is_binary

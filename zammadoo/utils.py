@@ -13,7 +13,6 @@ from typing import (
     Literal,
     Mapping,
     Optional,
-    TypedDict,
     TypeVar,
     Union,
     get_args,
@@ -37,12 +36,6 @@ JsonDictList = List[JsonDict]
 JsonContainer = Union[JsonDict, JsonDictList]
 StringKeyMapping = Mapping[str, Any]
 PathType = Union[str, "PathLike[Any]"]
-
-
-class TypedTag(TypedDict):
-    id: int
-    name: str
-    count: Optional[int]
 
 
 class YieldCounter:

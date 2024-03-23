@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, Iterator, List
-
-from .utils import TypedTag
+from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, TypedDict
 
 if TYPE_CHECKING:
     from .client import Client
     from .utils import StringKeyMapping
+
+
+class TypedTag(TypedDict):
+    id: int
+    name: str
+    count: Optional[int]
 
 
 class Tags:
