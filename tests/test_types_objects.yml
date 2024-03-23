@@ -21,14 +21,15 @@
     from zammadoo import Client
 
     client = Client("<url>", http_token="<token>")    
-
-    reveal_type(client.groups)            # N: Revealed type is "zammadoo.groups.Groups"
-    reveal_type(
-      client.groups.create(name=""))      # N: Revealed type is "zammadoo.groups.Group"
-    reveal_type(
-      client.groups(0).update())          # N: Revealed type is "zammadoo.groups.Group"
-    reveal_type(
-      client.groups(0).users)             # N: Revealed type is "builtins.list[zammadoo.users.User]"
+    groups = client.groups
+    reveal_type(groups)                   # N: Revealed type is "zammadoo.groups.Groups"
+    reveal_type(groups.create(name=""))   # N: Revealed type is "zammadoo.groups.Group"
+    group = groups(0)
+    reveal_type(group.update())           # N: Revealed type is "zammadoo.groups.Group"
+    reveal_type(group.users)              # N: Revealed type is "builtins.list[zammadoo.users.User]"
+    reveal_type(group.active)             # N: Revealed type is "builtins.bool"
+    reveal_type(group.name)               # N: Revealed type is "builtins.str"
+    reveal_type(group.note)               # N: Revealed type is "Union[builtins.str, None]"
 
     reveal_type(client.roles)             # N: Revealed type is "zammadoo.roles.Roles"
     role = client.roles(0)
