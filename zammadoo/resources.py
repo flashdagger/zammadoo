@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 import weakref
-from dataclasses import asdict
 from functools import partial
 from typing import (
     TYPE_CHECKING,
@@ -12,9 +11,7 @@ from typing import (
     Literal,
     Optional,
     Type,
-    TypedDict,
     TypeVar,
-    cast,
 )
 
 from .cache import LruCache
@@ -29,11 +26,6 @@ if TYPE_CHECKING:
 
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
-
-
-class ParamDict(TypedDict):
-    page: int
-    per_page: int
 
 
 class ResourcesT(Generic[_T_co]):
@@ -133,18 +125,13 @@ class IterableT(ResourcesT[_T_co]):
         :param args: additional endpoint arguments
         :param params: additional pagination options like ``page``, ``page_size``, ``extend``
         """
-        # preserve the kwargs order
-        if not params.get("page"):
-            params["page"] = 1
-        params.update(
-            (
-                (key, value)
-                for key, value in asdict(self.client.pagination).items()
-                if key not in params
-            )
-        )
-        typed_params = cast(ParamDict, params)
-        per_page = typed_params["per_page"]
+        pagination = self.client.pagination
+        per_page = params.get("per_page", pagination.per_page)
+
+        # preserving the params order is important
+        params["page"] = params.get("page") or 1
+        params["per_page"] = per_page
+        params["expand"] = params.get("expand", pagination.expand)
 
         while True:
             items = self.client.get(self.endpoint, *args, params=params)
@@ -156,7 +143,7 @@ class IterableT(ResourcesT[_T_co]):
             if per_page and yielded < per_page or yielded == 0:
                 return
 
-            typed_params["page"] += 1
+            params["page"] += 1
 
     def __iter__(self) -> Iterator[_T_co]:
         return self.iter()
