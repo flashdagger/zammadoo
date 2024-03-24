@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Dict, Iterator, List, Optional, TypedDict
 
 if TYPE_CHECKING:
@@ -23,23 +24,24 @@ class Tags:
         self.client = client
         self.cache: Dict[str, TypedTag] = {}
         self.endpoint = "tag_list"
+        self._unintialized = True
 
     def __repr__(self):
         url = f"{self.client.url}/{self.endpoint}"
         return f"<{self.__class__.__qualname__} {url!r}>"
 
-    def __iter__(self) -> Iterator[TypedTag]:
-        if not self.cache:
+    def __iter__(self) -> Iterator["StringKeyMapping"]:
+        if self._unintialized:
             self.reload()
-        yield from self.cache.values()
+        return (MappingProxyType(value) for value in self.cache.values())
 
-    def __getitem__(self, item: str) -> TypedTag:
-        if not self.cache:
+    def __getitem__(self, item: str) -> "StringKeyMapping":
+        if self._unintialized:
             self.reload()
-        return self.cache[item]
+        return MappingProxyType(self.cache[item])
 
     def __contains__(self, item: str) -> bool:
-        if not self.cache:
+        if self._unintialized:
             self.reload()
         return item in self.cache
 
@@ -48,6 +50,7 @@ class Tags:
         cache = self.cache
         cache.clear()
         cache.update((info["name"], info) for info in self.client.get(self.endpoint))
+        self._unintialized = False
 
     def search(self, term: str) -> List[str]:
         """
@@ -64,9 +67,9 @@ class Tags:
         creates a new tag (admin only), if name already exists, it is ignored
         """
         cache = self.cache
-        if name not in cache:
-            cache.clear()
         self.client.post(self.endpoint, json={"name": name})
+        if name not in cache:
+            self._unintialized = True
 
     def delete(self, name: str) -> None:
         """
@@ -76,7 +79,7 @@ class Tags:
         :raises: :class:`KeyError` if not found
         """
         cache = self.cache
-        if not cache:
+        if name not in cache:
             self.reload()
         self.client.delete(self.endpoint, cache.pop(name)["id"])
 
@@ -91,12 +94,12 @@ class Tags:
         :raises: :class:`KeyError` if not found
         """
         cache = self.cache
-        if not cache:
+        if name not in cache:
             self.reload()
 
+        self.client.put(self.endpoint, cache[name]["id"], json={"name": new_name})
         tag = cache[new_name] = cache.pop(name)
         tag["name"] = new_name
-        self.client.put(self.endpoint, tag["id"], json={"name": new_name})
 
     def add_to_ticket(self, tid: int, *names: str) -> None:
         """

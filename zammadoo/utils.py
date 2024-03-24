@@ -104,7 +104,7 @@ class FrozenInfo:
         extra_attributes = set(self._info.keys()) - set(names)
         return chain(names, extra_attributes)
 
-    def view(self) -> "MappingProxyType[str, JsonType]":
+    def view(self) -> "StringKeyMapping":
         """
         returns a mapping view of the objects internal properties
         as returned by the REST API.
