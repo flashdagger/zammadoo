@@ -8,6 +8,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
+    Generic,
     Iterable,
     List,
     Literal,
@@ -113,7 +114,10 @@ class FrozenInfo:
         return MappingProxyType(self._info)
 
 
-class Property:
+T = TypeVar("T")
+
+
+class _AttributeBase:
     __slots__ = ("name",)
 
     def __init__(self, name: str = ""):
@@ -124,12 +128,18 @@ class Property:
             self.name = name
 
 
-class DateTime(Property):
+class AttributeT(Generic[T], _AttributeBase):
+    def __get__(self, instance, owner=None) -> T:
+        value: T = instance[self.name]
+        return value
+
+
+class DateTime(_AttributeBase):
     def __get__(self, instance, owner=None) -> datetime:
         return datetime.fromisoformat(instance[self.name].replace("Z", "+00:00"))
 
 
-class OptionalDateTime(Property):
+class OptionalDateTime(_AttributeBase):
     def __get__(self, instance, owner=None) -> Optional[datetime]:
         value = instance[self.name]
         return (

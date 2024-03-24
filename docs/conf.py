@@ -5,6 +5,8 @@
 
 import os
 import sys
+from typing import Generic, TypeVar, get_args
+from warnings import warn
 
 sys.path.insert(0, os.path.abspath(os.path.join(__file__, "..", "..")))
 
@@ -102,7 +104,7 @@ dummy_object = object()
 empty_dict = {}
 
 
-def hook(_app, what, _name, obj, _options, _lines):
+def hook(_app, what, name, obj, _options, _lines):
     if what != "class":
         return
 
@@ -120,6 +122,12 @@ def hook(_app, what, _name, obj, _options, _lines):
             getter = getattr(value, "__get__", dummy_object)
             return_type = getattr(getter, "__annotations__", empty_dict).get("return")
             if return_type:
+                if isinstance(return_type, TypeVar) and isinstance(value, Generic):
+                    try:
+                        orig_cls = getattr(value, "__orig_class__")
+                        return_type = get_args(orig_cls)[0]
+                    except AttributeError:
+                        warn(f"Cannot determine generic type of {name}.{key}={value}")
                 annotations[key] = return_type
 
         if cls is obj and annotations:

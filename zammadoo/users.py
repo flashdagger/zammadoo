@@ -4,9 +4,9 @@
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from .groups import Group
-from .resource import NamedResource
+from .resource import NamedResource, OptionalUserProperty
 from .resources import CreatableT, SearchableT
-from .utils import OptionalDateTime
+from .utils import AttributeT, OptionalDateTime
 
 if TYPE_CHECKING:
     from .client import Client
@@ -27,8 +27,10 @@ class User(NamedResource):
     login: str  #: users login name
     login_failed: int  #:
     mobile: str  #:
+    name = AttributeT[str]("login")  #: alias for :attr:`login`
     out_of_office: bool  #:
     out_of_office_end_at = OptionalDateTime()
+    out_of_office_replacement = OptionalUserProperty()
     out_of_office_start_at = OptionalDateTime()
     phone: str  #:
     verified: bool  #:
@@ -49,16 +51,6 @@ class User(NamedResource):
         return f"{fullname} ({organization.name})" if organization else fullname
 
     @property
-    def name(self) -> str:
-        """alias for :attr:`login`"""
-        return self.login
-
-    @name.setter
-    # dummy setter to keep mypy happy
-    # value setting is prevented by Resource.__setattr__()
-    def name(self, _value) -> None: ...
-
-    @property
     def groups(self) -> List[Group]:
         groups = self.parent.client.groups
         return [groups(int(gid)) for gid in self["group_ids"]]
@@ -72,12 +64,6 @@ class User(NamedResource):
     def organizations(self) -> List["Organization"]:
         organizations = self.parent.client.organizations
         return [organizations(oid) for oid in self["organization_ids"]]
-
-    @property
-    def out_of_office_replacement(self) -> Optional["User"]:
-        uid: Optional[int] = self["out_of_office_replacement_id"]
-        users: "Users" = self.parent  # type: ignore[assignment]
-        return None if uid is None else users(uid)
 
     @property
     def roles(self) -> List["Role"]:

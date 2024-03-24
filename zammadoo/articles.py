@@ -12,7 +12,7 @@ from charset_normalizer import is_binary
 from .resource import OptionalUserProperty, Resource, UserProperty
 from .resources import CreatableT, ResourcesT
 from .time_accountings import TimeAccounting
-from .utils import DateTime, FrozenInfo
+from .utils import AttributeT, DateTime, FrozenInfo
 
 if TYPE_CHECKING:
     from .client import Client
@@ -149,14 +149,10 @@ class Article(Resource):
 
     created_at = DateTime()
     created_by = UserProperty()
+    from_ = AttributeT[str]("from")
     origin_by = OptionalUserProperty()
     updated_at = DateTime()
     updated_by = UserProperty()
-
-    @property
-    def from_(self) -> str:
-        value: str = self["from"]
-        return value
 
     @property
     def ticket(self) -> "Ticket":

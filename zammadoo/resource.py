@@ -5,9 +5,10 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Any, Optional, Tuple
 
 from .resources import ResourcesT, _T_co
-from .utils import DateTime, FrozenInfo, Property
+from .utils import AttributeT, DateTime, FrozenInfo, _AttributeBase
 
 if TYPE_CHECKING:
+    # noinspection PyUnresolvedReferences
     from .users import User
     from .utils import JsonDict
 
@@ -65,12 +66,12 @@ class Resource(FrozenInfo):
         return self.parent.cache.timestamp(self.url)
 
 
-class UserProperty(Property):
+class UserProperty(_AttributeBase):
     def __get__(self, instance: Resource, owner=None) -> "User":
         return instance.parent.client.users(instance[f"{self.name}_id"])
 
 
-class OptionalUserProperty(Property):
+class OptionalUserProperty(_AttributeBase):
     def __get__(self, instance: Resource, owner=None) -> Optional["User"]:
         value = instance[f"{self.name}_id"]
         return None if value is None else instance.parent.client.users(value)
@@ -100,6 +101,6 @@ class MutableResource(Resource):
 
 
 class NamedResource(MutableResource):
-    active: bool  #:
-    name: str  #:
-    note: Optional[str]  #:
+    active = AttributeT[bool]()  #:
+    name = AttributeT[str]()  #:
+    note = AttributeT[Optional[str]]()  #:

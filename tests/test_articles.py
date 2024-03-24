@@ -8,6 +8,11 @@ import pytest
 from . import ticket_pair
 
 
+def test_article_from_attribute(client):
+    article = client.ticket_articles(1, info={"id": 1, "from": "john.doe"})
+    assert article.from_ == "john.doe"
+
+
 def test_article_created_by_attribute(client):
     article = client.ticket_articles(1, info={"id": 1, "created_by_id": 2})
     assert article.created_by == client.users(2)
