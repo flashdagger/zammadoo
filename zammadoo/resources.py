@@ -175,7 +175,7 @@ class SearchableT(IterableT[_T_co]):
 
 
         :param query: query string
-        :param sort_by: sort by a specific property (e.g. ``name``)
+        :param sort_by: sort by a specific property (e.g. `'name'` or `'created_at'`)
         :param order_by: sort direction
         :param params: additional pagination options like ``page``, ``page_size``, ``extend``
         """

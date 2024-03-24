@@ -106,9 +106,8 @@ class FrozenInfo:
 
     def view(self) -> "MappingProxyType[str, JsonType]":
         """
-        A mapping view of the objects internal properties as returned by the REST API.
-
-        :rtype: :class:`MappingProxyType[str, Any]`
+        returns a mapping view of the objects internal properties
+        as returned by the REST API.
         """
         self._assert_attribute()
         return MappingProxyType(self._info)
