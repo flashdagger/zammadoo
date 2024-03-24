@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING, List, Optional
 
 from .resource import NamedResource
-from .resources import CreatableT, IterableT, _T_co
+from .resources import CreatableT, IterableT
 
 if TYPE_CHECKING:
     from .client import Client
@@ -14,11 +14,13 @@ if TYPE_CHECKING:
 class Group(NamedResource):
     """Group(...)"""
 
+    parent: "Groups"  # type: ignore[assignment]
+
     shared_drafts: bool  #:
     user_ids: List[int]  #:
 
     @property
-    def parent_group(self: _T_co) -> Optional[_T_co]:
+    def parent_group(self) -> Optional["Group"]:
         """available since Zammad version 6.2"""
         pid: int = self["parent_id"]
         return None if pid is None else self.parent(pid)

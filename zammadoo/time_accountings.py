@@ -67,6 +67,7 @@ class TimeAccounting(MutableResource):
     """TimeAccounting(...)"""
 
     EXPANDED_ATTRIBUTES = ("type",)
+    parent: "TimeAccountings"  # type: ignore[assignment]
 
     id: int  #:
     ticket_id: int  #:
@@ -86,8 +87,7 @@ class TimeAccounting(MutableResource):
     @property
     def type(self) -> Optional[TimeAccountingType]:
         type_id: int = self["type_id"]
-        parent: "TimeAccountings" = self.parent  # type: ignore[assignment]
-        return None if type_id is None else parent.types(type_id)
+        return None if type_id is None else self.parent.types(type_id)
 
 
 class TimeAccountings(IterableT[TimeAccounting], CreatableT[TimeAccounting]):

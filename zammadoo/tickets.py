@@ -48,6 +48,8 @@ class Priorities(IterableT[Priority], CreatableT[Priority]):
 class State(NamedResource):
     """State(...)"""
 
+    parent: "States"  # type: ignore[assignment]
+
     default_create: bool  #:
     default_follow_up: bool  #:
     ignore_escalation: bool  #:
@@ -56,14 +58,12 @@ class State(NamedResource):
     @property
     def next_state(self) -> Optional["State"]:
         sid: Optional[int] = self["next_state_id"]
-        states: "States" = self.parent  # type: ignore[assignment]
-        return None if sid is None else states(sid)
+        return None if sid is None else self.parent(sid)
 
     @property
     def state_type(self) -> "State":
         sid: int = self["state_type_id"]
-        states: "States" = self.parent  # type: ignore[assignment]
-        return states(sid)
+        return self.parent(sid)
 
 
 class States(IterableT[State], CreatableT[State]):
