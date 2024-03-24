@@ -2,13 +2,12 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Optional, Tuple
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 from .resources import ResourcesT, _T_co
 from .utils import AttributeT, DateTime, FrozenInfo, _AttributeBase
 
 if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences
     from .users import User
     from .utils import JsonDict
 
@@ -69,6 +68,13 @@ class Resource(FrozenInfo):
 class UserProperty(_AttributeBase):
     def __get__(self, instance: Resource, owner=None) -> "User":
         return instance.parent.client.users(instance[f"{self.name}_id"])
+
+
+class UserListProperty(_AttributeBase):
+    def __get__(self, instance: Resource, owner=None) -> List["User"]:
+        user = instance.parent.client.users
+        uids = instance[f"{self.name[:-1]}_ids"]
+        return [user(uid) for uid in uids]
 
 
 class OptionalUserProperty(_AttributeBase):

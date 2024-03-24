@@ -1,32 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
-from .resource import NamedResource
+from .resource import NamedResource, UserListProperty
 from .resources import CreatableT, SearchableT
 
 if TYPE_CHECKING:
     from .client import Client
-    from .users import User
 
 
 class Organization(NamedResource):
     """Organization(...)"""
 
-    shared: bool  #:
     domain: str  #:
     domain_assignment: bool  #:
-
-    @property
-    def members(self) -> List["User"]:
-        users = self.parent.client.users
-        return [users(mid) for mid in self["member_ids"]]
-
-    @property
-    def secondary_members(self) -> List["User"]:
-        users = self.parent.client.users
-        return [users(sec_mid) for sec_mid in self["secondary_member_ids"]]
+    members = UserListProperty()  #:
+    secondary_members = UserListProperty()  #:
+    shared: bool  #:
 
     @property
     def weburl(self) -> str:
