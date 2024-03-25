@@ -53,7 +53,7 @@ class ResourcesT(Generic[_T_co]):
             assert (
                 info.get("id") == rid
             ), "parameter info must contain 'id' and be equal with rid"
-            self.cache[f"{self.url}/{rid}"] = info
+            self.cache[f"{self.url}/{rid}"] = None if info is None else dict(info)
 
         return self._RESOURCE_TYPE(self, rid, info=info)
 

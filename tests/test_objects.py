@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+""" tests related to classes in `zammadoo.resource` that can be performed offline """
+
 import pytest
 
-""" tests related to classes in `zammadoo.resource` that can be performed offline """
+from zammadoo.tickets import Ticket
 
 
 def test_client_resources_are_singletons(client):
@@ -69,7 +71,7 @@ def test_resource_view_is_readonly(client):
 
 
 @pytest.fixture(scope="function")
-def ticket_with_set_cache(client):
+def ticket_with_set_cache(client) -> Ticket:
     tickets = client.tickets
     cache = tickets.cache
     ticket = tickets(123)
@@ -90,6 +92,23 @@ def test_lazy_object_on_getitem(ticket_with_set_cache):
 
 def test_lazy_object_on_view(ticket_with_set_cache):
     assert dict(ticket_with_set_cache.view()) == {"id": 123, "title": "some title"}
+
+
+def test_resource_info_is_copy(client):
+    tickets = client.tickets
+    tickets.cache.max_size = -1
+
+    init_info = {"id": 123, "title": "other title"}
+    ticket = tickets(123, info=init_info)
+
+    ticket_info = ticket._info
+    assert init_info == ticket_info
+    assert init_info is not ticket_info
+
+    cache_info = tickets.cache[ticket.url]
+    assert init_info == cache_info
+    assert cache_info is not ticket_info
+    assert init_info is not cache_info
 
 
 def test_resources_caching_enabled(client):

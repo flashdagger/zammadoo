@@ -61,7 +61,7 @@ class FrozenInfo:
         self,
         info=None,
     ) -> None:
-        self._info = info or {}
+        self._info = dict(info) if info is not None else {}
         self._frozen = True
 
     def __getattr__(self, name: str) -> Union["JsonType", datetime]:
