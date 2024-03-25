@@ -2,14 +2,14 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 
 from .resources import ResourcesT, _T_co
-from .utils import AttributeT, DateTime, FrozenInfo, _AttributeBase
+from .utils import DateTime, FrozenInfo, _AttributeBase
 
 if TYPE_CHECKING:
     from .users import User
-    from .utils import JsonDict
+    from .utils import AttributeT, JsonDict
 
 
 class Resource(FrozenInfo):
@@ -107,6 +107,6 @@ class MutableResource(Resource):
 
 
 class NamedResource(MutableResource):
-    active = AttributeT[bool]()  #:
-    name = AttributeT[str]()  #:
-    note = AttributeT[Optional[str]]()  #:
+    active: bool  #:
+    name: Union[str, "AttributeT[str]"]  #:
+    note: Optional[str]  #:

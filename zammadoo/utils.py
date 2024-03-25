@@ -128,7 +128,7 @@ class _AttributeBase:
             self.name = name
 
 
-class AttributeT(Generic[T], _AttributeBase):
+class AttributeT(_AttributeBase, Generic[T]):
     def __get__(self, instance, owner=None) -> T:
         value: T = instance[self.name]
         return value
