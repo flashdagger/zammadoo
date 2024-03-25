@@ -95,9 +95,10 @@ class FrozenInfo:
 
     def __getitem__(self, name: str) -> Any:
         info = self._info
-        if name in info:
+        try:
             return info[name]
-        self._assert_attribute(name)
+        except KeyError:
+            self._assert_attribute(name)
         return info[name]
 
     def __dir__(self):
