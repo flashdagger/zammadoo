@@ -1,15 +1,12 @@
 /venv
+/.vscode
 /dist
 /build
-/htmlcov
 .coverage
 /*.egg-info
 *_
-/docs/html
 /docs/_build
 /cache
-/out
-/.idea/workspace.xml
 /.idea
 /token.*
 /*.crt
