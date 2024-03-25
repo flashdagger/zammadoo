@@ -67,17 +67,17 @@ class FrozenInfo:
     def __getattr__(self, name: str) -> Union["JsonType", datetime]:
         info: Dict[str, "JsonType"] = self._info
 
+        try:
+            return info[name]
+        except KeyError:
+            self._assert_attribute(name)
+
         if name in info:
             return info[name]
 
-        self._assert_attribute(name)
-
-        if name not in info:
-            raise AttributeError(
-                f"{self.__class__.__name__!r} object has no attribute {name!r}"
-            )
-
-        return info[name]
+        raise AttributeError(
+            f"{self.__class__.__name__!r} object has no attribute {name!r}"
+        )
 
     def _assert_attribute(self, name: Optional[str] = None) -> None:
         pass
