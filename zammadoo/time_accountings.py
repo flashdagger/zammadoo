@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class TimeAccountingType(NamedResource):
-    EXPANDED_ATTRIBUTES = ()  #: :meta private:
+    pass
 
 
 class TimeAccountingTypes(
@@ -67,9 +67,9 @@ class TimeAccounting(MutableResource):
     """TimeAccounting(...)"""
 
     EXPANDED_ATTRIBUTES = ("type",)
-    parent: "TimeAccountings"  # type: ignore[assignment]
 
     id: int  #:
+    parent: "TimeAccountings"
     ticket_id: int  #:
     ticket_article_id: Optional[int]  #:
     time_unit: str  #:

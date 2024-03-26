@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union, cast
 
 from .resources import ResourcesT, _T_co
 from .utils import DateTime, FrozenInfo, _AttributeBase
@@ -13,14 +13,14 @@ if TYPE_CHECKING:
 
 
 class Resource(FrozenInfo):
-    EXPANDED_ATTRIBUTES: Tuple[str, ...] = ()
+    EXPANDED_ATTRIBUTES: Tuple[str, ...] = ()  #: :meta private:
 
     id: int  #:
     url: str  #: the API endpoint URL
 
     def __init__(
-        self: _T_co,
-        parent: ResourcesT[_T_co],
+        self,
+        parent: ResourcesT[Any],
         rid: int,
         *,
         info: Optional["JsonDict"] = None,
@@ -97,7 +97,7 @@ class MutableResource(Resource):
         :return: a new instance of the updated resource
         :rtype: same as object
         """
-        parent = self.parent
+        parent = cast("ResourcesT[_T_co]", self.parent)
         updated_info = parent.client.put(parent.endpoint, self.id, json=kwargs)
         return parent(updated_info["id"], info=updated_info)
 

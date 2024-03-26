@@ -32,6 +32,7 @@ class User(NamedResource):
     out_of_office_end_at = OptionalDateTime()
     out_of_office_replacement = OptionalUserProperty()
     out_of_office_start_at = OptionalDateTime()
+    parent: "Users"
     phone: str  #:
     verified: bool  #:
     vip: bool  #:

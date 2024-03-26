@@ -13,8 +13,7 @@ if TYPE_CHECKING:
 class Group(NamedResource):
     """Group(...)"""
 
-    parent: "Groups"  # type: ignore[assignment]
-
+    parent: "Groups"
     shared_drafts: bool  #:
     users = UserListProperty()  #:
 

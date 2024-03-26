@@ -48,7 +48,7 @@ class Priorities(IterableT[Priority], CreatableT[Priority]):
 class State(NamedResource):
     """State(...)"""
 
-    parent: "States"  # type: ignore[assignment]
+    parent: "States"
 
     default_create: bool  #:
     default_follow_up: bool  #:
@@ -98,6 +98,7 @@ class Ticket(MutableResource):
     create_article_type: str  #:
     note: Optional[str]  #:
     number: str  #:
+    parent: "Tickets"
     time_unit: Optional[str]  #:
     title: str  #:
 
@@ -253,7 +254,7 @@ class Ticket(MutableResource):
             }
             self.parent.client.delete("links/remove", json=params)
 
-    def merge_into(self: _T_co, target: Union[int, _T_co]) -> _T_co:
+    def merge_into(self, target: Union[int, "Ticket"]) -> "Ticket":
         """
         merges the ticket into another
 

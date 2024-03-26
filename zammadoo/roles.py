@@ -17,6 +17,7 @@ class Role(NamedResource):
     EXPANDED_ATTRIBUTES = ("permissions",)
 
     default_at_signup: bool  #:
+    parent: "Roles"
     permissions: List[str]  #:
 
     @property

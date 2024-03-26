@@ -142,6 +142,7 @@ class Article(Resource):
     internal: bool  #:
     message_id: Optional[str]  #:
     message_id_md5: Optional[str]  #:
+    parent: "Articles"
     sender: str  #:
     subject: Optional[str]  #:
     time_unit: Optional[str]  #:

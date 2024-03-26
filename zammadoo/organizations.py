@@ -16,6 +16,7 @@ class Organization(NamedResource):
     domain: str  #:
     domain_assignment: bool  #:
     members = UserListProperty()  #:
+    parent: "Organizations"
     secondary_members = UserListProperty()  #:
     shared: bool  #:
 
