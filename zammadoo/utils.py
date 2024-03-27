@@ -11,25 +11,16 @@ from typing import (
     Generic,
     Iterable,
     List,
-    Literal,
     Mapping,
     Optional,
     TypeVar,
     Union,
-    get_args,
 )
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
     from os import PathLike
 
-    from typing_extensions import TypeAlias
-
-    LinkType: TypeAlias = Literal["normal", "parent", "child"]
-else:
-    LinkType = Literal["normal", "parent", "child"]
-
-LINK_TYPES = get_args(LinkType)
 
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]

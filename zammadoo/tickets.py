@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Dict, List, Literal, Optional, Union, cast, get_args
 
 from .resource import MutableResource, NamedResource, UserProperty
 from .resources import CreatableT, IterableT, SearchableT, _T_co
 from .time_accountings import TimeAccounting, TimeAccountingType
-from .utils import LINK_TYPES, LinkType, OptionalDateTime
+from .utils import OptionalDateTime
 
 if TYPE_CHECKING:
     from .articles import Article, OptionalFiles
@@ -16,6 +16,10 @@ if TYPE_CHECKING:
     from .resource import Resource
     from .resources import ResourcesT
     from .utils import JsonDict, JsonDictList, StringKeyMapping
+
+
+LinkType = Literal["normal", "parent", "child"]
+LINK_TYPES = get_args(LinkType)
 
 
 class Priority(NamedResource):
