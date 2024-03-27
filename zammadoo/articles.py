@@ -15,10 +15,13 @@ from .time_accountings import TimeAccounting
 from .utils import AttributeT, DateTime, FrozenInfo
 
 if TYPE_CHECKING:
+    from os import PathLike
+
     from .client import Client
     from .tickets import Ticket
-    from .utils import JsonDict, PathType
+    from .utils import JsonDict
 
+    PathType = Union[str, PathLike[Any]]
     OptionalFiles = Union[None, "PathType", Iterable["PathType"]]
 
 

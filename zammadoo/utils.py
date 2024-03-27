@@ -5,7 +5,6 @@ from datetime import datetime
 from itertools import chain
 from types import MappingProxyType
 from typing import (
-    TYPE_CHECKING,
     Any,
     Dict,
     Generic,
@@ -17,15 +16,9 @@ from typing import (
     Union,
 )
 
-if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences
-    from os import PathLike
-
-
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]
 StringKeyMapping = Mapping[str, Any]
-PathType = Union[str, "PathLike[Any]"]
 
 
 class YieldCounter:
@@ -104,9 +97,6 @@ class FrozenInfo:
         return MappingProxyType(self._info)
 
 
-T = TypeVar("T")
-
-
 class _AttributeBase:
     __slots__ = ("name",)
 
@@ -118,9 +108,12 @@ class _AttributeBase:
             self.name = name
 
 
-class AttributeT(_AttributeBase, Generic[T]):
-    def __get__(self, instance, owner=None) -> T:
-        value: T = instance[self.name]
+_T = TypeVar("_T")
+
+
+class AttributeT(_AttributeBase, Generic[_T]):
+    def __get__(self, instance, owner=None) -> _T:
+        value: _T = instance[self.name]
         return value
 
 
