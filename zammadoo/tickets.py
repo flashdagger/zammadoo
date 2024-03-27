@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .organizations import Organization
     from .resource import Resource
     from .resources import ResourcesT
-    from .utils import JsonDict, JsonDictList, StringKeyMapping
+    from .utils import JsonDict, StringKeyMapping
 
 
 LinkType = Literal["normal", "parent", "child"]
@@ -365,7 +365,7 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
     def __init__(self, client: "Client"):
         super().__init__(client, "tickets")
 
-    def _iter_items(self, items: Union["StringKeyMapping", "JsonDictList"]):
+    def _iter_items(self, items: Union["StringKeyMapping", List["JsonDict"]]):
         if isinstance(items, list):
             yield from super()._iter_items(items)
             return

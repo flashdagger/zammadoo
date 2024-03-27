@@ -24,8 +24,6 @@ if TYPE_CHECKING:
 
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]
-JsonDictList = List[JsonDict]
-JsonContainer = Union[JsonDict, JsonDictList]
 StringKeyMapping = Mapping[str, Any]
 PathType = Union[str, "PathLike[Any]"]
 

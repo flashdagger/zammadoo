@@ -8,6 +8,7 @@ from typing import (
     Callable,
     Generic,
     Iterator,
+    List,
     Literal,
     Optional,
     Type,
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
 
     # noinspection PyUnresolvedReferences
     from .resource import Resource
-    from .utils import JsonDict, JsonDictList
+    from .utils import JsonDict
 
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
@@ -95,7 +96,7 @@ class CreatableT(ResourcesT[_T_co]):
 
 
 class IterableT(ResourcesT[_T_co]):
-    def _iter_items(self, items: "JsonDictList") -> Iterator[_T_co]:
+    def _iter_items(self, items: List["JsonDict"]) -> Iterator[_T_co]:
         for item in items:
             rid = item["id"]
             assert isinstance(rid, int)
