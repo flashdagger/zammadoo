@@ -100,35 +100,49 @@ html_theme_options = {
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
 
-dummy_object = object()
-empty_dict = {}
+
+def generic_return(cls, method):
+    if isinstance(method, str):
+        method = getattr(cls, method, object())
+    annotations = getattr(method, "__annotations__", {})
+    return_type = annotations.get("return")
+
+    if return_type and isinstance(return_type, TypeVar):
+        if isinstance(cls, Generic):
+            orig_cls = getattr(cls, "__orig_class__")
+            return_type = get_args(orig_cls)[0]
+        elif annotations.get("self") is return_type:
+            return {**annotations, "return": cls}
+
+    return return_type
 
 
-def hook(_app, what, name, obj, _options, _lines):
+def docstring_hook(_app, what, name, obj, _options, _lines):
     if what != "class":
         return
 
     annotations = {}
     for cls in reversed(obj.mro()):
-        cls_annotations = getattr(cls, "__annotations__", empty_dict)
+        cls_annotations = getattr(cls, "__annotations__", None)
 
-        for key, value in cls.__dict__.items():
+        if cls_annotations is None:
+            continue
+
+        for key, attr in cls.__dict__.items():
             if (
                 key.startswith("_")
-                or not isinstance(value, object)
+                or not isinstance(attr, object)
                 or key in cls_annotations
+                or callable(attr)
             ):
                 continue
-            getter = getattr(value, "__get__", dummy_object)
-            return_type = getattr(getter, "__annotations__", empty_dict).get("return")
-            if return_type:
-                if isinstance(return_type, TypeVar) and isinstance(value, Generic):
-                    try:
-                        orig_cls = getattr(value, "__orig_class__")
-                        return_type = get_args(orig_cls)[0]
-                    except AttributeError:
-                        warn(f"Cannot determine generic type of {name}.{key}={value}")
-                annotations[key] = return_type
+
+            try:
+                return_type = generic_return(attr, "__get__")
+                if return_type is not None:
+                    annotations[key] = return_type
+            except AttributeError:
+                warn(f"Cannot determine generic type of {name}.{key}={cls}")
 
         if cls is obj and annotations:
             cls_annotations.update(
@@ -141,4 +155,4 @@ def hook(_app, what, name, obj, _options, _lines):
 
 
 def setup(app):
-    app.connect("autodoc-process-docstring", hook)
+    app.connect("autodoc-process-docstring", docstring_hook)
