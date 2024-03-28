@@ -4,7 +4,7 @@
 from collections import OrderedDict
 from collections.abc import Hashable
 from datetime import datetime, timezone
-from typing import Callable, Generic, Optional, Tuple, TypeVar
+from typing import Generic, Optional, Tuple, TypeVar
 
 _T = TypeVar("_T")
 
@@ -35,10 +35,10 @@ class LruCache(Generic[_T]):
         for _ in range(len(cache) - max_size):
             cache.popitem(last=False)
 
-    def setdefault_by_callback(self, item, callback: Callable[[], _T]) -> _T:
+    def setdefault(self, item, default: _T) -> _T:
         max_size = self._max_size
         if max_size == 0:
-            return callback()
+            return default
 
         cache = self._cache
         if item in cache:
@@ -46,12 +46,11 @@ class LruCache(Generic[_T]):
                 cache.move_to_end(item)
             return cache[item][1]
 
-        value = callback()
-        cache[item] = datetime.now(timezone.utc), value
+        cache[item] = datetime.now(timezone.utc), default
         if 0 < max_size < len(cache):
             cache.popitem(last=False)
 
-        return value
+        return default
 
     def clear(self):
         self._cache.clear()

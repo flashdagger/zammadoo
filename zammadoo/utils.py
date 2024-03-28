@@ -4,17 +4,7 @@
 from datetime import datetime
 from itertools import chain
 from types import MappingProxyType
-from typing import (
-    Any,
-    Dict,
-    Generic,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    TypeVar,
-    Union,
-)
+from typing import Any, Dict, Generic, Iterable, List, Mapping, Optional, TypeVar, Union
 
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]

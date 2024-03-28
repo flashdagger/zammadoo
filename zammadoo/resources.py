@@ -2,10 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 import weakref
-from functools import partial
 from typing import (
     TYPE_CHECKING,
-    Callable,
     Generic,
     Iterator,
     List,
@@ -70,15 +68,15 @@ class ResourcesT(Generic[_T_co]):
     def cached_info(self, rid: int, refresh=True, expand=False) -> "JsonDict":
         item = f"{self.url}/{rid}"
         cache = self.cache
-        callback: Callable[[], "JsonDict"] = partial(
-            self.client.get, self.endpoint, rid, params={"expand": expand or None}
-        )
 
-        if refresh:
-            response = cache[item] = callback()
+        if refresh or item not in cache:
+            response: "JsonDict" = self.client.get(
+                self.endpoint, rid, params={"expand": expand or None}
+            )
+            cache[item] = response
             return response
 
-        return cache.setdefault_by_callback(item, callback)
+        return cache[item]
 
     def delete(self, rid: int) -> None:
         """:meta private:"""
