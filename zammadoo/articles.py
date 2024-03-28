@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from os import PathLike
 
     from .client import Client
+    from .resource import TypedResourceDict
     from .tickets import Ticket
     from .utils import JsonDict
 
@@ -204,7 +205,9 @@ class Articles(CreatableT[Article], ResourcesT[Article]):
         super().__init__(client, "ticket_articles")
 
     def by_ticket(self, tid: int) -> List[Article]:
-        items = self.client.get(self.endpoint, "by_ticket", tid)
+        items: List["TypedResourceDict"] = self.client.get(
+            self.endpoint, "by_ticket", tid, _erase_return_type=True
+        )
         return [self(item["id"], info=item) for item in items]
 
     def create(

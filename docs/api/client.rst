@@ -11,3 +11,8 @@ Client
 
 .. autoclass:: Client
     :members:
+    :exclude-members: get
+
+    .. method:: get(*args, params=None)
+
+       shortcut for :meth:`request` with parameter ``("GET", *args, params)``

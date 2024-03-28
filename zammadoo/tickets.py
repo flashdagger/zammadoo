@@ -1,7 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, List, Literal, Optional, Union, cast, get_args
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    TypedDict,
+    Union,
+    get_args,
+)
 
 from .resource import MutableResource, NamedResource, UserProperty
 from .resources import CreatableT, IterableT, SearchableT, _T_co
@@ -13,13 +22,20 @@ if TYPE_CHECKING:
     from .client import Client
     from .groups import Group
     from .organizations import Organization
-    from .resource import Resource
+    from .resource import Resource, TypedResourceDict
     from .resources import ResourcesT
     from .utils import JsonDict, StringKeyMapping
 
 
 LinkType = Literal["normal", "parent", "child"]
 LINK_TYPES = get_args(LinkType)
+
+
+class _TypedDict(TypedDict, total=False):
+    id: int
+    assets: Dict[str, Dict[str, "JsonDict"]]
+    history: List["StringKeyMapping"]
+    links: List["StringKeyMapping"]
 
 
 class Priority(NamedResource):
@@ -159,7 +175,9 @@ class Ticket(MutableResource):
         parent = self.parent
         client = parent.client
         time_accountings = client.time_accountings
-        time_accountings_list = client.get(parent.endpoint, self.id, "time_accountings")
+        time_accountings_list: List["TypedResourceDict"] = client.get(
+            parent.endpoint, self.id, "time_accountings", _erase_return_type=True
+        )
         return [
             time_accountings(info["id"], info=info) for info in time_accountings_list
         ]
@@ -200,9 +218,12 @@ class Ticket(MutableResource):
         params = {"link_object": "Ticket", "link_object_value": self.id}
         link_map = dict((key, []) for key in LINK_TYPES)
 
-        items = client.get("links", params=params)
-        cache_assets(client, items.get("assets", {}))
-        for item in items["links"]:
+        items: _TypedDict = client.get("links", params=params, _erase_return_type=True)
+        assets = items.get("assets", {})
+        cache_assets(client, assets)
+
+        links = items["links"]
+        for item in links:
             assert item["link_object"] == "Ticket"
             link_type = item["link_type"]
             link_map.setdefault(link_type, []).append(parent(item["link_object_value"]))
@@ -347,8 +368,10 @@ class Ticket(MutableResource):
 
         :return: the ticket's history
         """
-        info = self.parent.client.get("ticket_history", self.id)
-        return cast(List["StringKeyMapping"], info["history"])
+        info: _TypedDict = self.parent.client.get(
+            "ticket_history", self.id, _erase_return_type=True
+        )
+        return info["history"]
 
     @property
     def weburl(self) -> str:

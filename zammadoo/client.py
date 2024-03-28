@@ -6,7 +6,18 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import cached_property
 from textwrap import shorten
-from typing import TYPE_CHECKING, Optional, Sequence, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Literal,
+    Optional,
+    Sequence,
+    Tuple,
+    TypedDict,
+    TypeVar,
+    Union,
+    overload,
+)
 
 import requests
 from requests import HTTPError, JSONDecodeError, Response
@@ -23,8 +34,11 @@ from .users import Users
 if TYPE_CHECKING:
     from .utils import JsonType, StringKeyMapping
 
-
 LOG = logging.getLogger(__name__)
+
+
+class _TypedDict(TypedDict):
+    version: str
 
 
 class APIException(HTTPError):
@@ -67,7 +81,8 @@ def raise_or_return_json(response: requests.Response) -> "JsonType":
         raise exception from exc
 
     try:
-        return cast("JsonType", response.json())
+        json_response: "JsonType" = response.json()
+        return json_response
     except JSONDecodeError:
         return response.text
 
@@ -90,6 +105,8 @@ class Client:
         client = Client("https://myhost.com/api/v1/", oauth2_token="<secret_token>")
 
     """
+
+    _T = TypeVar("_T")
 
     @cached_property
     def groups(self) -> Groups:
@@ -282,8 +299,24 @@ class Client:
             LOG.info("HTTP:%s %s", method, response.url)
         return response
 
-    def get(self, *args, params: Optional["StringKeyMapping"] = None):
-        """shortcut for :meth:`request` with parameter ``("GET", *args, params)``"""
+    @overload
+    def get(
+        self,
+        *args,
+        params: Optional["StringKeyMapping"] = ...,
+        _erase_return_type: Literal[False] = ...,
+    ) -> "JsonType": ...
+
+    # this enforces type annotation in the assignment by mypy
+    @overload
+    def get(
+        self,
+        *args,
+        params: Optional["StringKeyMapping"] = ...,
+        _erase_return_type: Literal[True] = ...,
+    ) -> Any: ...
+
+    def get(self, *args, params=None, _erase_return_type=False):
         return self.request("GET", *args, params=params)
 
     def post(self, *args, json: Optional["StringKeyMapping"] = None):
@@ -301,8 +334,8 @@ class Client:
     @cached_property
     def server_version(self) -> str:
         """the Zammad server version"""
-        version: str = self.get("version")["version"]
-        return version
+        info: "_TypedDict" = self.get("version", _erase_return_type=True)
+        return info["version"]
 
     @cached_property
     def weburl(self) -> str:

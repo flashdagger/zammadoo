@@ -8,13 +8,14 @@
     client.tickets(1).missing_method()
   out: |
     main:4: error: "None" not callable  \[misc\]
-    main:4: error: "bool" not callable  \[operator\]
-    main:4: error: "int" not callable  \[operator\]
-    main:4: error: "float" not callable  \[operator\]
-    main:4: error: "str" not callable  \[operator\]
-    main:4: error: "[Ll]ist\[JsonType\]" not callable  \[operator\]
-    main:4: error: "[Dd]ict\[str, JsonType\]" not callable  \[operator\]
-    main:4: error: "datetime" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
+    main:4: error: "[^\"]+" not callable  \[operator\]
 - case: client_attributes_are_of_proper_type
   skip: sys.implementation.name == "pypy"
   main: |

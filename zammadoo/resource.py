@@ -2,14 +2,25 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 
 from .resources import ResourcesT, _T_co
 from .utils import DateTime, FrozenInfo, _AttributeBase
 
 if TYPE_CHECKING:
+    from typing import Literal, overload
+
     from .users import User
-    from .utils import AttributeT, JsonDict
+    from .utils import AttributeT, JsonDict, JsonType
+
+    class TypedResourceDict(JsonDict):
+        @overload
+        def __getitem__(self, item: Literal["id"]) -> int: ...
+
+        @overload
+        def __getitem__(self, item: str) -> "JsonType": ...
+
+        def __getitem__(self, item): ...
 
 
 class Resource(FrozenInfo):
@@ -97,9 +108,10 @@ class MutableResource(Resource):
         :return: a new instance of the updated resource
         :rtype: same as object
         """
-        parent = cast("ResourcesT[_T_co]", self.parent)
+        parent = self.parent
         updated_info = parent.client.put(parent.endpoint, self.id, json=kwargs)
-        return parent(updated_info["id"], info=updated_info)
+        updated_resource: _T_co = parent(updated_info["id"], info=updated_info)
+        return updated_resource
 
     def delete(self) -> None:
         """Delete the resource. Requires the respective permission."""

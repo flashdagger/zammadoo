@@ -52,7 +52,7 @@ class ResourcesT(Generic[_T_co]):
             assert (
                 info.get("id") == rid
             ), "parameter info must contain 'id' and be equal with rid"
-            self.cache[f"{self.url}/{rid}"] = None if info is None else dict(info)
+            self.cache[f"{self.url}/{rid}"] = dict(info)
 
         return self._RESOURCE_TYPE(self, rid, info=info)
 
@@ -71,7 +71,10 @@ class ResourcesT(Generic[_T_co]):
 
         if refresh or item not in cache:
             response: "JsonDict" = self.client.get(
-                self.endpoint, rid, params={"expand": expand or None}
+                self.endpoint,
+                rid,
+                params={"expand": expand or None},
+                _erase_return_type=True,
             )
             cache[item] = response
             return response
@@ -133,7 +136,9 @@ class IterableT(ResourcesT[_T_co]):
         params["expand"] = params.get("expand", pagination.expand)
 
         while True:
-            items = self.client.get(self.endpoint, *args, params=params)
+            items: List["JsonDict"] = self.client.get(
+                self.endpoint, *args, params=params, _erase_return_type=True
+            )
             counter = YieldCounter()
 
             yield from counter(self._iter_items(items))

@@ -15,6 +15,11 @@ class TypedTag(TypedDict):
     count: Optional[int]
 
 
+class _TypedDict(TypedTag, total=False):
+    value: str
+    tags: List[str]
+
+
 class Tags:
     """Tags(...)
     This class manages the ``/tags``, ``/tag_list`` and ``/tag_search`` endpoint.
@@ -48,8 +53,10 @@ class Tags:
     def reload(self) -> None:
         """reloads the tag cache"""
         cache = self.cache
+        items: List[TypedTag] = self.client.get(self.endpoint, _erase_return_type=True)
+
         cache.clear()
-        cache.update((info["name"], info) for info in self.client.get(self.endpoint))
+        cache.update((info["name"], info) for info in items)
         self._unintialized = False
 
     def search(self, term: str) -> List[str]:
@@ -59,7 +66,9 @@ class Tags:
         :param term: search term
         :return: search results
         """
-        items = self.client.get("tag_search", params={"term": term})
+        items: List["_TypedDict"] = self.client.get(
+            "tag_search", params={"term": term}, _erase_return_type=True
+        )
         return list(info["value"] for info in items)
 
     def create(self, name: str) -> None:
@@ -132,7 +141,7 @@ class Tags:
         :param tid: the ticket id
         :return: ticket tags
         """
-        items: "StringKeyMapping" = self.client.get(
-            "tags", params={"object": "Ticket", "o_id": tid}
+        items: "_TypedDict" = self.client.get(
+            "tags", params={"object": "Ticket", "o_id": tid}, _erase_return_type=True
         )
         return items.get("tags", [])

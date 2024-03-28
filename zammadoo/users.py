@@ -11,6 +11,7 @@ from .utils import AttributeT, OptionalDateTime
 if TYPE_CHECKING:
     from .client import Client
     from .organizations import Organization
+    from .resource import TypedResourceDict
     from .roles import Role
 
 
@@ -127,5 +128,7 @@ class Users(SearchableT[User], CreatableT[User]):
         """
         :return: Return the authenticated user.
         """
-        info = self.client.get(self.endpoint, "me")
+        info: "TypedResourceDict" = self.client.get(
+            self.endpoint, "me", _erase_return_type=True
+        )
         return self._RESOURCE_TYPE(self, info["id"], info=info)
