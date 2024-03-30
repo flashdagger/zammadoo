@@ -15,7 +15,7 @@ class TypedTag(TypedDict):
     count: Optional[int]
 
 
-class _TypedDict(TypedTag, total=False):
+class _TypedJson(TypedTag, total=False):
     value: str
     tags: List[str]
 
@@ -66,7 +66,7 @@ class Tags:
         :param term: search term
         :return: search results
         """
-        items: List["_TypedDict"] = self.client.get(
+        items: List["_TypedJson"] = self.client.get(
             "tag_search", params={"term": term}, _erase_return_type=True
         )
         return list(info["value"] for info in items)
@@ -141,7 +141,7 @@ class Tags:
         :param tid: the ticket id
         :return: ticket tags
         """
-        items: "_TypedDict" = self.client.get(
+        items: "_TypedJson" = self.client.get(
             "tags", params={"object": "Ticket", "o_id": tid}, _erase_return_type=True
         )
-        return items.get("tags", [])
+        return items["tags"]

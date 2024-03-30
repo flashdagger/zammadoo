@@ -48,7 +48,7 @@ class ResourcesT(Generic[_T_co]):
         )  #: resource LRU cache
 
     def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
-        if info:
+        if info is not None:
             assert (
                 info.get("id") == rid
             ), "parameter info must contain 'id' and be equal with rid"
@@ -70,12 +70,11 @@ class ResourcesT(Generic[_T_co]):
         cache = self.cache
 
         if refresh or item not in cache:
-            response: "JsonDict" = self.client.get(
-                self.endpoint,
-                rid,
-                params={"expand": expand or None},
-                _erase_return_type=True,
+            response = self.client.get(
+                self.endpoint, rid, params={"expand": expand or None}
             )
+            if TYPE_CHECKING:
+                assert isinstance(response, dict)
             cache[item] = response
             return response
 

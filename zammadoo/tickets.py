@@ -31,7 +31,7 @@ LinkType = Literal["normal", "parent", "child"]
 LINK_TYPES = get_args(LinkType)
 
 
-class _TypedDict(TypedDict, total=False):
+class _TypedJson(TypedDict, total=False):
     id: int
     assets: Dict[str, Dict[str, "JsonDict"]]
     history: List["StringKeyMapping"]
@@ -218,9 +218,8 @@ class Ticket(MutableResource):
         params = {"link_object": "Ticket", "link_object_value": self.id}
         link_map = dict((key, []) for key in LINK_TYPES)
 
-        items: _TypedDict = client.get("links", params=params, _erase_return_type=True)
-        assets = items.get("assets", {})
-        cache_assets(client, assets)
+        items: _TypedJson = client.get("links", params=params, _erase_return_type=True)
+        cache_assets(client, items["assets"])
 
         links = items["links"]
         for item in links:
@@ -368,7 +367,7 @@ class Ticket(MutableResource):
 
         :return: the ticket's history
         """
-        info: _TypedDict = self.parent.client.get(
+        info: _TypedJson = self.parent.client.get(
             "ticket_history", self.id, _erase_return_type=True
         )
         return info["history"]
