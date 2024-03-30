@@ -13,7 +13,6 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
-    TypedDict,
     TypeVar,
     Union,
     overload,
@@ -35,10 +34,6 @@ if TYPE_CHECKING:
     from .utils import JsonType, StringKeyMapping
 
 LOG = logging.getLogger(__name__)
-
-
-class _TypedDict(TypedDict):
-    version: str
 
 
 class APIException(HTTPError):
@@ -307,7 +302,7 @@ class Client:
         _erase_return_type: Literal[False] = ...,
     ) -> "JsonType": ...
 
-    # this enforces type annotation in the assignment by mypy
+    # this allows type annotation in the assignment by mypy
     @overload
     def get(
         self,
@@ -334,8 +329,11 @@ class Client:
     @cached_property
     def server_version(self) -> str:
         """the Zammad server version"""
-        info: "_TypedDict" = self.get("version", _erase_return_type=True)
-        return info["version"]
+        info = self.get("version")
+        assert isinstance(info, dict)
+        version = info["version"]
+        assert isinstance(version, str)
+        return version
 
     @cached_property
     def weburl(self) -> str:
