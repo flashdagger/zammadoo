@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Iterator, List, Optional
+from typing import TYPE_CHECKING, Iterator, List
 
 from .resource import MutableResource, UserProperty
 from .resources import IterableT
@@ -14,21 +14,13 @@ if TYPE_CHECKING:
 class Notification(MutableResource):
     """Notification(...)"""
 
-    EXPANDED_ATTRIBUTES = ("object", "type", "user")
+    EXPANDED_ATTRIBUTES = ("*", "created_by", "object", "type", "updated_by", "user")
 
-    parent: "Notifications"
     object: str
+    parent: "Notifications"
     seen: bool
     type: str
     user = UserProperty()
-
-    # always use expand=True
-    def reload(self, expand=True) -> None:
-        return super().reload(expand=True)
-
-    # always use expand=True
-    def _assert_attribute(self, name: Optional[str] = None) -> None:
-        return super()._assert_attribute(name="object")
 
 
 class Notifications(IterableT[Notification]):

@@ -1,0 +1,2 @@
+{"method": "POST", "url": "https://localhost/api/v1/online_notifications/mark_all_as_read", "status_code": 200, "reason": "OK", "headers": {"Content-Type": "application/json; charset=utf-8", "Content-Length": "2"}, "encoding": "utf-8", "content_size": 2}
+{}
