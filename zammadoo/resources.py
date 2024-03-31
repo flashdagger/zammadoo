@@ -69,16 +69,16 @@ class ResourcesT(Generic[_T_co]):
         item = f"{self.url}/{rid}"
         cache = self.cache
 
-        if refresh or item not in cache:
-            response = self.client.get(
-                self.endpoint, rid, params={"expand": expand or None}
-            )
-            if TYPE_CHECKING:
-                assert isinstance(response, dict)
-            cache[item] = response
-            return response
+        if not refresh and item in cache:
+            return cache[item]
 
-        return cache[item]
+        response = self.client.get(
+            self.endpoint, rid, params={"expand": expand or None}
+        )
+        if TYPE_CHECKING:
+            assert isinstance(response, dict)
+        cache[item] = response
+        return response
 
     def delete(self, rid: int) -> None:
         """:meta private:"""

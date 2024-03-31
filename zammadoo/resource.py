@@ -58,15 +58,18 @@ class Resource(FrozenInfo):
         expanded_attributes = self.EXPANDED_ATTRIBUTES
         name_in_expanded_attributes = name in expanded_attributes
         refresh = info and name_in_expanded_attributes
-        cached_info = self.parent.cached_info(
+        cached_info = self.parent.cached_info
+
+        updated_info = cached_info(
             self.id,
             refresh=refresh,
             expand=(name_in_expanded_attributes or "*" in expanded_attributes),
         )
-        if name_in_expanded_attributes and not refresh and name not in cached_info:
-            cached_info = self.parent.cached_info(self.id, refresh=True, expand=True)
+        if not refresh and name_in_expanded_attributes and name not in updated_info:
+            updated_info = cached_info(self.id, refresh=True, expand=True)
+
         info.clear()
-        info.update(cached_info)
+        info.update(updated_info)
 
     def reload(self, expand=False) -> None:
         """
