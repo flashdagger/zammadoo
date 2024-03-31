@@ -23,6 +23,7 @@ from requests import HTTPError, JSONDecodeError, Response
 
 from .articles import Articles
 from .groups import Groups
+from .notifications import Notifications
 from .organizations import Organizations
 from .roles import Roles
 from .tags import Tags
@@ -107,6 +108,11 @@ class Client:
     def groups(self) -> Groups:
         """Manages the ``/groups`` endpoint."""
         return Groups(self)
+
+    @cached_property
+    def notificatons(self) -> Notifications:
+        """Manages the ``/online_notifications`` endpoint."""
+        return Notifications(self)
 
     @cached_property
     def organizations(self) -> Organizations:

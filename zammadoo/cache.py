@@ -52,7 +52,7 @@ class LruCache(Generic[_T]):
 
         return default
 
-    def clear(self):
+    def clear(self) -> None:
         self._cache.clear()
 
     def keys(self):
