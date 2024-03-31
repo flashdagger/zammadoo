@@ -13,8 +13,18 @@ if TYPE_CHECKING:
 class Group(NamedResource):
     """Group(...)"""
 
+    EXPANDED_ATTRIBUTES = (
+        "created_by",
+        "email_address",
+        "signature",
+        "updated_by",
+        "users",
+    )
+
+    email_address: str
     parent: "Groups"
     shared_drafts: bool  #:
+    signature: str
     users = UserListProperty()  #:
 
     @property

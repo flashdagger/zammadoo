@@ -41,6 +41,8 @@ class _TypedJson(TypedDict, total=False):
 class Priority(NamedResource):
     """Priority(...)"""
 
+    EXPANDED_ATTRIBUTES = ("created_by", "updated_by")
+
     ui_color: Optional[str]  #:
     ui_icon: Optional[str]  #:
 
@@ -68,12 +70,13 @@ class Priorities(IterableT[Priority], CreatableT[Priority]):
 class State(NamedResource):
     """State(...)"""
 
+    EXPANDED_ATTRIBUTES = ("created_by", "state_type", "updated_by")
+
     parent: "States"
 
     default_create: bool  #:
     default_follow_up: bool  #:
     ignore_escalation: bool  #:
-    state_type_id: int  #:
 
     @property
     def next_state(self) -> Optional["State"]:
@@ -111,7 +114,21 @@ class States(IterableT[State], CreatableT[State]):
 class Ticket(MutableResource):
     """Ticket(...)"""
 
-    EXPANDED_ATTRIBUTES = "article_ids", "create_article_sender", "create_article_type"
+    EXPANDED_ATTRIBUTES = (
+        "article_ids",
+        "create_article_sender",
+        "create_article_type",
+        "created_by",
+        "customer",
+        "group",
+        "organization",
+        "owner",
+        "priority",
+        "state",
+        "ticket_time_accounting",
+        "ticket_time_accounting_ids",
+        "updated_by",
+    )
 
     article_count: Optional[int]  #:
     create_article_sender: str  #:

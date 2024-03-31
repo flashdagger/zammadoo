@@ -14,9 +14,16 @@ if TYPE_CHECKING:
 class Role(NamedResource):
     """Role(...)"""
 
-    EXPANDED_ATTRIBUTES = ("permissions",)
+    EXPANDED_ATTRIBUTES = (
+        "created_by",
+        "groups",
+        "knowledge_base_permissions",
+        "permissions",
+        "updated_by",
+    )
 
     default_at_signup: bool  #:
+    knowledge_base_permissions: List[str]  #:
     parent: "Roles"
     permissions: List[str]  #:
 

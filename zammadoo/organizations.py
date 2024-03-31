@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 class Organization(NamedResource):
     """Organization(...)"""
 
+    EXPANDED_ATTRIBUTES = ("created_by", "members", "updated_by")
+
     domain: str  #:
     domain_assignment: bool  #:
     members = UserListProperty()  #:

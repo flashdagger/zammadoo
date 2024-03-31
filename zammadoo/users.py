@@ -18,6 +18,17 @@ if TYPE_CHECKING:
 class User(NamedResource):
     """User(...)"""
 
+    EXPANDED_ATTRIBUTES = (
+        "authorizations",
+        "created_by",
+        "groups",
+        "organizations",
+        "overview_sortings",
+        "roles",
+        "two_factor_preferences",
+        "updated_by",
+    )
+
     department: Optional[str]  #:
     email: str  #:
     fax: str  #:

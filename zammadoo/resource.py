@@ -49,15 +49,24 @@ class Resource(FrozenInfo):
 
     def _assert_attribute(self, name: Optional[str] = None) -> None:
         info = self._info
-        expand = (
-            name is not None and name in self.EXPANDED_ATTRIBUTES and name not in info
+        if name is None:
+            name = "id"
+
+        if name in info:
+            return
+
+        expanded_attributes = self.EXPANDED_ATTRIBUTES
+        name_in_expanded_attributes = name in expanded_attributes
+        refresh = info and name_in_expanded_attributes
+        cached_info = self.parent.cached_info(
+            self.id,
+            refresh=refresh,
+            expand=(name_in_expanded_attributes or "*" in expanded_attributes),
         )
-        if expand or not info:
-            cached_info = self.parent.cached_info(
-                self.id, refresh=(info and expand), expand=expand
-            )
-            info.clear()
-            info.update(cached_info)
+        if name_in_expanded_attributes and not refresh and name not in cached_info:
+            cached_info = self.parent.cached_info(self.id, refresh=True, expand=True)
+        info.clear()
+        info.update(cached_info)
 
     def reload(self, expand=False) -> None:
         """
@@ -65,10 +74,16 @@ class Resource(FrozenInfo):
 
         :param expand: if ``True`` the properties will contain `additional information
                <https://docs.zammad.org/en/latest/api/intro.html#response-payloads-expand>`_.
+
+        .. note::
+           if :attr:`EXPANDED_ATTRIBUTES` contains ``'*'`` **expand** will always be ``True``
+
         """
         info = self._info
         info.clear()
-        new_info = self.parent.cached_info(self.id, refresh=True, expand=expand)
+        new_info = self.parent.cached_info(
+            self.id, refresh=True, expand=expand or "*" in self.EXPANDED_ATTRIBUTES
+        )
         info.update(new_info)
 
     def last_request_at(self) -> Optional[datetime]:

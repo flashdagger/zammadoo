@@ -17,10 +17,12 @@ History
     * added :meth:`tickets.Ticket.time_accountings` and :meth:`tickets.Ticket.create_time_accounting`
     * added :meth:`articles.Article.create_or_update_time_accounting`
     * added support for the ``/online_notifications`` endpoint (for details see :doc:`api/notifications`)
+    * force requests with ``'expand=true'`` if ``'*'`` in :attr:`EXPANDED_ATTRIBUTES`
 
 * **fixes**
 
-    * none yet
+    * fix edge case when unexpanded attributes were cached but a new instance accessed an expanded attribute
+    * update ``EXPANDED_ATTRIBUTES`` on classes
 
 0.2.0 (2024-03-10)
 ------------------
