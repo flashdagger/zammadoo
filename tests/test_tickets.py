@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 import time
 
-from . import assert_existing_tags, ticket_pair
+import pytest
+
+from . import assert_existing_tags, single_ticket, ticket_pair
 
 
 def test_ticket_customer_attribute(client):
@@ -124,25 +127,22 @@ def test_ticket_merge(ticket_pair):
     assert b_articles[0].body == "merged"
 
 
-def test_ticket_update(ticket_pair):
-    ticket, _ = ticket_pair
-    assert ticket.article_count == 1
-    updated_ticket = ticket.update(body="new article")
+def test_ticket_update(single_ticket):
+    assert single_ticket.article_count == 1
+    updated_ticket = single_ticket.update(body="new article")
     assert updated_ticket.article_count == 2
 
 
-def test_ticket_create_article(ticket_pair):
-    ticket, _ = ticket_pair
-    assert ticket.article_count == 1
-    new_article = ticket.create_article(body="new article")
-    ticket.reload(expand=True)
-    assert len(ticket.articles) == 2
+def test_ticket_create_article(single_ticket):
+    assert single_ticket.article_count == 1
+    new_article = single_ticket.create_article(body="new article")
+    single_ticket.reload(expand=True)
+    assert len(single_ticket.articles) == 2
     assert new_article.body == "new article"
 
 
-def test_ticket_history(ticket_pair):
-    ticket, _ = ticket_pair
-    history = ticket.history()
+def test_ticket_history(single_ticket):
+    history = single_ticket.history()
     assert len(history) == 3
 
     assert history[0].items() > {"object": "Ticket", "type": "created"}.items()
@@ -160,30 +160,56 @@ def test_ticket_search(rclient, ticket_pair, record_log):
     assert len(tickets) >= 2
 
 
-def test_ticket_iter(rclient, ticket_pair):
+def test_ticket_iter_with_offset(rclient, ticket_pair):
     tickets = list(rclient.tickets.iter(page=1000))
     assert len(tickets) == 0
 
 
-def test_ticket_tags(ticket_pair, assert_existing_tags):
-    ticket_a, ticket_b = ticket_pair
+def test_ticket_tags(single_ticket, assert_existing_tags):
     with assert_existing_tags("__pytest__", "__tag__"):
-        assert ticket_a.tags() == []
-        ticket_a.add_tags("__pytest__", "__tag__")
-        assert ticket_a.tags() == ["__pytest__", "__tag__"]
-        ticket_a.remove_tags("__tag__")
-        assert ticket_a.tags() == ["__pytest__"]
+        assert single_ticket.tags() == []
+        single_ticket.add_tags("__pytest__", "__tag__")
+        assert single_ticket.tags() == ["__pytest__", "__tag__"]
+        single_ticket.remove_tags("__tag__")
+        assert single_ticket.tags() == ["__pytest__"]
 
 
-def test_ticket_create_article_sender_and_type_attribute(ticket_pair):
-    ticket_a, ticket_b = ticket_pair
-    assert ticket_a.create_article_sender == "Agent"
-    assert ticket_b.create_article_type == "note"
+def test_ticket_create_article_sender_and_type_attribute(single_ticket):
+    assert single_ticket.create_article_sender == "Agent"
+    assert single_ticket.create_article_type == "note"
 
 
-def test_ticket_last_request_at(ticket_pair):
+def test_ticket_last_request_at(single_ticket):
     from datetime import datetime
 
-    ticket, _ = ticket_pair
-    timestamp = ticket.last_request_at()
+    timestamp = single_ticket.last_request_at()
     assert isinstance(timestamp, datetime)
+
+
+def test_lazy_attribute_caching(caplog, rclient):
+    import logging
+
+    api_url = rclient.url
+    ticket = rclient.tickets(1)
+
+    with caplog.at_level(logging.INFO, logger="zammadoo"):
+        _ = ticket["number"]
+        with pytest.raises(KeyError):
+            ticket["doesnotexist"]
+
+    # expect only one request without expand
+    assert caplog.record_tuples == [
+        ("zammadoo", logging.INFO, f"HTTP:GET {api_url}/tickets/1"),
+    ]
+
+    ticket = rclient.tickets(1)
+    with caplog.at_level(logging.INFO, logger="zammadoo"):
+        _ = ticket["owner"]
+        with pytest.raises(KeyError):
+            ticket["stilldoesnotexist"]
+
+    # expect one more request with expand
+    assert caplog.record_tuples == [
+        ("zammadoo", logging.INFO, f"HTTP:GET {api_url}/tickets/1"),
+        ("zammadoo", logging.INFO, f"HTTP:GET {api_url}/tickets/1?expand=true"),
+    ]
