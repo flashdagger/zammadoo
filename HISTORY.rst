@@ -16,6 +16,7 @@ History
     * added support for the ``/time_accountings`` endpoint (for details see :doc:`api/time_accountings`)
     * added :meth:`tickets.Ticket.time_accountings` and :meth:`tickets.Ticket.create_time_accounting`
     * added :meth:`articles.Article.create_or_update_time_accounting`
+    * added support for the ``/online_notifications`` endpoint (for details see :doc:`api/notifications`)
 
 * **fixes**
 

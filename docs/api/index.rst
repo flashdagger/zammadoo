@@ -8,6 +8,7 @@ API Reference
     articles
     client
     groups
+    notifications
     organizations
     roles
     tickets
