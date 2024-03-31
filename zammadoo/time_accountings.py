@@ -28,14 +28,13 @@ class TimeAccountingTypes(
     def __init__(self, client: "Client"):
         super().__init__(client, "time_accounting/types")
 
-    def cached_info(self, rid: int, refresh=True, expand=False) -> "JsonDict":
-        item = f"{self.url}/{rid}"
+    def cached_info(self, url: str, refresh=True, expand=False) -> "JsonDict":
         cache = self.cache
-        if item not in cache or refresh:
+        if url not in cache or refresh:
             for _ in self:
                 pass
 
-        return cache[item]
+        return cache[url]
 
     def create(
         self, name: str, *, note: Optional[str] = None, active: bool = True

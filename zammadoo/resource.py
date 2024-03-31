@@ -61,12 +61,12 @@ class Resource(FrozenInfo):
         cached_info = self.parent.cached_info
 
         updated_info = cached_info(
-            self.id,
+            self.url,
             refresh=refresh,
             expand=(name_in_expanded_attributes or "*" in expanded_attributes),
         )
         if not refresh and name_in_expanded_attributes and name not in updated_info:
-            updated_info = cached_info(self.id, refresh=True, expand=True)
+            updated_info = cached_info(self.url, refresh=True, expand=True)
 
         info.clear()
         info.update(updated_info)
@@ -85,7 +85,7 @@ class Resource(FrozenInfo):
         info = self._info
         info.clear()
         new_info = self.parent.cached_info(
-            self.id, refresh=True, expand=expand or "*" in self.EXPANDED_ATTRIBUTES
+            self.url, refresh=True, expand=expand or "*" in self.EXPANDED_ATTRIBUTES
         )
         info.update(new_info)
 

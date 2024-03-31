@@ -249,7 +249,9 @@ class Client:
 
         :raises: :exc:`APIException`, :class:`requests.HTTPError`
         """
-        url = "/".join(map(str, (self.url, *args)))
+        url = "/".join(filter(bool, map(str, args)))
+        if not url.startswith(self.url):
+            url = f"{self.url}/{url}" if url else self.url
         response = self.response(method, url, json=json, params=params, **kwargs)
         value = raise_or_return_json(response)
         LOG.debug("HTTP:%s returned %s", method, shorten(repr(value), width=120))

@@ -65,19 +65,16 @@ class ResourcesT(Generic[_T_co]):
         assert client is not None, "missing client reference"
         return client
 
-    def cached_info(self, rid: int, refresh=True, expand=False) -> "JsonDict":
-        item = f"{self.url}/{rid}"
+    def cached_info(self, url: str, refresh=True, expand=False) -> "JsonDict":
         cache = self.cache
 
-        if not refresh and item in cache:
-            return cache[item]
+        if not refresh and url in cache:
+            return cache[url]
 
-        response = self.client.get(
-            self.endpoint, rid, params={"expand": expand or None}
-        )
+        response = self.client.get(url, params={"expand": expand or None})
         if TYPE_CHECKING:
             assert isinstance(response, dict)
-        cache[item] = response
+        cache[url] = response
         return response
 
     def delete(self, rid: int) -> None:
