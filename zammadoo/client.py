@@ -235,7 +235,7 @@ class Client:
         params: Optional["StringKeyMapping"] = None,
         json: Optional["StringKeyMapping"] = None,
         **kwargs,
-    ):
+    ) -> "JsonType":
         """
         Perform a request on the API URL.
 

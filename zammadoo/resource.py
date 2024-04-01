@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 from .resources import ResourcesT, _T_co
 from .utils import DateTime, FrozenInfo, _AttributeBase
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from typing import Literal, overload
 
     from .users import User
-    from .utils import AttributeT, JsonDict, JsonType
+    from .utils import JsonDict, JsonType
 
     class TypedResourceDict(JsonDict):
         @overload
@@ -138,5 +138,5 @@ class MutableResource(Resource):
 
 class NamedResource(MutableResource):
     active: bool  #:
-    name: Union[str, "AttributeT[str]"]  #:
+    name: str  #:
     note: Optional[str]  #:

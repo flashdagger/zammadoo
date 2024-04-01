@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union, cast
 
 from .groups import Group
 from .resource import NamedResource, OptionalUserProperty
@@ -39,7 +39,7 @@ class User(NamedResource):
     login: str  #: users login name
     login_failed: int  #:
     mobile: str  #:
-    name = AttributeT[str]("login")  #: alias for :attr:`login`
+    name = cast(str, AttributeT[str]("login"))  #: alias for :attr:`login`
     out_of_office: bool  #:
     out_of_office_end_at = OptionalDateTime()
     out_of_office_replacement = OptionalUserProperty()
