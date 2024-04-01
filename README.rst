@@ -14,7 +14,7 @@ zammadoo
    :alt: PyPI
 
 .. image:: https://img.shields.io/pypi/l/zammadoo.svg
-    :target: https://pypi.python.org/pypi/zammadoo/
+    :target: https://github.com/flashdagger/zammadoo/blob/main/LICENSE
     :alt: PyPI license
 
 .. image:: https://github.com/flashdagger/zammadoo/actions/workflows/core-tests.yml/badge.svg?event=push
