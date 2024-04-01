@@ -89,6 +89,9 @@ class ResourcesT(Generic[_T_co]):
 class CreatableT(ResourcesT[_T_co]):
     def _create(self, json: "JsonDict") -> _T_co:
         created_info = self.client.post(self.endpoint, json=json)
+        if TYPE_CHECKING:
+            assert isinstance(created_info, dict)
+            assert isinstance(created_info["id"], int)
         return self(created_info["id"], info=created_info)
 
 

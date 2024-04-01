@@ -14,7 +14,6 @@
     main:4: error: "[^\"]+" not callable  \[operator\]
     main:4: error: "[^\"]+" not callable  \[operator\]
     main:4: error: "[^\"]+" not callable  \[operator\]
-    main:4: error: "[^\"]+" not callable  \[operator\]
 - case: client_attributes_are_of_proper_type
   skip: sys.implementation.name == "pypy"
   main: |

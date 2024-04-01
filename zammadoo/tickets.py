@@ -13,11 +13,13 @@ from typing import (
 )
 
 from .resource import MutableResource, NamedResource, UserProperty
-from .resources import CreatableT, IterableT, SearchableT, _T_co
+from .resources import CreatableT, IterableT, SearchableT
 from .time_accountings import TimeAccounting, TimeAccountingType
 from .utils import OptionalDateTime
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from .articles import Article, OptionalFiles
     from .client import Client
     from .groups import Group
@@ -31,7 +33,7 @@ LinkType = Literal["normal", "parent", "child"]
 LINK_TYPES = get_args(LinkType)
 
 
-class _TypedJson(TypedDict, total=False):
+class _TypedJson(TypedDict):
     id: int
     assets: Dict[str, Dict[str, "JsonDict"]]
     history: List["StringKeyMapping"]
@@ -310,9 +312,15 @@ class Ticket(MutableResource):
         parent = self.parent
         if isinstance(target, int):
             target = parent(target)
+
         info = parent.client.put("ticket_merge", self.id, target["number"])
+        assert isinstance(info, dict)
         assert info["result"] == "success", f"merge failed with {info['result']}"
+
         merged_info = info["target_ticket"]
+        assert isinstance(merged_info, dict)
+        assert isinstance(merged_info["id"], int)
+
         return parent(merged_info["id"], info=merged_info)
 
     def create_article(
@@ -361,7 +369,7 @@ class Ticket(MutableResource):
 
         return self.parent.client.time_accountings.create(self.id, **kwargs)
 
-    def update(self: _T_co, **kwargs) -> _T_co:
+    def update(self: "Self", **kwargs) -> "Self":
         """
         Update the ticket properties.
 

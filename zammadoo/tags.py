@@ -15,7 +15,7 @@ class TypedTag(TypedDict):
     count: Optional[int]
 
 
-class _TypedJson(TypedTag, total=False):
+class _TypedJson(TypedTag):
     value: str
     tags: List[str]
 

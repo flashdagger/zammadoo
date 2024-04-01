@@ -4,11 +4,13 @@
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
-from .resources import ResourcesT, _T_co
+from .resources import ResourcesT
 from .utils import DateTime, FrozenInfo, _AttributeBase
 
 if TYPE_CHECKING:
     from typing import Literal, overload
+
+    from typing_extensions import Self
 
     from .users import User
     from .utils import JsonDict, JsonType
@@ -20,7 +22,7 @@ if TYPE_CHECKING:
         @overload
         def __getitem__(self, item: str) -> "JsonType": ...
 
-        def __getitem__(self, item): ...
+        def __getitem__(self, item) -> "JsonType": ...
 
 
 class Resource(FrozenInfo):
@@ -57,7 +59,7 @@ class Resource(FrozenInfo):
 
         expanded_attributes = self.EXPANDED_ATTRIBUTES
         name_in_expanded_attributes = name in expanded_attributes
-        refresh = info and name_in_expanded_attributes
+        refresh = bool(info) and name_in_expanded_attributes
         cached_info = self.parent.cached_info
 
         updated_info = cached_info(
@@ -118,7 +120,7 @@ class MutableResource(Resource):
     updated_at = DateTime()
     updated_by = UserProperty()
 
-    def update(self: _T_co, **kwargs) -> _T_co:
+    def update(self: "Self", **kwargs) -> "Self":
         """
         Update the resource properties.
 
@@ -128,7 +130,10 @@ class MutableResource(Resource):
         """
         parent = self.parent
         updated_info = parent.client.put(parent.endpoint, self.id, json=kwargs)
-        updated_resource: _T_co = parent(updated_info["id"], info=updated_info)
+        if TYPE_CHECKING:
+            assert isinstance(updated_info, dict)
+            assert isinstance(updated_info["id"], int)
+        updated_resource: "Self" = parent(updated_info["id"], info=updated_info)
         return updated_resource
 
     def delete(self) -> None:

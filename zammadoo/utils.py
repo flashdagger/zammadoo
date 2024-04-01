@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 import sys
 from datetime import datetime
 from itertools import chain
@@ -36,7 +37,7 @@ class FrozenInfo:
         self._info = dict(info) if info is not None else {}
         self._frozen = True
 
-    def __getattr__(self, name: str) -> Union["JsonType", datetime]:
+    def __getattr__(self, name: str) -> "JsonType":
         info: Dict[str, "JsonType"] = self._info
 
         try:
