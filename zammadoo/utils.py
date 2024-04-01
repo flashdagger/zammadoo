@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
+import sys
 from datetime import datetime
 from itertools import chain
 from types import MappingProxyType
@@ -107,16 +107,23 @@ class AttributeT(_AttributeBase, Generic[_T]):
         return value
 
 
+_fromisoformat = datetime.fromisoformat
+
+if sys.version_info < (3, 11):
+
+    def convert_date(date_string: str) -> datetime:
+        return _fromisoformat(date_string.replace("Z", "+00:00"))
+
+else:
+    convert_date = _fromisoformat
+
+
 class DateTime(_AttributeBase):
     def __get__(self, instance, owner=None) -> datetime:
-        return datetime.fromisoformat(instance[self.name].replace("Z", "+00:00"))
+        return convert_date(instance[self.name])
 
 
 class OptionalDateTime(_AttributeBase):
     def __get__(self, instance, owner=None) -> Optional[datetime]:
         value = instance[self.name]
-        return (
-            None
-            if value is None
-            else datetime.fromisoformat(instance[self.name].replace("Z", "+00:00"))
-        )
+        return None if value is None else convert_date(instance[self.name])
