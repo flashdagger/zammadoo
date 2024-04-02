@@ -24,7 +24,7 @@ jobs:
         path: |
           /opt/pipx/venvs/poetry
           /opt/pipx_bin/poetry
-        key: pipx-venvs
+        key: pipx-venvs-poetry
     - name: Install poetry
       run: |
         pipx install poetry
@@ -70,7 +70,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
-      - run: pipx install coverage[toml]
+      - name: Pipx cache for coverage
+        uses: actions/cache@v4
+        with:
+          path: |
+            /opt/pipx/venvs/coverage
+            /opt/pipx_bin/coverage
+          key: pipx-venvs-coverage
+      - name: Install Python coverage
+        run: |
+          pipx install coverage[toml]
+          pipx list --verbose
       - name: Merge coverage data and compute total coverage
         continue-on-error: true
         run: |
