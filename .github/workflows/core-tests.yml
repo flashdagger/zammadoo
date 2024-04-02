@@ -54,7 +54,7 @@ jobs:
       run: |
         poetry run mypy ./zammadoo
     - name: Static code analysis with pylint
-      if: ${{ matrix.python-version != '3.8' }}
+      if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
         poetry run pylint ./zammadoo
 

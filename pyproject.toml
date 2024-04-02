@@ -76,7 +76,7 @@ src_paths = ["zammadoo", "tests"]
 # see: https://pytest-cov.readthedocs.io/en/latest/config.html
 [tool.pytest.ini_options]
 minversion = "7.4"
-addopts = "tests -v --tb=short --cov=zammadoo --cov-report html --mypy-only-local-stub --benchmark-max-time=0.1"
+addopts = "tests -v --tb=short --cov=zammadoo --cov-report= --mypy-only-local-stub --benchmark-max-time=0.1"
 cache_dir = ".cache/pytest"
 markers = ["no_record"]
 
