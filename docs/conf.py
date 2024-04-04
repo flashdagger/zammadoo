@@ -14,8 +14,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(__file__, "..", "..")))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "zammadoo"
-copyright = "2023, MK"
-author = "Marcel Kuszak"
+copyright = "2023, MMM"
+author = "flashdagger"
 
 # The full version, including alpha/beta/rc tags
 release = "0.3.0.dev0"
