@@ -46,7 +46,7 @@ class Attachment(FrozenInfo):
     @property
     def size(self) -> int:
         """attachment size in bytes"""
-        return int(self._info["size"])
+        return int(self["size"])
 
     @staticmethod
     def info_from_files(*paths: "PathType"):
@@ -81,9 +81,7 @@ class Attachment(FrozenInfo):
     def _response(self) -> requests.Response:
         response = self._client.response("GET", self.url, stream=True)
         response.raise_for_status()
-
-        preferences = self._info.get("preferences", {})
-        response.encoding = preferences.get("Charset") or response.apparent_encoding
+        response.encoding = response.apparent_encoding
 
         return response
 

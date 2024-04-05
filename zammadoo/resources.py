@@ -21,13 +21,15 @@ if TYPE_CHECKING:
 
     # noinspection PyUnresolvedReferences
     from .resource import Resource
-    from .utils import JsonDict
+    from .utils import JsonDict, JsonMapping
 
 
 _T_co = TypeVar("_T_co", bound="Resource", covariant=True)
 
 
 class ResourcesT(Generic[_T_co]):
+    __slots__ = ("_client", "endpoint", "url", "cache")
+
     _RESOURCE_TYPE: Type[_T_co]
     DEFAULT_CACHE_SIZE = -1
     """
@@ -47,12 +49,13 @@ class ResourcesT(Generic[_T_co]):
             max_size=self.DEFAULT_CACHE_SIZE
         )  #: resource LRU cache
 
-    def __call__(self, rid: int, *, info: Optional["JsonDict"] = None) -> _T_co:
+    def __call__(self, rid: int, *, info: Optional["JsonMapping"] = None) -> _T_co:
         if info is not None:
+            mapping = dict(info)
             assert (
-                info.get("id") == rid
-            ), "parameter info must contain 'id' and be equal with rid"
-            self.cache[f"{self.url}/{rid}"] = dict(info)
+                mapping.get("id") == rid
+            ), "parameter info must contain 'id' equal to rid"
+            self.cache[f"{self.url}/{rid}"] = mapping
 
         return self._RESOURCE_TYPE(self, rid, info=info)
 

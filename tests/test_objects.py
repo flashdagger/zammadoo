@@ -18,7 +18,7 @@ def test_resource_creation_with_info_needs_proper_id(client):
     with pytest.raises(AssertionError, match="must contain 'id'"):
         _ = client.tickets(1, info={"noid": True})
 
-    with pytest.raises(AssertionError, match="be equal with rid"):
+    with pytest.raises(AssertionError, match="equal to rid"):
         _ = client.tickets(1, info={"id": 2})
 
 

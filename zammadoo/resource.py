@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
     from .users import User
-    from .utils import JsonDict, JsonType
+    from .utils import JsonDict, JsonMapping, JsonType
 
     class TypedResourceDict(JsonDict):
         @overload
@@ -26,6 +26,8 @@ if TYPE_CHECKING:
 
 
 class Resource(FrozenInfo):
+    __slots__ = ("id", "url", "parent")
+
     EXPANDED_ATTRIBUTES: Tuple[str, ...] = ()  #: :meta private:
 
     id: int  #:
@@ -36,12 +38,12 @@ class Resource(FrozenInfo):
         parent: ResourcesT[Any],
         rid: int,
         *,
-        info: Optional["JsonDict"] = None,
+        info: Optional["JsonMapping"] = None,
     ) -> None:
         self.id = rid
         self.parent = parent
         self.url = f"{parent.url}/{rid}"
-        super().__init__(info)
+        super().__init__(info or ())
 
     def __repr__(self):
         return f"<{self.__class__.__qualname__} {self.url!r}>"

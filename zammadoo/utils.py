@@ -5,11 +5,23 @@ import sys
 from datetime import datetime
 from itertools import chain
 from types import MappingProxyType
-from typing import Any, Dict, Generic, Iterable, List, Mapping, Optional, TypeVar, Union
+from typing import (
+    Any,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 JsonType = Union[None, bool, int, float, str, List["JsonType"], "JsonDict"]
 JsonDict = Dict[str, JsonType]
 StringKeyMapping = Mapping[str, Any]
+JsonMapping = Union[JsonDict, Iterable[Tuple[str, JsonType]]]
 
 
 class YieldCounter:
@@ -30,11 +42,13 @@ class YieldCounter:
 
 
 class FrozenInfo:
+    __slots__ = ("_info", "_frozen")
+
     def __init__(
         self,
-        info=None,
+        info: JsonMapping,
     ) -> None:
-        self._info = dict(info) if info is not None else {}
+        self._info = dict(info)
         self._frozen = True
 
     def __getattr__(self, name: str) -> "JsonType":
