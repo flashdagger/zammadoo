@@ -230,21 +230,34 @@ class Ticket(MutableResource):
         """
         returns all linked tickets grouped by link type
 
+        To loop over all linked tickets at once use `itertools.chain()`:
+
+        ::
+
+            for linked_ticked in itertools.chain(*ticket.links().values()):
+                print(linked_ticket)
+
         :return: ``{"normal": [Ticket, ...], "parent": [...], "child": [...]}``
         """
+
         parent = self.parent
         client = parent.client
-        params = {"link_object": "Ticket", "link_object_value": self.id}
-        link_map = dict((key, []) for key in LINK_TYPES)
-
-        items: _TypedJson = client.get("links", params=params, _erase_return_type=True)
+        items: _TypedJson = client.get(
+            "links",
+            params={"link_object": "Ticket", "link_object_value": self.id},
+            _erase_return_type=True,
+        )
         cache_assets(client, items["assets"])
 
-        links = items["links"]
-        for item in links:
+        link_map: Dict[str, List["Ticket"]] = {}
+        for item in items["links"]:
             assert item["link_object"] == "Ticket"
-            link_type = item["link_type"]
-            link_map.setdefault(link_type, []).append(parent(item["link_object_value"]))
+            link_map.setdefault(item["link_type"], []).append(
+                parent(item["link_object_value"])
+            )
+        for link_type in LINK_TYPES:
+            if link_type not in link_map:
+                link_map[link_type] = []
 
         return link_map
 

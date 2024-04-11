@@ -195,7 +195,7 @@ def test_lazy_attribute_caching(caplog, rclient):
     with caplog.at_level(logging.INFO, logger="zammadoo"):
         _ = ticket["number"]
         with pytest.raises(KeyError):
-            ticket["doesnotexist"]
+            _ = ticket["doesnotexist"]
 
     # expect only one request without expand
     assert caplog.record_tuples == [
@@ -206,7 +206,7 @@ def test_lazy_attribute_caching(caplog, rclient):
     with caplog.at_level(logging.INFO, logger="zammadoo"):
         _ = ticket["owner"]
         with pytest.raises(KeyError):
-            ticket["stilldoesnotexist"]
+            _ = ticket["stilldoesnotexist"]
 
     # expect one more request with expand
     assert caplog.record_tuples == [
