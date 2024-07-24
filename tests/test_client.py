@@ -93,7 +93,7 @@ def test_oauth2_token(recorded_session):
     assert answer == {"authenticated": True, "token": "AbCdEf123456"}
 
 
-def test_raise_if_not_authentication_provided():
+def test_raise_if_no_authentication_provided():
     from zammadoo import Client
 
     with pytest.raises(TypeError, match="needs an authentication parameter"):
