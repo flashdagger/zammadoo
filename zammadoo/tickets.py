@@ -382,7 +382,7 @@ class Ticket(MutableResource):
 
         return self.parent.client.time_accountings.create(self.id, **kwargs)
 
-    def update(self: "Self", **kwargs) -> "Self":
+    def update(self, **kwargs) -> "Self":
         """
         Update the ticket properties.
 

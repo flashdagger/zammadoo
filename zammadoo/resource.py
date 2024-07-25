@@ -122,7 +122,7 @@ class MutableResource(Resource):
     updated_at = DateTime()
     updated_by = UserProperty()
 
-    def update(self: "Self", **kwargs) -> "Self":
+    def update(self, **kwargs) -> "Self":
         """
         Update the resource properties.
 
