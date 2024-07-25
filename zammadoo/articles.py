@@ -11,7 +11,7 @@ from charset_normalizer import is_binary
 
 from .resource import OptionalUserProperty, Resource, UserProperty
 from .resources import CreatableT, ResourcesT
-from .time_accountings import TimeAccounting
+from .time_accountings import TimeAccounting, TimeAccountingType
 from .utils import AttributeT, DateTime, FrozenInfo
 
 if TYPE_CHECKING:
@@ -172,19 +172,31 @@ class Article(Resource):
             for info in self["attachments"]
         ]
 
+    # pylint: disable=redefined-builtin
     def create_or_update_time_accounting(
-        self, time_unit: Union[str, float], **kwargs
-    ) -> "TimeAccounting":
+        self,
+        time_unit: Union[str, float],
+        type: Union[None, str, int, TimeAccountingType] = None,
+    ) -> TimeAccounting:
         """
+        .. py:module:: zammadoo.time_accountings
+
         Create accounted time for ticket article.
         If time accounting already exists, it will be updated.
 
         :param time_unit: accounted time units
-        :param kwargs: type(`str`) or type_id(`int`)
+        :param type: accounting type
         :rtype: :class:`TimeAccounting`
         """
         aid = self.id
-        kwargs["ticket_article_id"] = aid
+        kwargs: Dict[str, Union[None, int, str]] = {"ticket_article_id": aid}
+
+        if isinstance(type, str):
+            kwargs["type"] = type
+        elif isinstance(type, TimeAccountingType):
+            kwargs["type_id"] = type.id
+        else:
+            kwargs["type_id"] = type
 
         ticket = self.ticket
         for accounting in ticket.time_accountings():

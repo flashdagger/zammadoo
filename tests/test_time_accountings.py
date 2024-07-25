@@ -52,6 +52,37 @@ def test_create_article_time_accounting(single_ticket):
     assert single_ticket.time_unit == "2.34"
 
 
+def test_update_article_time_accounting(single_ticket):
+    article = single_ticket.create_article("...", time_unit="1.23")
+    assert article.time_unit == "1.23"
+
+    accounting = single_ticket.time_accountings()[0]
+    assert accounting.ticket_article_id == article.id
+    assert accounting.time_unit == "1.23"
+    assert accounting.type is None
+
+    client = single_ticket.parent.client
+    accounting_type = next(iter(client.time_accountings.types))
+
+    article.create_or_update_time_accounting("2.34", type=accounting_type)
+    accounting.reload()
+    assert accounting.ticket_article_id == article.id
+    assert accounting.time_unit == "2.34"
+    assert accounting.type == accounting_type
+
+    article.create_or_update_time_accounting("3.45", type=accounting_type.id)
+    accounting.reload()
+    assert accounting.ticket_article_id == article.id
+    assert accounting.time_unit == "3.45"
+    assert accounting.type == accounting_type
+
+    article.create_or_update_time_accounting("4.56", type=accounting_type.name)
+    accounting.reload()
+    assert accounting.ticket_article_id == article.id
+    assert accounting.time_unit == "4.56"
+    assert accounting.type == accounting_type
+
+
 def test_create_ticket_time_accounting_with_type(single_ticket):
     client = single_ticket.parent.client
     accounting_type = next(iter(client.time_accountings.types))
