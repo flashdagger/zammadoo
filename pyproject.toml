@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zammadoo"
-version = "0.3.0.dev0"
+version = "0.3.0"
 description = "an object-oriented REST API client for zammad"
 authors = ["flashdagger"]
 license = "MIT"
@@ -39,7 +39,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [bumpver]
-current_version = "0.3.0.dev0"
+current_version = "0.3.0"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 
 [bumpver.file_patterns]

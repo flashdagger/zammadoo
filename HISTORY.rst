@@ -4,7 +4,7 @@ History
 
 .. py:module:: zammadoo
 
-0.3.0 (tbd)
+0.3.0 (2024-07-25)
 -----------
 * **breaking changes**
 
