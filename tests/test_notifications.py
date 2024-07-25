@@ -3,7 +3,10 @@
 
 import logging
 
+import pytest
 
+
+@pytest.mark.no_record
 def test_notifications_iter(caplog, rclient):
     api_url = rclient.url
 
@@ -36,6 +39,7 @@ def test_mark_all_as_read(caplog, rclient):
     ]
 
 
+@pytest.mark.no_record
 def test_always_use_expand_true(caplog, rclient):
     api_url = rclient.url
 

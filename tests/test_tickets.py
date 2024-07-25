@@ -143,7 +143,7 @@ def test_ticket_create_article(single_ticket):
 
 def test_ticket_history(single_ticket):
     history = single_ticket.history()
-    assert len(history) == 3
+    assert len(history) == 2
 
     assert history[0].items() > {"object": "Ticket", "type": "created"}.items()
     assert history[1].items() > {"object": "Ticket::Article", "type": "created"}.items()

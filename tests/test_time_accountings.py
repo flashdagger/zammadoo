@@ -69,6 +69,7 @@ def test_create_ticket_time_accounting_with_type(single_ticket):
     assert accounting.type == accounting_type
 
 
+@pytest.mark.no_record
 def test_create_time_accounting_types(rclient):
     from zammadoo.users import User
 
