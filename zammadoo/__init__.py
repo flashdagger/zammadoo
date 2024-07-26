@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-__version__ = "0.3.0.post0"
+__version__ = "0.4.0.dev0"
 
 from .client import LOG, APIException, Client
 

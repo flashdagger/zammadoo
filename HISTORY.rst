@@ -4,6 +4,20 @@ History
 
 .. py:module:: zammadoo
 
+0.4.0 (unreleased)
+------------------
+* **breaking changes**
+
+    * none yet
+
+* **added features**
+
+    * none yet
+
+* **fixes**
+
+    * none yet
+
 0.3.0 (2024-07-25)
 ------------------
 * **breaking changes**
