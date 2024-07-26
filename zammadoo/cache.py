@@ -1,37 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-
 from collections import OrderedDict
 from collections.abc import Hashable
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from time import monotonic
 from typing import Generic, Optional, Tuple, TypeVar
 
 _T = TypeVar("_T")
 
+_START_OFFSET = datetime.now(timezone.utc) - timedelta(seconds=monotonic())
+
 
 class LruCache(Generic[_T]):
-    def __init__(self, max_size=-1) -> None:
-        self._cache: "OrderedDict[Hashable, Tuple[datetime, _T]]" = OrderedDict()
+    def __init__(self, max_size: int = -1) -> None:
+        self._cache: "OrderedDict[Hashable, Tuple[float, _T]]" = OrderedDict()
         self._max_size = max_size
 
     @property
-    def max_size(self):
+    def max_size(self) -> int:
         return self._max_size
 
     @max_size.setter
     def max_size(self, value: int):
-        self._max_size = value
-        if value == 0:
-            self._cache.clear()
-        elif value > 0:
-            self.evict()
+        self._max_size = max(value, -1)
+        self.evict()
 
     def evict(self) -> None:
         max_size = self._max_size
-        if max_size <= 0:
+        if max_size < 0:
             return
 
         cache = self._cache
+        if max_size == 0:
+            cache.clear()
+            return
+
         for _ in range(len(cache) - max_size):
             cache.popitem(last=False)
 
@@ -42,14 +45,13 @@ class LruCache(Generic[_T]):
 
         cache = self._cache
         if item in cache:
-            if max_size > 1:
-                cache.move_to_end(item)
+            cache.move_to_end(item)
             return cache[item][1]
 
-        cache[item] = datetime.now(timezone.utc), default
-        if 0 < max_size < len(cache):
+        if 0 < max_size <= len(cache):
             cache.popitem(last=False)
 
+        cache[item] = monotonic(), default
         return default
 
     def clear(self) -> None:
@@ -72,8 +74,7 @@ class LruCache(Generic[_T]):
 
     def __getitem__(self, item: Hashable) -> _T:
         cache = self._cache
-        if self._max_size > 1:
-            cache.move_to_end(item)
+        cache.move_to_end(item)
         return cache[item][1]
 
     def __setitem__(self, item: Hashable, value: _T) -> None:
@@ -82,17 +83,19 @@ class LruCache(Generic[_T]):
             return
 
         cache = self._cache
-
         if item in cache:
             cache.move_to_end(item)
         elif 0 < max_size <= len(cache):
             cache.popitem(last=False)
 
-        cache[item] = datetime.now(timezone.utc), value
+        cache[item] = monotonic(), value
 
     def __delitem__(self, item: Hashable) -> None:
         del self._cache[item]
 
     def timestamp(self, item: Hashable) -> Optional[datetime]:
-        data = self._cache.get(item)
-        return data and data[0]
+        ts_sec = self._cache.get(item, (None, None))[0]
+        if ts_sec:
+            return _START_OFFSET + timedelta(seconds=ts_sec)
+
+        return None

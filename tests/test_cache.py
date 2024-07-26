@@ -168,6 +168,6 @@ def test_timestamp():
     assert isinstance(timestamp, datetime)
     assert timestamp.tzinfo == timezone.utc
 
-    time.sleep(0.001)
+    time.sleep(0.01)
     cache["foo"] = "baz"
     assert cache.timestamp("foo") > timestamp
