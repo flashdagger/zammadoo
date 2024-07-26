@@ -136,7 +136,7 @@ def recorded_session(record_log):
             )
             return req
 
-        def _request(self: Session, method, url, *args, **kwargs):
+        def _request(_self: Session, method, url, *args, **kwargs):
             req = prepared_request(method, url, *args, **kwargs)
             return replay.response_from_request(req)
 

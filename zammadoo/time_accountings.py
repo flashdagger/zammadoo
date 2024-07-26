@@ -21,7 +21,7 @@ class TimeAccountingType(NamedResource):
 class TimeAccountingTypes(
     IterableT[TimeAccountingType], CreatableT[TimeAccountingType]
 ):
-    """TimeAccountingTypess(...)"""
+    """TimeAccountingTypes(...)"""
 
     _RESOURCE_TYPE = TimeAccountingType
 
