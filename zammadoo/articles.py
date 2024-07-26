@@ -179,14 +179,12 @@ class Article(Resource):
         type: Union[None, str, int, TimeAccountingType] = None,
     ) -> TimeAccounting:
         """
-        .. py:module:: zammadoo.time_accountings
-
         Create accounted time for ticket article.
         If time accounting already exists, it will be updated.
 
         :param time_unit: accounted time units
         :param type: accounting type
-        :rtype: :class:`TimeAccounting`
+        :rtype: :class:`~zammadoo.time_accountings.TimeAccounting`
         """
         aid = self.id
         kwargs: Dict[str, Union[None, int, str]] = {"ticket_article_id": aid}
