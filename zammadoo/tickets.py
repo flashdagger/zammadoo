@@ -286,7 +286,7 @@ class Ticket(MutableResource):
         self, target: Union[int, "Ticket"], link_type: Optional[LinkType] = None
     ) -> None:
         """
-        remove link with another, if the link does not exist it will be ignored
+        remove the link to another ticket, if the link does not exist it will be ignored
 
         :param target: the target ticket or its id
         :type target: :class:`Ticket` | int
