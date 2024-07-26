@@ -82,15 +82,13 @@ class LruCache(Generic[_T]):
             return
 
         cache = self._cache
-        timestamp = datetime.now(timezone.utc)
+
         if item in cache:
-            if max_size > 1:
-                cache.move_to_end(item)
-            cache[item] = timestamp, value
-        else:
-            cache[item] = timestamp, value
-            if 0 < max_size < len(cache):
-                cache.popitem(last=False)
+            cache.move_to_end(item)
+        elif 0 < max_size <= len(cache):
+            cache.popitem(last=False)
+
+        cache[item] = datetime.now(timezone.utc), value
 
     def __delitem__(self, item: Hashable) -> None:
         del self._cache[item]
