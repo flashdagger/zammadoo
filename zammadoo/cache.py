@@ -2,13 +2,10 @@
 # -*- coding: UTF-8 -*-
 from collections import OrderedDict
 from collections.abc import Hashable
-from datetime import datetime, timedelta, timezone
 from time import monotonic
 from typing import Generic, Optional, Tuple, TypeVar
 
 _T = TypeVar("_T")
-
-_START_OFFSET = datetime.now(timezone.utc) - timedelta(seconds=monotonic())
 
 
 class LruCache(Generic[_T]):
@@ -93,9 +90,8 @@ class LruCache(Generic[_T]):
     def __delitem__(self, item: Hashable) -> None:
         del self._cache[item]
 
-    def timestamp(self, item: Hashable) -> Optional[datetime]:
-        ts_sec = self._cache.get(item, (None, None))[0]
-        if ts_sec:
-            return _START_OFFSET + timedelta(seconds=ts_sec)
-
-        return None
+    def age_s(self, item: Hashable) -> Optional[float]:
+        try:
+            return monotonic() - self._cache[item][0]
+        except KeyError:
+            return None

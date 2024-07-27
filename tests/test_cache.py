@@ -157,17 +157,16 @@ def test_clear():
     assert not cache
 
 
-def test_timestamp():
+def test_age_s():
     import time
     from datetime import datetime, timezone
 
     cache = LruCache()
-    assert cache.timestamp("foo") is None
-    cache["foo"] = "bar"
-    timestamp = cache.timestamp("foo")
-    assert isinstance(timestamp, datetime)
-    assert timestamp.tzinfo == timezone.utc
+    assert cache.age_s("foo") is None
 
-    time.sleep(0.01)
+    cache["foo"] = "bar"
+
+    time.sleep(0.015)
+    assert cache.age_s("foo") > 0.015
     cache["foo"] = "baz"
-    assert cache.timestamp("foo") > timestamp
+    assert cache.age_s("foo") < 0.015

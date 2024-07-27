@@ -8,7 +8,8 @@ History
 ------------------
 * **breaking changes**
 
-    * none yet
+    * :class:`Resource` class: replace :meth:`last_request_at()` with :meth:`last_request_age_s()`
+      (e.g see :meth:`tickets.Ticket.last_request_age_s()`)
 
 * **added features**
 
@@ -22,7 +23,7 @@ History
 ------------------
 * **breaking changes**
 
-    * none yet
+    * none
 
 * **added features**
 

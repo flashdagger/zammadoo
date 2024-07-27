@@ -179,11 +179,10 @@ def test_ticket_create_article_sender_and_type_attribute(single_ticket):
     assert single_ticket.create_article_type == "note"
 
 
-def test_ticket_last_request_at(single_ticket):
-    from datetime import datetime
-
-    timestamp = single_ticket.last_request_at()
-    assert isinstance(timestamp, datetime)
+def test_ticket_last_request_age_s(single_ticket):
+    age_s = single_ticket.last_request_age_s()
+    assert isinstance(age_s, float)
+    assert age_s >= 0.0
 
 
 def test_lazy_attribute_caching(caplog, rclient):

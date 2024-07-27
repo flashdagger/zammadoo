@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from datetime import datetime
 from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 from .resources import ResourcesT
@@ -93,9 +92,9 @@ class Resource(FrozenInfo):
         )
         info.update(new_info)
 
-    def last_request_at(self) -> Optional[datetime]:
-        """:return: the last request timestamp"""
-        return self.parent.cache.timestamp(self.url)
+    def last_request_age_s(self) -> Optional[float]:
+        """:return: time in seconds since the last request"""
+        return self.parent.cache.age_s(self.url)
 
 
 class UserProperty(_AttributeBase):
