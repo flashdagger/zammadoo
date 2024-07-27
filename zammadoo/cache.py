@@ -3,7 +3,7 @@
 from collections import OrderedDict
 from collections.abc import Hashable
 from time import monotonic
-from typing import Generic, Optional, Tuple, TypeVar
+from typing import Generic, Optional, Tuple, TypeVar, Union
 
 _T = TypeVar("_T")
 
@@ -22,12 +22,18 @@ class LruCache(Generic[_T]):
         self._max_size = max(value, -1)
         self.evict()
 
-    def evict(self) -> None:
+    def evict(self, max_age_s: Union[None, int, float] = None) -> None:
+        cache = self._cache
+        if max_age_s is not None:
+            min_timestamp = monotonic() - max_age_s
+            outdated = [key for key, value in cache.items() if value[0] < min_timestamp]
+            for key in outdated:
+                del cache[key]
+
         max_size = self._max_size
         if max_size < 0:
             return
 
-        cache = self._cache
         if max_size == 0:
             cache.clear()
             return

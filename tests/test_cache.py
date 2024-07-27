@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
+import time
 from itertools import zip_longest
 from operator import eq
 
@@ -158,9 +159,6 @@ def test_clear():
 
 
 def test_age_s():
-    import time
-    from datetime import datetime, timezone
-
     cache = LruCache()
     assert cache.age_s("foo") is None
 
@@ -170,3 +168,16 @@ def test_age_s():
     assert cache.age_s("foo") > 0.015
     cache["foo"] = "baz"
     assert cache.age_s("foo") < 0.015
+
+
+def test_evict_by_age():
+    cache = LruCache()
+    cache["first"] = None
+    time.sleep(0.015)
+    cache["second"] = None
+
+    cache.evict()
+    assert cache.keys() == {"first", "second"}
+
+    cache.evict(max_age_s=0.015)
+    assert cache.keys() == {"second"}
