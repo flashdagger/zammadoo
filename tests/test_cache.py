@@ -164,7 +164,7 @@ def test_age_s():
 
     cache["foo"] = "bar"
 
-    time.sleep(0.015)
+    time.sleep(0.016)
     assert cache.age_s("foo") > 0.015
     cache["foo"] = "baz"
     assert cache.age_s("foo") < 0.015
