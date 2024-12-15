@@ -163,11 +163,11 @@ def test_age_s():
     assert cache.age_s("foo") is None
 
     cache["foo"] = "bar"
+    time.sleep(0.015)
+    assert 0.0145 < cache.age_s("foo") < 0.0165
 
-    time.sleep(0.016)
-    assert cache.age_s("foo") > 0.015
     cache["foo"] = "baz"
-    assert cache.age_s("foo") < 0.015
+    assert cache.age_s("foo") < 0.001
 
 
 def test_evict_by_age():
@@ -179,5 +179,5 @@ def test_evict_by_age():
     cache.evict()
     assert cache.keys() == {"first", "second"}
 
-    cache.evict(max_age_s=0.015)
+    cache.evict(max_age_s=0.0145)
     assert cache.keys() == {"second"}
