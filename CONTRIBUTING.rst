@@ -61,7 +61,7 @@ Run ``pylint zammadoo`` to run the linter.
 Test your changes
 ^^^^^^^^^^^^^^^^^
 
-Add unit tests to your PR and run ``pytest`` to run the tests.
+Add unit tests to your PR and run ``pytest  --cov-report html`` to run the tests.
 Ensure the code coverage report in ``report/index.html`` includes your changes.
 
 
