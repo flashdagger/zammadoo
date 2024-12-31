@@ -163,7 +163,9 @@ def test_age_s():
     assert cache.age_s("foo") is None
 
     cache["foo"] = "bar"
-    time.sleep(0.015)
+    start = time.monotonic()
+    while time.monotonic() - start < 0.015:
+        time.sleep(0.001)
     assert 0.0145 < cache.age_s("foo") < 0.0165
 
     cache["foo"] = "baz"
