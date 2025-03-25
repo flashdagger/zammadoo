@@ -94,7 +94,7 @@ jobs:
       - name: Update coverage badge
         uses: schneegans/dynamic-badges-action@v1.7.0
         with:
-          auth: ${{ secrets.GIST_TOKEN }}
+          auth: ${{ secrets.GIST_SECRET }}
           gistID: 1a66c9e88a9e4267f7e0b1d185be98f4
           filename: 'covbadge.json'
           label: coverage
