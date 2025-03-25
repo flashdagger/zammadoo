@@ -26,6 +26,7 @@ requests = "^2.28.2"
 charset-normalizer = "^3.2"
 
 [tool.poetry.group.dev.dependencies]
+dill = ">=0.3.9"
 pylint = ">=3.0"
 pytest = ">=7.4"
 pytest-cov = ">=4.0"
@@ -468,6 +469,7 @@ confidence = ["HIGH", "CONTROL_FLOW", "INFERENCE", "INFERENCE_FAILURE", "UNDEFIN
 # --disable=W".
 disable = [
     "bad-inline-option",
+    "declare-non-slot",
     "deprecated-pragma",
     "file-ignored",
     "locally-disabled",
