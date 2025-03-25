@@ -35,6 +35,10 @@ jobs:
         cache: 'poetry'
     - run: |
         poetry install
+    - name: Patch PyPy dependencies
+      if: ${{ startsWith(matrix.python-version, 'pypy') }}
+      run: |
+        poetry run pip install --force-reinstall --no-cache rpds-py regex
     - name: Unit tests with pytest
       run: |
         poetry run pytest
