@@ -115,7 +115,7 @@ def test_create_article_via_ticket(ticket_pair, rclient):
 
     with TemporaryDirectory() as tmpdir:
         textfile = Path(tmpdir, filename_text)
-        textfile.write_text(content_text)
+        textfile.write_text(content_text, encoding="utf-8")
         binfile = Path(tmpdir, filename_binary)
         binfile.write_bytes(content_binary)
 
@@ -156,7 +156,7 @@ def test_create_article_via_ticket(ticket_pair, rclient):
         destination_file = Path(tmpdir, f"{filename_text}.bkp")
         downloaded_file = text_attachment.download(destination_file)
         assert downloaded_file == destination_file
-        assert downloaded_file.read_text() == content_text
+        assert downloaded_file.read_text(encoding="utf-8") == content_text
 
         with pytest.raises(FileExistsError):
             text_attachment.download(downloaded_file, raise_if_exists=True)
