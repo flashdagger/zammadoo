@@ -79,16 +79,12 @@ class State(NamedResource):
     default_create: bool  #:
     default_follow_up: bool  #:
     ignore_escalation: bool  #:
+    state_type: str  #:
 
     @property
     def next_state(self) -> Optional["State"]:
         sid: Optional[int] = self["next_state_id"]
         return None if sid is None else self.parent(sid)
-
-    @property
-    def state_type(self) -> "State":
-        sid: int = self["state_type_id"]
-        return self.parent(sid)
 
 
 class States(IterableT[State], CreatableT[State]):
@@ -432,8 +428,12 @@ class Tickets(SearchableT[Ticket], CreatableT[Ticket]):
 
         cache_assets(self.client, items.get("assets", {}))
 
-        for rid in items.get("tickets", ()):
-            yield self._RESOURCE_TYPE(self, rid)
+        for key in ("record_ids", "tickets"):
+            rids = items.get(key)
+            if rids is not None:
+                for rid in rids:
+                    yield self._RESOURCE_TYPE(self, rid)
+                break
 
     def create(
         self,

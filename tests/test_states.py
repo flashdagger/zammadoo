@@ -10,7 +10,7 @@ def test_create_state(rclient, temporary_resources):
         assert new_state.active is True
         assert new_state.note is None
         assert new_state.next_state is None
-        assert new_state.state_type == rclient.ticket_states(5)
+        assert new_state.state_type_id == 5
         assert new_state.ignore_escalation is False
         assert new_state.default_create is False
         assert new_state.default_follow_up is False
@@ -55,7 +55,7 @@ def test_delete_state(rclient, temporary_resources):
 
 def test_state_state_type_attribute(client):
     state = client.ticket_states(1, info={"id": 1, "state_type_id": 1})
-    assert state.state_type == state
+    assert state.state_type_id == 1
 
 
 def test_state_next_state_attribute_is_not_none(client):

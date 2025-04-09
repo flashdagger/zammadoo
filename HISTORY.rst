@@ -10,6 +10,7 @@ History
 
     * :class:`Resource` class: replace :meth:`last_request_at()` with :meth:`last_request_age_s()`
       (e.g see :meth:`tickets.Ticket.last_request_age_s()`)
+    * property :attr:`tickets.State.state_type` now returns a string
 
 * **added features**
 
