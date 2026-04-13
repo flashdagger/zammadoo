@@ -72,7 +72,7 @@ Build the documentation locally
 .. code-block:: sh
 
     # install the optional dependencies for building the documentation
-    pip install -r docs/requirements.txt
+    uv pip install -r docs/requirements.txt
     # build the HTML documents
     docs\make.bat html  # Windows
     make -C docs html   # Linux, MacOS
