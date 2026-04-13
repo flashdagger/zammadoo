@@ -14,39 +14,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "pypy-3.10"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "pypy-3.11"]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Pipx cache for poetry
-      uses: actions/cache@v4
+    - uses: actions/checkout@v6
+    - name: Pipx cache for uv
+      uses: actions/cache@v5
       with:
         path: |
-          /opt/pipx/venvs/poetry
-          /opt/pipx_bin/poetry
-        key: pipx-venvs-poetry
-    - name: Install poetry
-      run: |
-        pipx install poetry
-        pipx list --verbose
-    - uses: actions/setup-python@v5
+          /opt/pipx/venvs/uv
+          /opt/pipx_bin/uv
+        key: pipx-venvs-uv
+    - name: Setup uv cache
+      uses: actions/cache@v5
       with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'poetry'
-    - run: |
-        poetry install
-    - name: Patch PyPy dependencies
-      if: ${{ startsWith(matrix.python-version, 'pypy') }}
+        path: |
+          /home/runner/.cache/uv
+        key: 'uv-cache-${{ matrix.python-version }}'
+    - name: Install uv and sync virtual environment
       run: |
-        poetry run pip install --force-reinstall --no-cache rpds-py regex
+        pipx install uv
+        uv sync -p ${{ matrix.python-version }}
+        echo $HOME
+        du -h $HOME/.cache
     - name: Unit tests with pytest
+      if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
-        poetry run pytest
+        uv run pytest
       env:
         COVERAGE_FILE: .coverage.${{ matrix.python-version }}
     - name: Upload coverage data
       if: success() || failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-data-${{ matrix.python-version }}
         if-no-files-found: warn
@@ -57,11 +56,11 @@ jobs:
     - name: Static typechecking with mypy
       if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
-        poetry run mypy ./zammadoo
+        uv run mypy ./zammadoo
     - name: Static code analysis with pylint
       if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
-        poetry run pylint ./zammadoo
+        uv run pylint ./zammadoo
 
   process-test-data:
     if: success() || failure()
@@ -70,13 +69,13 @@ jobs:
     env:
       TOTAL_COVERAGE: '-'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download coverage data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
       - name: Pipx cache for coverage
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             /opt/pipx/venvs/coverage
@@ -96,9 +95,10 @@ jobs:
           echo "### Total coverage: ${TOTAL}%" >> $GITHUB_STEP_SUMMARY
           coverage report
       - name: Update coverage badge
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        continue-on-error: true
+        uses: schneegans/dynamic-badges-action@v1.8.0
         with:
-          auth: ${{ secrets.GIST_SECRET }}
+          auth: ${{ secrets.GIST_TOKEN }}
           gistID: 1a66c9e88a9e4267f7e0b1d185be98f4
           filename: 'covbadge.json'
           label: coverage
