@@ -76,7 +76,7 @@ version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 
 [tool.black]
 line-length = 88
-target_version = ['py38', 'py39', 'py310', 'py311']
+target_version = ['py39', 'py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -96,7 +96,7 @@ src_paths = ["zammadoo", "tests"]
 # see: https://pytest-cov.readthedocs.io/en/latest/config.html
 [tool.pytest.ini_options]
 minversion = "7.4"
-addopts = "tests -v --tb=short --cov=zammadoo --cov-report= --mypy-only-local-stub --benchmark-max-time=0.1 --benchmark-disable"
+addopts = "tests -v --tb=short --cov=zammadoo --cov-report= --benchmark-max-time=0.1 --benchmark-disable"
 cache_dir = ".cache/pytest"
 markers = ["no_record"]
 
@@ -112,7 +112,7 @@ html = {directory = "report"}
     ]
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 cache_dir = ".cache/mypy"
 exclude = "build|venv"
 
@@ -209,10 +209,6 @@ py-version = "3.11"
 # directory used to determine a package namespace for modules located under the
 # source root.
 # source-roots =
-
-# When enabled, pylint would attempt to guess common misconfiguration and emit
-# user-friendly hints instead of false-positive error messages.
-suggestion-mode = true
 
 # Allow loading of arbitrary C extensions. Extensions are imported into the
 # active Python interpreter and may run arbitrary code.
