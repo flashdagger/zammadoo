@@ -21,11 +21,12 @@ and create your own development branch.
 Setting up your own virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The repository includes a Poetry_ ``pyproject.toml`` file to help you set up a
-virtual environment and install the needed development dependencies. From the
+The repository includes a ``pyproject.toml`` file to help you set up a
+virtual environment and install the needed development dependencies.
+You can use UV_ to setup a virtual environment. From the
 repository checkout root directory execute::
 
-    poetry install
+    uv sync
 
 
 Run the unit tests to ensure everything is working
@@ -93,5 +94,5 @@ On github interface, click on `Pull Request` button. Wait CI to run and one of t
 
 
 .. _GitHub: https://github.com/
-.. _Poetry: https://python-poetry.org/
+.. _UV: https://docs.astral.sh/uv/
 .. _pytest: https://www.pytest.org/
