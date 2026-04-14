@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-    - name: Pipx cache for uv
+    - name: Setup pipx cache
       uses: actions/cache@v5
       with:
         path: |
@@ -35,12 +35,16 @@ jobs:
       run: |
         pipx install uv
         uv sync -p ${{ matrix.python-version }}
-        echo $HOME
-        du -h $HOME/.cache
     - name: Unit tests with pytest
       if: ${{ !startsWith(matrix.python-version, 'pypy') }}
       run: |
         uv run pytest
+      env:
+        COVERAGE_FILE: .coverage.${{ matrix.python-version }}
+    - name: Unit tests with pytest
+      if: ${{ startsWith(matrix.python-version, 'pypy') }}
+      run: |
+        uv run pytest --ignore-glob "*.yml"
       env:
         COVERAGE_FILE: .coverage.${{ matrix.python-version }}
     - name: Upload coverage data
@@ -74,7 +78,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           merge-multiple: true
-      - name: Pipx cache for coverage
+      - name: Setup coverage cache
         uses: actions/cache@v5
         with:
           path: |
@@ -84,7 +88,6 @@ jobs:
       - name: Install Python coverage
         run: |
           pipx install coverage[toml]
-          pipx list --verbose
       - name: Merge coverage data and compute total coverage
         continue-on-error: true
         run: |
