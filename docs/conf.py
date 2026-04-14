@@ -18,7 +18,7 @@ copyright = "2026, MMM"
 author = "flashdagger"
 
 # The full version, including alpha/beta/rc tags
-release = "0.4.0.dev0"
+release = "0.4.0.dev1"
 # The short X.Y version
 version = ".".join(release.split(".")[:2])
 
